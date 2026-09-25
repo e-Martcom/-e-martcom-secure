@@ -1,11 +1,9 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 app.use(express.static('public'));
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
-app.get('/api/test', (req, res) => {
-  res.json({ ok: true });
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log('Live'));
+app.listen(PORT, () => console.log('Live on ' + PORT));
