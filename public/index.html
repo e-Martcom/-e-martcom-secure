@@ -127,3 +127,29 @@ function toggleBot(){document.getElementById("botWindow").classList.toggle("acti
 function sendBot(){let i=document.getElementById("botInput"),t=i.value.trim();if(!t)return;let b=document.getElementById("botBody");b.innerHTML+=`<div class="bot-msg bot-user">${t}</div>`;i.value="";setTimeout(()=>{b.innerHTML+=`<div class="bot-msg bot-bot" style="font-weight:800">E-MARTCOM - 36 real products - All categories - No pop-ups! Real products only! Bold prices!</div>`;b.scrollTop=b.scrollHeight;},400);}
 buildBrandLogos();buildCats();render(allProducts);
 </script></body></html>
+<div style="background:#fff7ed;padding:15px;border-radius:10px;margin-top:10px">
+  <h3>Lipa na M-Pesa</h3>
+  <input id="mpesaPhone" placeholder="07XXXXXXXX" style="width:100%;padding:10px;margin:5px 0">
+  <input id="mpesaAmount" placeholder="Amount e.g. 10" value="10" style="width:100%;padding:10px">
+  <button onclick="payMpesa()" style="width:100%;background:#00a651;color:white;padding:12px;border:none;border-radius:8px;font-weight:bold">PAY WITH M-PESA - STK PUSH</button>
+  <p id="mpesaResult" style="font-size:12px;margin-top:8px"></p>
+</div>
+
+<script>
+async function payMpesa(){
+  const phone = document.getElementById('mpesaPhone').value;
+  const amount = document.getElementById('mpesaAmount').value;
+  document.getElementById('mpesaResult').innerText = "Sending STK Push to " + phone + "...";
+  try{
+    const res = await fetch('/api/mpesa/stk', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({phone, amount})
+    });
+    const data = await res.json();
+    document.getElementById('mpesaResult').innerText = JSON.stringify(data, null, 2);
+    if(data.ResponseCode == "0") alert("✅ STK Push sent! Check phone " + phone + " and enter PIN");
+    else alert("Response: " + JSON.stringify(data));
+  }catch(e){ document.getElementById('mpesaResult').innerText = "Error: " + e.message; }
+}
+</script>
