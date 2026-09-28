@@ -24,6 +24,9 @@ app.get('/admin.html', (req, res) => {
 const ORDERS_FILE = path.join(__dirname, 'orders.json');
 if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, JSON.stringify({orders: []}));
 
+const EXTERNAL_FILE = path.join(__dirname, 'external_orders.json');
+if (!fs.existsSync(EXTERNAL_FILE)) fs.writeFileSync(EXTERNAL_FILE, JSON.stringify([]));
+
 function saveOrder(order) {
   const data = JSON.parse(fs.readFileSync(ORDERS_FILE));
   data.orders.unshift(order);
@@ -47,18 +50,14 @@ async function stkPushLogic(phone, amount, items) {
   const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
   const shortcode = process.env.MPESA_SHORTCODE || 174379;
   const passkey = process.env.MPESA_PASSKEY;
-  
-  // FIXED: Ensure callback is ALWAYS valid https URL
   let baseUrl = process.env.BASE_URL || "https://e-martcom-secure.onrender.com";
-  baseUrl = baseUrl.replace(/\/$/, ''); // remove trailing slash
+  baseUrl = baseUrl.replace(/\/$/, '');
   if (!baseUrl.startsWith('https://')) {
     baseUrl = baseUrl.replace('http://', 'https://');
     if (!baseUrl.startsWith('https://')) baseUrl = 'https://' + baseUrl;
   }
   const callbackUrl = `${baseUrl}/api/callback`;
-  
   console.log(`🔗 Using CallBackURL: ${callbackUrl}`);
-
   const password = Buffer.from(`${shortcode}${passkey}${timestamp}`).toString('base64');
   const stkRes = await axios.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
     BusinessShortCode: shortcode,
@@ -73,7 +72,6 @@ async function stkPushLogic(phone, amount, items) {
     AccountReference: 'E-MARTCOM',
     TransactionDesc: 'Oceanic Store Payment'
   }, { headers: { Authorization: `Bearer ${token}` } });
-  
   const order = {
     id: Date.now(),
     CheckoutRequestID: stkRes.data.CheckoutRequestID,
@@ -179,19 +177,33 @@ app.get('/api/orders/clear', (req, res) => {
   res.json({ cleared: true });
 });
 
-// External product link - hidden sourcing
-app.post('/api/external-order', async (req,res)=>{
-  const { productId, externalUrl, source } = req.body;
-  // source = 'alibaba' | '1688' | 'jumia' | 'ebay' | 'madeinchina'
-  console.log(`Sourcing ${productId} from ${source}: ${externalUrl}`);
-  // Here you will later add automatic ordering via API
-  // For now, we log it for you to order manually
-  // You earn difference: Customer pays you KSh 23500, you buy at $150
-  res.json({ok:true, msg:`Order will be sourced from ${source}`});
+// === 🌊 SECRET GLOBAL SOURCING - SINGLE FIXED ROUTE ===
+app.post('/api/external-order', (req,res)=>{
+  try{
+    let list = JSON.parse(fs.readFileSync(EXTERNAL_FILE));
+    const entry = {...req.body, time: new Date().toISOString()};
+    list.unshift(entry);
+    fs.writeFileSync(EXTERNAL_FILE, JSON.stringify(list, null, 2));
+    console.log(`🌊 SECRET VIEW LOGGED: ${entry.productName} | Customer KSh ${entry.customerPrice} | Profit KSh ${Math.floor((entry.customerPrice||0)*0.45)}`);
+    res.json({ok:true, count: list.length});
+  }catch(e){
+    console.error(e);
+    res.json({ok:true});
+  }
 });
+
+app.get('/api/external-orders', (req,res)=>{
+  try{
+    const list = JSON.parse(fs.readFileSync(EXTERNAL_FILE));
+    res.json(list);
+  }catch(e){
+    res.json([]);
+  }
+});
+
+// Supplier
 let suppliers = [];
 let pendingProducts = [];
-
 app.post('/api/supplier/register', (req,res)=>{
   const { supplier, product } = req.body;
   suppliers.push({...supplier, id:Date.now(), date:new Date()});
@@ -199,22 +211,11 @@ app.post('/api/supplier/register', (req,res)=>{
     pendingProducts.push({...product, id:Date.now(), supplier:supplier.name, status:'pending'});
   }
   console.log('NEW SUPPLIER:', supplier.name, supplier.phone);
-  // Send you WhatsApp notification via your existing logic
   res.json({ok:true});
 });
-
 app.get('/api/supplier/pending', (req,res)=>{
   res.json({suppliers, pendingProducts});
 });
-let externalOrders = [];
-app.post('/api/external-order', (req,res)=>{
-  externalOrders.push(req.body);
-  console.log('🌊 SECRET ORDER LOGGED:', req.body.productName, 'Profit:', Math.floor((req.body.customerPrice||0)*0.45));
-  res.json({ok:true});
-});
 
-app.get('/api/external-orders', (req,res)=>{
-  res.json(externalOrders);
-});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🌊 Oceanic Server Live on ${PORT}`));
