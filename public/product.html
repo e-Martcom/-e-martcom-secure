@@ -46,6 +46,19 @@ let current=null;
 function getId(){let p=new URLSearchParams(location.search);return parseInt(p.get('id'))||2}
 function load(){let id=getId();current=allProducts.find(x=>x.id===id)||allProducts[1];
 document.getElementById('pImg').src=current.img;document.getElementById('pName').innerText=`${current.name} - ${current.desc}`;document.getElementById('pBrand').innerText=current.brand.toUpperCase();document.getElementById('pBrandLink').innerText=current.brand;document.getElementById('pPrice').innerText=current.price;document.getElementById('pOld').innerText=current.old;document.getElementById('pDesc').innerText=current.desc;document.getElementById('pDetails').innerText=`${current.desc}. Premium ${current.brand} product from ${current.cat}. 100% genuine ${current.brand} brand. Best quality guaranteed. Oceanic verified seller. Features: 100% Original ${current.brand}, High quality, Durable, Warranty available, Pay on delivery in Nanyuki & Nairobi. Why buy? Original guarantee, Fast delivery, M-Pesa & Card, Easy return.`;document.getElementById('bread').innerText=`Home > ${current.cat} > ${current.brand} > ${current.name}`;document.getElementById('sellerName').innerText=`${current.brand} Official - E-MARTCOM Store 🌊`;document.getElementById('specTable').innerHTML=`<tr><td>Brand</td><td>${current.brand}</td></tr><tr><td>Category</td><td>${current.cat}</td></tr><tr><td>Price</td><td>KSh ${current.price}</td></tr><tr><td>Shipping</td><td>Air 2-5 days / Sea 20-35 days</td></tr><tr><td>Payment</td><td>M-Pesa STK & Visa Secure Oceanic</td></tr><tr><td>Stock</td><td>In Stock - Nanyuki Warehouse</td></tr>`;document.getElementById('sideImg').src=current.img;document.getElementById('sideName').innerText=current.name;document.getElementById('sidePrice').innerText=current.price;let thumbs=document.getElementById('thumbs');thumbs.innerHTML='';[current.img,current.img,current.img,current.img].forEach((src,i)=>{thumbs.innerHTML+=`<img src="${src}" class="${i==0?'active':''}" onclick="document.getElementById('pImg').src='${src}';document.querySelectorAll('.thumbs img').forEach(e=>e.classList.remove('active'));this.classList.add('active')">`});let rel=document.getElementById('related');rel.innerHTML='';allProducts.filter(x=>x.cat===current.cat&&x.id!==current.id).slice(0,6).forEach(p=>{rel.innerHTML+=`<div onclick="location.href='/product.html?id=${p.id}'" style="cursor:pointer"><img src="${p.img}"><div style="font-size:11px;margin-top:4px;height:28px;overflow:hidden">${p.name}</div><div style="font-weight:800;font-size:12px;color:#023e8a">KSh ${p.price}</div></div>`});let c=JSON.parse(localStorage.getItem('emart_cart')||'[]').reduce((s,i)=>s+i.qty,0);document.getElementById('cartCount').innerText=c;}
-function addToCartCurrent(){if(!current)return;let cart=JSON.parse(localStorage.getItem('emart_cart')||'[]');let ex=cart.find(x=>x.id===current.id);if(ex)ex.qty++;else cart.push({id:current.id,name:current.name,price:current.price,brand:current.brand,image:current.img,qty:1});localStorage.setItem('emart_cart',JSON.stringify(cart));document.getElementById('cartCount').innerText=cart.reduce((s,i)=>s+i.qty,0);let t=document.createElement('div');t.innerText=`🌊 ${current.name} added to cart!`;t.style.cssText="position:fixed;bottom:20px;right:20px;background:linear-gradient(90deg,#0077b6,#0096c7);color:#fff;padding:12px 18px;border-radius:24px;z-index:9999;font-weight:700";document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
+function addToCartCurrent(){
+  // ... your existing cart code ...
+
+  // NEW: Secretly check other marketplaces
+  fetch('/api/external-order',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      productId: current.id,
+      externalUrl: `https://www.alibaba.com/trade/search?searchText=${encodeURIComponent(current.name)}`,
+      source: 'alibaba'
+    })
+  });
+}
 window.onload=load;
 </script></body></html>
