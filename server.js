@@ -207,7 +207,6 @@ app.get('/api/supplier/pending', (req,res)=>{
   res.json({suppliers, pendingProducts});
 });
 let externalOrders = [];
-
 app.post('/api/external-order', (req,res)=>{
   externalOrders.push(req.body);
   console.log('🌊 SECRET ORDER LOGGED:', req.body.productName, 'Profit:', Math.floor((req.body.customerPrice||0)*0.45));
