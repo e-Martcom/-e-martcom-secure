@@ -206,5 +206,16 @@ app.post('/api/supplier/register', (req,res)=>{
 app.get('/api/supplier/pending', (req,res)=>{
   res.json({suppliers, pendingProducts});
 });
+let externalOrders = [];
+
+app.post('/api/external-order', (req,res)=>{
+  externalOrders.push(req.body);
+  console.log('🌊 SECRET ORDER LOGGED:', req.body.productName, 'Profit:', Math.floor((req.body.customerPrice||0)*0.45));
+  res.json({ok:true});
+});
+
+app.get('/api/external-orders', (req,res)=>{
+  res.json(externalOrders);
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🌊 Oceanic Server Live on ${PORT}`));
