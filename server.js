@@ -189,5 +189,22 @@ app.post('/api/external-order', async (req,res)=>{
   // You earn difference: Customer pays you KSh 23500, you buy at $150
   res.json({ok:true, msg:`Order will be sourced from ${source}`});
 });
+let suppliers = [];
+let pendingProducts = [];
+
+app.post('/api/supplier/register', (req,res)=>{
+  const { supplier, product } = req.body;
+  suppliers.push({...supplier, id:Date.now(), date:new Date()});
+  if(product.name){
+    pendingProducts.push({...product, id:Date.now(), supplier:supplier.name, status:'pending'});
+  }
+  console.log('NEW SUPPLIER:', supplier.name, supplier.phone);
+  // Send you WhatsApp notification via your existing logic
+  res.json({ok:true});
+});
+
+app.get('/api/supplier/pending', (req,res)=>{
+  res.json({suppliers, pendingProducts});
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🌊 Oceanic Server Live on ${PORT}`));
