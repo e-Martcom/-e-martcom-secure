@@ -67,20 +67,19 @@ function removeItem(idx){
 }
 
 async function payMpesa(){
-  const phoneEl = document.getElementById('mpesaPhone');
-  const phone = phoneEl ? phoneEl.value : prompt("Enter M-Pesa number 2547...");
-  if(!phone){ alert("Enter phone number"); return; }
-  const total = cartItems.reduce((s,i)=>s+i.price,0) || 1;
-  
-  const btn = document.querySelector('#payBtn');
-  if(btn){ btn.innerText="Sending STK..."; btn.disabled=true; }
-  
+  const phone = document.querySelector('#mpesaPhone')?.value || "254713367205";
+  const total = cartItems.reduce((s,i)=>s+(parseInt(i.price)||0),0) || 1;
+  const btn = document.querySelector('#payBtn') || event.target;
+  btn.innerText="Sending STK..."; btn.disabled=true;
   try{
-    const r = await fetch('/api/mpesa/stk',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({phone, amount: total})
-    });
+    const r = await fetch('/api/mpesa/stk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone, amount: total})});
+    const data = await r.json();
+    if(data.success){
+      alert(`✅ STK PUSH SENT to ${phone}\nTotal: Ksh ${total}\n\nID: ${data.data.CheckoutRequestID}\nCheck Render logs!`);
+    } else { alert("Failed: "+JSON.stringify(data)); }
+  }catch(e){ alert(e.message); }
+  btn.innerText="LIPA NA M-PESA - STK PUSH"; btn.disabled=false;
+}
     const data = await r.json();
     console.log(data);
     if(data.success || data.data?.ResponseCode=="0"){
