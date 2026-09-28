@@ -37,18 +37,77 @@ header{background:#fff;display:flex;align-items:center;padding:12px;gap:8px;posi
   <div class="modal" id="loginModal"><div class="box"><h3 style="font-weight:900">E-MARTCOM - Sign in</h3><button class="btn" style="width:100%;margin-top:8px" onclick="closeModals()">Continue - No Pop-up</button><button class="btn2" style="width:100%;margin-top:6px" onclick="closeModals()">Cancel</button></div></div>
 <script>
 let cartCount=0,currentDetailId=null;
-  let cartItems=[];
+let cartItems=[];
+
 function openCart(){
  document.getElementById('cartModal').style.display='flex';
  document.getElementById('mCount').innerText=cartCount;
- document.getElementById('cartList').innerHTML = cartItems.length ? cartItems.map(i=>`<div>${i.name} - KES ${i.price}</div>`).join('') : 'Empty';
+ const list = document.getElementById('cartList');
+ const total = cartItems.reduce((s,i)=>s+i.price,0);
+ 
+ if(cartItems.length===0){
+   list.innerHTML = '<p style="text-align:center;color:#888;padding:20px;">Cart is Empty - Add some products! 🛒</p>';
+ } else {
+   list.innerHTML = cartItems.map((item, idx)=>`
+     <div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee;">
+       <span>${item.name}</span>
+       <span><b>Ksh ${item.price}</b> <button onclick="removeItem(${idx})" style="color:red;margin-left:10px;border:none;background:none;cursor:pointer;">✕</button></span>
+     </div>
+   `).join('') + `<div style="padding:15px;text-align:right;font-weight:900;font-size:18px;border-top:2px solid #000;margin-top:10px;">Total: Ksh ${total}</div>`;
+ }
 }
+
 function closeCart(){ document.getElementById('cartModal').style.display='none'; }
 
 function addToCart(name,price){
- cartCount++; cartItems.push({name,price});
- document.getElementById('cartCount').innerText=cartCount;
- alert(name+' added! Cart='+cartCount);
+  cartCount++; 
+  cartItems.push({name,price});
+  document.getElementById('cartCount').innerText=cartCount;
+  document.getElementById('mCount').innerText=cartCount;
+  // Nice toast instead of alert
+  const toast = document.createElement('div');
+  toast.innerText = `✅ ${name} added!`;
+  toast.style.cssText="position:fixed;bottom:20px;right:20px;background:#000;color:#fff;padding:12px 20px;border-radius:8px;z-index:9999;";
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),2000);
+}
+
+function removeItem(idx){
+  cartItems.splice(idx,1);
+  cartCount = cartItems.length;
+  document.getElementById('cartCount').innerText=cartCount;
+  openCart(); // refresh
+}
+
+async function payMpesa(){
+  const phoneEl = document.getElementById('mpesaPhone');
+  const phone = phoneEl ? phoneEl.value : prompt("Enter M-Pesa number 2547...");
+  if(!phone){ alert("Enter phone number"); return; }
+  const total = cartItems.reduce((s,i)=>s+i.price,0) || 1;
+  
+  const btn = document.querySelector('#payBtn');
+  if(btn){ btn.innerText="Sending STK..."; btn.disabled=true; }
+  
+  try{
+    const r = await fetch('/api/mpesa/stk',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({phone, amount: total})
+    });
+    const data = await r.json();
+    console.log(data);
+    if(data.success || data.data?.ResponseCode=="0"){
+      alert(`✅ SUCCESS!\n\nSTK sent to ${phone}\nTotal: Ksh ${total}\n\nCheckoutID: ${data.data.CheckoutRequestID}\n\n(Sandbox: Simulate in Daraja Test Credentials)`);
+      cartItems=[]; cartCount=0;
+      document.getElementById('cartCount').innerText=0;
+      closeCart();
+    } else {
+      alert("Failed: "+JSON.stringify(data));
+    }
+  }catch(e){
+    alert("Error: "+e.message);
+  }
+  if(btn){ btn.innerText="LIPA NA M-PESA - STK PUSH"; btn.disabled=false; }
 }
 
 async function payMpesa(){
