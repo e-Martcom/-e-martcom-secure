@@ -75,7 +75,10 @@ function buildCats(){let c=document.getElementById("catsWithBrands"),h="";brands
 function render(list){let g=document.getElementById("prodGrid"),h="";list.forEach(p=>{h+=`<div class="pcard"><img src="${p.img}" onclick="openDetail(${p.id})"><div style="font-size:9px;color:#0e7490;font-weight:800">${p.cat}</div><div class="brand-badge">${p.brand.toUpperCase()}</div><div style="font-weight:900;font-size:12px;margin:4px 0;height:32px;overflow:hidden">E-MARTCOM - ${p.name}</div><span class="price">KSh ${p.price} <s>KSh ${p.old}</s></span><div style="font-size:10px;font-weight:600;color:#334155;margin:4px 0;height:32px;overflow:hidden">${p.desc}</div><div style="margin-top:6px"><span class="moq">MOQ 1-5 | Air/Sea | M-Pesa & Card</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px"><button class="btn2" onclick="openDetail(${p.id})">DETAILS</button><button class="btn" onclick="addToCart(${p.id})">ADD TO CART</button></div></div>`;});g.innerHTML=h;document.getElementById("filterInfo").innerText=`${list.length} oceanic products • M-Pesa + Card payments`;}
 function filterBrand(b){let f=allProducts.filter(p=>p.brand.toLowerCase().includes(b.toLowerCase()));render(f.length?f:allProducts);}
 function filterCat(c){if(c=="All")render(allProducts);else render(allProducts.filter(p=>p.cat==c));}
-function openDetail(id){currentDetailId=id;let p=allProducts.find(x=>x.id==id);document.getElementById("detailName").innerText=p.name;document.getElementById("detailImg").src=p.img;document.getElementById("detailDesc").innerText=p.desc;document.getElementById("detailSpecs").innerHTML=`<tr><td>Brand</td><td><b style="color:#0a4a7a">${p.brand}</b></td></tr><tr><td>Price</td><td style="font-weight:900;color:#0a4a7a;font-size:18px">KSh ${p.price}</td></tr><tr><td>Shipping</td><td>Air 2-5 days / Sea 20-35 days</td></tr><tr><td>Payment</td><td>M-Pesa STK & Visa Card Secure</td></tr>`;document.getElementById('detailModal').classList.add('active');}
+function openDetail(id){
+  // Go to Jumia-style product page
+  window.location.href = '/product.html?id=' + id;
+}
 buildBrandLogos();buildCats();render(allProducts);
 </script>
 </body>
