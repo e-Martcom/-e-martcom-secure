@@ -27,87 +27,82 @@ header{background:#fff;display:flex;align-items:center;padding:12px;gap:8px;posi
 .bot-body{flex:1;overflow:auto;padding:8px;background:#f8fafc}.bot-msg{margin:5px 0;padding:7px 9px;border-radius:10px;max-width:85%;font-size:11px;font-weight:600}.bot-bot{background:#fff;border:1px solid #ddd}.bot-user{background:#ff6a00;color:#fff;margin-left:auto}
 .bot-footer{display:flex;padding:6px;border-top:1px solid #eee}.bot-footer input{flex:1;padding:7px;border:1px solid #ddd;border-radius:20px}.bot-footer button{margin-left:5px;background:#ff6a00;color:#fff;border:none;padding:7px 11px;border-radius:20px;cursor:pointer;font-weight:800}
 </style></head><body>
-<header><div class="logo">E-<span>MART</span><span class="com">COM</span></div><div class="search"><input id="searchInput" placeholder="Search 36 products..."><button class="btn" onclick="doSearch()">SEARCH</button></div><div id="cartBtn" onclick="openCart()" style="cursor:pointer;font-weight:900;background:#0f172a;color:#fff;padding:8px 14px;border-radius:25px;display:flex;align-items:center;gap:6px;z-index:9999">🛒 Cart <span id="cartCount" style="background:red;color:white;border-radius:50%;padding:2px 7px">0</span></div><div style="font-weight:700;cursor:pointer" onclick="document.getElementById('loginModal').style.display='flex'">Sign in</div></header>
+<header><div class="logo">E-<span>MART</span><span class="com">COM</span></div><div class="search"><input id="searchInput" placeholder="Search 36 products..."><button class="btn" onclick="doSearch()">SEARCH</button></div><div id="cartBtn" onclick="openCart()" style="cursor:pointer;font-weight:900;background:#0f172a;color:#fff;padding:8px 14px;border-radius:25px;display:flex;align-items:center;gap:6px;z-index:9999">🛒 Cart <span id="cartCount" style="background:red;color:white;border-radius:50%;padding:2px 7px">0</span></div><div style="font-weight:700;cursor:pointer" onclick="document.getElementById('loginModal').classList.add('active')">Sign in</div></header>
 <div style="max-width:1600px;margin:10px auto;padding:0 10px"><div class="brand-logos-top" id="brandLogosTop"></div></div>
 <div class="nav"><div class="cats"><b style="font-weight:900;font-size:12px">E-MARTCOM - 36 CATEGORIES - 36 REAL PRODUCTS - NO POPUPS</b><div onclick="filterCat('All')" style="background:linear-gradient(90deg,#ff6a00,#0f172a);color:#fff;font-weight:900;margin-top:8px;padding:8px;border-radius:8px">All 36 Real Products - No Popups</div><div id="catsWithBrands"></div></div><div class="main"><div class="banner"><h2 style="font-weight:900;font-size:14px">E-MARTCOM - 36 Real Products - All Categories - Real Product View - No Popups!</h2><p style="font-weight:700;font-size:10px;margin-top:4px" id="filterInfo">36 real products - One per category - Click logo - See real product - No blocking OK message - Bold prices & descriptions - Air/Sea - M-Pesa & Visa</p></div><div id="prodGrid" class="grid"></div></div></div>
 <div id="botBtn" onclick="toggleBot()">E-BOT</div>
 <div id="botWindow"><div class="bot-header"><div>E-MARTCOM - 36 Real</div><span onclick="toggleBot()" style="cursor:pointer">X</span></div><div class="bot-body" id="botBody"><div class="bot-msg bot-bot" style="font-weight:800">Welcome to E-MARTCOM! 36 real products - all 36 categories - No pop-ups! Real products only!</div></div><div class="bot-footer"><input id="botInput" placeholder="Search..." onkeypress="if(event.key==='Enter')sendBot()"><button onclick="sendBot()">Send</button></div></div>
 <div class="modal" id="detailModal"><div class="box"><h3 id="detailName" style="font-weight:900"></h3><img id="detailImg" style="width:100%;height:180px;object-fit:cover;border-radius:8px;margin:8px 0"><p id="detailDesc" style="font-weight:900;font-size:12px"></p><table class="spec-table" id="detailSpecs"></table><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px"><button class="btn2" onclick="closeModals()">Close</button><button class="btn" onclick="addToCartFromDetail()">Add to Cart - No Pop-up</button></div></div></div>
-<div class="modal" id="cartModal" onclick="if(event.target==this)closeCart()"><div class="box"><h3 style="font-weight:900">Your Cart (<span id="mCount">0</span>)</h3><div id="cartList" style="margin:10px 0">Empty - Add products!</div><hr><input id="mpesaPhone" placeholder="07XXXXXXXX" style="width:100%;padding:11px;margin:8px 0;border:2px solid #ff6a00;border-radius:8px"><button onclick="payMpesa()" style="width:100%;padding:12px;background:#00a651;color:#fff;border:none;border-radius:8px;font-weight:900">LIPA NA M-PESA - STK PUSH</button><button onclick="closeCart()" style="width:100%;margin-top:6px;padding:8px;border-radius:8px;border:1px solid #ccc">Continue Shopping</button><p id="mpesaResult" style="font-size:11px;margin-top:8px;word-break:break-all"></p></div></div>
-  <div class="modal" id="loginModal"><div class="box"><h3 style="font-weight:900">E-MARTCOM - Sign in</h3><button class="btn" style="width:100%;margin-top:8px" onclick="closeModals()">Continue - No Pop-up</button><button class="btn2" style="width:100%;margin-top:6px" onclick="closeModals()">Cancel</button></div></div>
+<div class="modal" id="cartModal" onclick="if(event.target==this)closeCart()"><div class="box"><h3 style="font-weight:900">Your Cart (<span id="mCount">0</span>)</h3><div id="cartList" style="margin:10px 0">Empty - Add products!</div><hr>
+<input id="mpesaPhone" value="254713367205" placeholder="2547..." style="width:100%;padding:11px;margin:8px 0;border:2px solid #ff6a00;border-radius:8px">
+<button id="payBtn" onclick="payMpesa()" style="width:100%;padding:12px;background:#00a651;color:#fff;border:none;border-radius:8px;font-weight:900">LIPA NA M-PESA - STK PUSH</button>
+<button onclick="closeCart()" style="width:100%;margin-top:6px;padding:8px;border-radius:8px;border:1px solid #ccc">Continue Shopping</button>
+<p id="mpesaResult" style="font-size:11px;margin-top:8px;word-break:break-all"></p></div></div>
+<div class="modal" id="loginModal"><div class="box"><h3 style="font-weight:900">E-MARTCOM - Sign in</h3><button class="btn" style="width:100%;margin-top:8px" onclick="closeModals()">Continue - No Pop-up</button><button class="btn2" style="width:100%;margin-top:6px" onclick="closeModals()">Cancel</button></div></div>
 <script>
-let cartCount=0,currentDetailId=null;
-let cartItems=[];
+let cartItems=[]; let currentDetailId=null;
 
 function openCart(){
-  document.getElementById('cartModal').style.display='flex';
+  document.getElementById('cartModal').classList.add('active');
   document.getElementById('mCount').innerText = cartItems.length;
   const list = document.getElementById('cartList');
   const total = cartItems.reduce((s,i)=>s+(parseInt(i.price)||0),0);
-  
   if(cartItems.length === 0){
     list.innerHTML = '<p style="text-align:center;color:#888;padding:20px;">Cart is Empty - Add some products! 🛒</p>';
   } else {
     list.innerHTML = cartItems.map((item,idx)=>`
       <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #eee;">
-        <div><b>${item.name}</b></div>
+        <div><b>${item.name}</b><br><small style="color:#666">${item.brand||''}</small></div>
         <div style="display:flex;align-items:center;gap:10px;">
-          <b>Ksh ${item.price}</b>
-          <button onclick="event.stopPropagation(); removeItem(${idx})" style="background:red;color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;">✕</button>
+          <b>KSh ${item.price}</b>
+          <button onclick="removeItem(${idx})" style="background:red;color:white;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-weight:900;">✕</button>
         </div>
       </div>
-    `).join('') + `<div style="padding:15px;text-align:right;font-weight:900;font-size:18px;border-top:2px solid #000;margin-top:10px;">Total: Ksh ${total}</div>`;
+    `).join('') + `<div style="padding:15px;text-align:right;font-weight:900;font-size:18px;border-top:2px solid #000;margin-top:10px;">Total: KSh ${total}</div>`;
   }
 }
-
+function closeCart(){ document.getElementById('cartModal').classList.remove('active'); }
+function closeModals(){ document.querySelectorAll('.modal').forEach(m=>m.classList.remove('active')); }
 function removeItem(idx){
   cartItems.splice(idx,1);
   document.getElementById('cartCount').innerText = cartItems.length;
   openCart();
 }
+function addToCart(id){
+  let p=allProducts.find(x=>x.id==id);
+  if(!p) return;
+  cartItems.push({id:p.id, name:p.name, price:p.price, brand:p.brand});
+  document.getElementById('cartCount').innerText = cartItems.length;
+  const toast=document.createElement('div');
+  toast.innerText=`✅ ${p.name} - KSh ${p.price} added!`;
+  toast.style.cssText="position:fixed;bottom:20px;right:20px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:700;";
+  document.body.appendChild(toast); setTimeout(()=>toast.remove(),2000);
+}
+function addToCartFromDetail(){ if(currentDetailId) addToCart(currentDetailId); closeModals(); }
 
 async function payMpesa(){
-  const phone = document.querySelector('#mpesaPhone')?.value || "254713367205";
+  const phone=document.getElementById('mpesaPhone').value.trim();
+  if(!phone){ alert('Enter M-Pesa number like 2547...'); return; }
   const total = cartItems.reduce((s,i)=>s+(parseInt(i.price)||0),0) || 1;
-  const btn = document.querySelector('#payBtn') || event.target;
-  btn.innerText="Sending STK..."; btn.disabled=true;
+  const btn=document.getElementById('payBtn');
+  const resultEl=document.getElementById('mpesaResult');
+  btn.innerText="Sending STK... Please wait"; btn.disabled=true;
+  resultEl.innerText='Sending STK Push to '+phone+' Amount KSh '+total+'...';
   try{
-    const r = await fetch('/api/mpesa/stk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone, amount: total})});
-    const data = await r.json();
+    const res=await fetch('/api/mpesa/stk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone, amount: total})});
+    const data=await res.json();
+    console.log(data);
+    resultEl.innerText = JSON.stringify(data,null,2);
     if(data.success){
-      alert(`✅ STK PUSH SENT to ${phone}\nTotal: Ksh ${total}\n\nID: ${data.data.CheckoutRequestID}\nCheck Render logs!`);
-    } else { alert("Failed: "+JSON.stringify(data)); }
-  }catch(e){ alert(e.message); }
+      alert(`✅ STK PUSH SENT!\n\nPhone: ${phone}\nTotal: KSh ${total}\nCheckoutID: ${data.data.CheckoutRequestID}\n\nCheck phone for PIN.\n(Sandbox? Simulate in Daraja Portal)`);
+      cartItems=[]; document.getElementById('cartCount').innerText=0; closeCart();
+    } else {
+      alert("Failed: "+ (data.error || JSON.stringify(data)));
+    }
+  }catch(e){ resultEl.innerText='Error: '+e.message; alert('Error: '+e.message); }
   btn.innerText="LIPA NA M-PESA - STK PUSH"; btn.disabled=false;
 }
-    const data = await r.json();
-    console.log(data);
-    if(data.success || data.data?.ResponseCode=="0"){
-      alert(`✅ SUCCESS!\n\nSTK sent to ${phone}\nTotal: Ksh ${total}\n\nCheckoutID: ${data.data.CheckoutRequestID}\n\n(Sandbox: Simulate in Daraja Test Credentials)`);
-      cartItems=[]; cartCount=0;
-      document.getElementById('cartCount').innerText=0;
-      closeCart();
-    } else {
-      alert("Failed: "+JSON.stringify(data));
-    }
-  }catch(e){
-    alert("Error: "+e.message);
-  }
-  if(btn){ btn.innerText="LIPA NA M-PESA - STK PUSH"; btn.disabled=false; }
-}
-
-async function payMpesa(){
- const phone=document.getElementById('mpesaPhone').value;
- if(!phone){alert('Enter M-Pesa number');return;}
- document.getElementById('mpesaResult').innerText='Sending STK to '+phone+'...';
- try{
-  const res=await fetch('/api/mpesa/stk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,amount:10})});
-  const data=await res.json();
-  document.getElementById('mpesaResult').innerText=JSON.stringify(data,null,2);
-  if(data.ResponseCode=='0') alert('✅ STK Push sent! Check phone '+phone);
- }catch(e){document.getElementById('mpesaResult').innerText='Error: '+e.message}
-}
-function doSearch(){ alert('Searching: '+document.getElementById('searchInput').value); }
+function doSearch(){ let q=document.getElementById("searchInput").value.toLowerCase(); if(!q){render(allProducts);return;} render(allProducts.filter(p=>p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q))); }
 let brandsData=[
 {cat:"Apparel & Accessories",brands:[{name:"Nike",domain:"nike.com"},{name:"Zara",domain:"zara.com"},{name:"Adidas",domain:"adidas.com"},{name:"Gucci",domain:"gucci.com"}]},
 {cat:"Consumer Electronics",brands:[{name:"Samsung",domain:"samsung.com"},{name:"Apple",domain:"apple.com"},{name:"Tecno",domain:"tecno-mobile.com"},{name:"Sony",domain:"sony.com"},{name:"JBL",domain:"jbl.com"}]},
@@ -190,38 +185,8 @@ function buildCats(){let c=document.getElementById("catsWithBrands"),h="";brands
 function render(list){let g=document.getElementById("prodGrid"),h="";list.forEach(p=>{h+=`<div class="pcard"><img src="${p.img}" onclick="openDetail(${p.id})"><div style="font-size:9px;color:#0284c7;font-weight:800">${p.cat}</div><div class="brand-badge"><img src="${getLogoUrl(p.domain)}" onerror="this.style.display='none'">${p.brand.toUpperCase()}</div><div style="font-weight:900;font-size:12px;margin:3px 0;height:30px;overflow:hidden">E-MARTCOM - ${p.name}</div><span class="price">KSh ${p.price} <span style="text-decoration:line-through;color:#999;font-size:10px">KSh ${p.old}</span></span><span class="desc-bold">${p.desc}</span><div style="margin-top:4px"><span class="moq">E-MARTCOM - MOQ 1-5 | Air/Sea | M-Pesa & Visa</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px"><button class="btn2" onclick="openDetail(${p.id})">SPECS + LOGO</button><button class="btn" onclick="addToCart(${p.id})">ADD TO CART</button></div></div>`;});g.innerHTML=h;document.getElementById("filterInfo").innerText="E-MARTCOM - "+list.length+" Real Products - No Popups - All 36 Categories - 300+ Brands With Logos - Bold Prices & Descriptions";}
 function filterBrand(b){let f=allProducts.filter(p=>p.brand.toLowerCase().includes(b.toLowerCase())||p.name.toLowerCase().includes(b.toLowerCase()));if(f.length==0){document.getElementById("prodGrid").innerHTML=`<div style='background:#fff;padding:30px;border-radius:12px;text-align:center;grid-column:1/-1'><h2 style='font-weight:900'>${b.toUpperCase()} - More Products Coming Soon!</h2><p style='font-weight:700;margin:10px 0'>Brand ${b} ready on E-MARTCOM! But check 36 real products below!</p><button class="btn" style="padding:10px 20px" onclick="filterCat('All')">VIEW ALL 36 REAL PRODUCTS</button></div>`;document.getElementById("filterInfo").innerText="E-MARTCOM - "+b.toUpperCase()+" - No Pop-up - Real Page";return;}render(f);}
 function filterCat(c){if(c=="All")render(allProducts);else render(allProducts.filter(p=>p.cat==c));}
-function searchProd(){let q=document.getElementById("searchInput").value.toLowerCase();render(allProducts.filter(p=>p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q)));}
-function openDetail(id){currentDetailId=id;let p=allProducts.find(x=>x.id==id);document.getElementById("detailName").innerHTML=`<img src="${getLogoUrl(p.domain)}" style="width:28px;height:28px;vertical-align:middle"> E-MARTCOM - ${p.name}`;document.getElementById("detailImg").src=p.img;document.getElementById("detailDesc").innerText=p.desc;let h=`<tr><td>Brand Logo</td><td><img src="${getLogoUrl(p.domain)}" style="width:45px;height:30px;background:#fff;border:1px solid #eee;border-radius:6px"> <b style="color:#ff6a00">${p.brand.toUpperCase()}</b></td></tr><tr><td>Price Bold</td><td style="font-weight:900;color:#ff6a00;font-size:18px">KSh ${p.price}</td></tr><tr><td>Description Bold</td><td style="font-weight:900">${p.desc}</td></tr><tr><td>Shipping</td><td style="font-weight:800">Air 2-5 days / Sea 20-35 days</td></tr><tr><td>Payment</td><td style="font-weight:800">M-Pesa STK & Visa - Phone Hidden</td></tr>`;document.getElementById("detailSpecs").innerHTML=h;openModal('detailModal');}
-function addToCart(id){cartCount++;document.getElementById("cartCount").innerText=cartCount;let p=allProducts.find(x=>x.id==id);document.getElementById("filterInfo").innerText="E-MARTCOM - Added: "+p.name+" - KSh "+p.price+" - Cart: "+cartCount+" - No Pop-up! Real Product!";}
-function addToCartFromDetail(){if(currentDetailId)addToCart(currentDetailId);closeModals();}
-function openModal(id){document.getElementById(id).classList.add("active");}function closeModals(){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("active"))}
+function openDetail(id){currentDetailId=id;let p=allProducts.find(x=>x.id==id);document.getElementById("detailName").innerHTML=`<img src="${getLogoUrl(p.domain)}" style="width:28px;height:28px;vertical-align:middle"> E-MARTCOM - ${p.name}`;document.getElementById("detailImg").src=p.img;document.getElementById("detailDesc").innerText=p.desc;let h=`<tr><td>Brand Logo</td><td><img src="${getLogoUrl(p.domain)}" style="width:45px;height:30px;background:#fff;border:1px solid #eee;border-radius:6px"> <b style="color:#ff6a00">${p.brand.toUpperCase()}</b></td></tr><tr><td>Price Bold</td><td style="font-weight:900;color:#ff6a00;font-size:18px">KSh ${p.price}</td></tr><tr><td>Description Bold</td><td style="font-weight:900">${p.desc}</td></tr><tr><td>Shipping</td><td style="font-weight:800">Air 2-5 days / Sea 20-35 days</td></tr><tr><td>Payment</td><td style="font-weight:800">M-Pesa STK & Visa - Phone Hidden</td></tr>`;document.getElementById("detailSpecs").innerHTML=h;document.getElementById('detailModal').classList.add('active');}
 function toggleBot(){document.getElementById("botWindow").classList.toggle("active");}
 function sendBot(){let i=document.getElementById("botInput"),t=i.value.trim();if(!t)return;let b=document.getElementById("botBody");b.innerHTML+=`<div class="bot-msg bot-user">${t}</div>`;i.value="";setTimeout(()=>{b.innerHTML+=`<div class="bot-msg bot-bot" style="font-weight:800">E-MARTCOM - 36 real products - All categories - No pop-ups! Real products only! Bold prices!</div>`;b.scrollTop=b.scrollHeight;},400);}
 buildBrandLogos();buildCats();render(allProducts);
 </script></body></html>
-<div style="background:#fff7ed;padding:15px;border-radius:10px;margin-top:10px">
-  <h3>Lipa na M-Pesa</h3>
-  <input id="mpesaPhone" placeholder="07XXXXXXXX" style="width:100%;padding:10px;margin:5px 0">
-  <input id="mpesaAmount" placeholder="Amount e.g. 10" value="10" style="width:100%;padding:10px">
-  <button onclick="payMpesa()" style="width:100%;background:#00a651;color:white;padding:12px;border:none;border-radius:8px;font-weight:bold">PAY WITH M-PESA - STK PUSH</button>
-  <p id="mpesaResult" style="font-size:12px;margin-top:8px"></p>
-</div>
-
-<script>
-async function payMpesa(){
-  const phone = document.getElementById('mpesaPhone').value;
-  const amount = document.getElementById('mpesaAmount').value;
-  document.getElementById('mpesaResult').innerText = "Sending STK Push to " + phone + "...";
-  try{
-    const res = await fetch('/api/mpesa/stk', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({phone, amount})
-    });
-    const data = await res.json();
-    document.getElementById('mpesaResult').innerText = JSON.stringify(data, null, 2);
-    if(data.ResponseCode == "0") alert("✅ STK Push sent! Check phone " + phone + " and enter PIN");
-    else alert("Response: " + JSON.stringify(data));
-  }catch(e){ document.getElementById('mpesaResult').innerText = "Error: " + e.message; }
-}
-</script>
