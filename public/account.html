@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Account - E-MARTCOM</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family: -apple-system, BlinkMacSystemFont, sans-serif}
+body{background:#f5f5f5}
+.header{padding:15px;background:#fff;display:flex;align-items:center;gap:12px}
+.avatar{width:55px;height:55px;border-radius:50%;background:#ffe0cc;display:flex;align-items:center;justify-content:center;font-size:28px}
+.name{font-weight:700;font-size:18px}
+.sub{color:#666;font-size:13px}
+.top-icons{margin-left:auto;display:flex;gap:15px;font-size:22px}
+.star-card{margin:12px;background:#fde8e8;border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.level-badge{position:absolute;top:0;right:0;background:#e53935;color:#fff;padding:8px 18px;border-radius:0 12px 0 12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.progress{height:5px;background:#fff;border-radius:10px;margin-top:12px;overflow:hidden}
+.progress-bar{height:100%;width:60%;background:#000;border-radius:10px}
+.card{background:#fff;margin-top:8px;padding:15px}
+.card h3{font-size:18px;margin-bottom:15px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;text-align:center}
+.grid4 div{font-size:13px;color:#333}
+.grid4 span{font-size:28px;display:block;margin-bottom:6px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center}
+.share-row{display:flex;align-items:center;gap:10px;background:#fff;margin-top:8px;padding:15px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee}
+.bottom-nav div{text-align:center;font-size:12px}
+.bottom-nav .active{color:#e53935}
+.badge{background:#e53935;color:#fff;border-radius:50%;padding:1px 6px;font-size:10px;position:relative;top:-8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="avatar">👤</div>
+  <div>
+    <div class="name" id="userName">Guest Buyer</div>
+    <div class="sub" id="userCompany">E-MARTCOM Customer</div>
+  </div>
+  <div class="top-icons">
+    <span>📷</span><span>🎧</span><span>⚙️</span>
+  </div>
+</div>
+
+<div class="star-card">
+  <div class="level-badge">⭐ Level 2</div>
+  <div style="font-weight:700;font-size:18px">Star Buyer</div>
+  <div style="margin-top:8px;color:#555;display:flex;justify-content:space-between">Complete your profile to be more trustable. <b onclick="alert('Add profile info soon!')">Go > </b></div>
+  <div class="progress"><div class="progress-bar"></div></div>
+</div>
+
+<div class="card">
+  <h3>Orders</h3>
+  <div class="grid4">
+    <div onclick="location.href='/public/index.html'"><span>📦</span>Orders</div>
+    <div onclick="alert('M-Pesa Payments history')"><span>💲</span>Payments</div>
+    <div onclick="alert('Refund policy')"><span>↩️</span>Refund</div>
+    <div onclick="alert('KRA Tax Info')"><span>🧾</span>Tax Info</div>
+    <div onclick="alert('Verify with ID')"><span>👤✔️</span>Verify Account</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>More features</h3>
+  <div class="grid4">
+    <div><span>♡</span>Favorites</div>
+    <div><span>🕒</span>Browsing History</div>
+    <div><span>✉️</span>Inquiries</div>
+    <div><span>🎯</span>Quotations</div>
+    <div><span>⭐</span>Reviews</div>
+    <div><span>☺️</span>Preferences</div>
+    <div><span>❓</span>Help Center</div>
+  </div>
+</div>
+
+<div class="share-row">
+  <div style="font-weight:900;color:red;font-size:22px">M</div>
+  <div style="flex:1">Share App to my friends</div>
+  <div>→</div>
+</div>
+
+<div class="card" style="margin-bottom:80px">
+  <h3>Inspired by your interests</h3>
+  <div style="display:flex;gap:15px;overflow:auto">
+    <span>🔍</span><b style="border-bottom:2px solid #000">All</b>
+    <span>Mobile Phone & Accessories</span>
+    <span>Optical Fiber, etc</span>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div onclick="location.href='/'">🏠<br>Home</div>
+  <div>🛍️<br>Buy Now</div>
+  <div>💬<sup class="badge">21</sup><br>Messages</div>
+  <div class="active">👤<br>My Account</div>
+</div>
+
+<script>
+// Load name from localStorage if you save customer info
+document.getElementById('userName').innerText = localStorage.getItem('emart_name') || 'Arther';
+document.getElementById('userCompany').innerText = localStorage.getItem('emart_company') || 'Royal Tyrant Ventures';
+</script>
+</body>
+</html>
