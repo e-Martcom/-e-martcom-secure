@@ -123,5 +123,42 @@ app.get('/api/orders/clear', (req, res) => {
   res.json({ cleared: true });
 });
 
-const PORT = process.env.PORT || 10000;
+const PORT =// COMPATIBILITY: old frontend calls /api/mpesa/stk
+app.post('/api/mpesa/stk', async (req, res) => {
+  req.url = '/api/stkpush';
+  // re-route internally
+  try {
+    const { phone, amount, items } = req.body;
+    const token = await getToken();
+    const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
+    const password = Buffer.from(`174379${process.env.MPESA_PASSKEY}${timestamp}`).toString('base64');
+    const stkRes = await axios.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
+      BusinessShortCode: 174379,
+      Password: password,
+      Timestamp: timestamp,
+      TransactionType: 'CustomerPayBillOnline',
+      Amount: amount,
+      PartyA: phone,
+      PartyB: 174379,
+      PhoneNumber: phone,
+      CallBackURL: `${process.env.BASE_URL}/api/callback`,
+      AccountReference: 'E-MARTCOM',
+      TransactionDesc: 'Oceanic Store Payment'
+    }, { headers: { Authorization: `Bearer ${token}` } });
+    const order = {
+      id: Date.now(),
+      CheckoutRequestID: stkRes.data.CheckoutRequestID,
+      MerchantRequestID: stkRes.data.MerchantRequestID,
+      phone, amount, items,
+      itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '),
+      status: 'STK Sent - Awaiting PIN',
+      date: new Date().toISOString()
+    };
+    saveOrder(order);
+    res.json({ success: true, data: stkRes.data, CheckoutRequestID: stkRes.data.CheckoutRequestID });
+  } catch (e) {
+    console.error(e.response?.data || e.message);
+    res.status(500).json(e.response?.data || { error: e.message });
+  }
+}); process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🌊 Oceanic Server Live on ${PORT}`));
