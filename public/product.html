@@ -39,7 +39,11 @@ body{background:#f0f8ff}
 <div><div class="card"><div class="rightTitle">🌊 DELIVERY & RETURNS</div><select class="select"><option>Nanyuki, Laikipia</option><option>Nairobi</option><option>Mombasa</option></select><div class="infoBox"><b>🚚 Door Delivery</b><br>KSh 100-250<br>1-2 days<br><br><b>📦 Pickup</b><br>KSh 80-150<br>1-2 days</div></div><div class="sellerBox"><div class="rightTitle">SELLER INFORMATION</div><div style="font-weight:700;color:#023e8a" id="sellerName"></div><button style="width:100%;background:linear-gradient(90deg,#0077b6,#0096c7);color:#fff;border:none;padding:10px;border-radius:24px;font-weight:700;margin-top:6px">Follow Store 🌊</button></div></div>
 </div>
 <div class="bottomGrid"><div><div class="section"><h3>Product details</h3><p id="pDetails" style="font-size:13px;line-height:1.8"></p><h3 style="margin-top:20px">Specifications</h3><table class="spec" style="width:100%;border-collapse:collapse" id="specTable"></table><h3 style="margin-top:20px">Customers also viewed</h3><div class="related" id="related"></div>
-<div class="section" style="margin-top:16px;border:2px solid #0096c7"><h3>🌊 Global Sourcing - Best Price Auto-Found</h3><div id="sourcingLinks" style="display:grid;gap:8px"></div></div>
+<!-- HIDDEN FROM CUSTOMERS - ONLY ADMIN CAN SEE -->
+<div id="adminSourcingBox" class="section" style="margin-top:16px;border:2px solid #0096c7;display:none">
+<h3>🌊 Global Sourcing - ADMIN ONLY</h3>
+<div id="sourcingLinks" style="display:grid;gap:8px"></div>
+</div>
 </div></div><div><div class="section"><img id="sideImg" style="width:60px;height:60px;object-fit:contain;float:left;margin-right:8px"><b id="sideName"></b><br>KSh <span id="sidePrice"></span><button class="btn" style="margin-top:10px;padding:10px" onclick="addToCartCurrent()">Add to cart</button></div></div></div>
 <script>
 let allProducts=[{id:1,name:"Nike Cotton T-Shirt Pack",price:1800,old:2200,cat:"Apparel & Accessories",brand:"Nike",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",desc:"Nike Brand - 100% Cotton Premium"},{id:2,name:"Samsung Galaxy A15 128GB",price:23500,old:26000,cat:"Consumer Electronics",brand:"Samsung",img:"https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400",desc:"Samsung - 6.5 inch AMOLED"},{id:3,name:"Puma Gym Dumbbells 20kg",price:4500,old:5500,cat:"Sports & Entertainment",brand:"Puma",img:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",desc:"Puma - Cast Iron Dumbbells"}];
@@ -47,6 +51,32 @@ let current=null;
 function getId(){let p=new URLSearchParams(location.search);return parseInt(p.get('id'))||2}
 function load(){let id=getId();current=allProducts.find(x=>x.id===id)||allProducts[1];document.getElementById('pImg').src=current.img;document.getElementById('pName').innerText=current.name;document.getElementById('pBrand').innerText=current.brand;document.getElementById('pPrice').innerText=current.price;document.getElementById('pOld').innerText=current.old;document.getElementById('pDesc').innerText=current.desc;document.getElementById('pDetails').innerText=current.desc;document.getElementById('bread').innerText=`Home > ${current.cat} > ${current.name}`;document.getElementById('sellerName').innerText=current.brand;document.getElementById('specTable').innerHTML=`<tr><td>Brand</td><td>${current.brand}</td></tr><tr><td>Price</td><td>KSh ${current.price}</td></tr>`;document.getElementById('sideImg').src=current.img;document.getElementById('sideName').innerText=current.name;document.getElementById('sidePrice').innerText=current.price;let thumbs=document.getElementById('thumbs');thumbs.innerHTML=`<img src="${current.img}" class="active">`;let rel=document.getElementById('related');rel.innerHTML=allProducts.map(p=>`<div onclick="location.href='/product.html?id=${p.id}'"><img src="${p.img}"><div style="font-size:11px">${p.name}</div><div style="font-weight:800;color:#023e8a">KSh ${p.price}</div></div>`).join('');let c=JSON.parse(localStorage.getItem('emart_cart')||'[]').reduce((s,i)=>s+i.qty,0);document.getElementById('cartCount').innerText=c;loadGlobalSourcing();}
 function loadGlobalSourcing(){
+  // --- SECRET: Auto-source in background without showing customers ---
+  const q = encodeURIComponent(current.name);
+  // Automatically log to your admin - customer doesn't see anything!
+  fetch('/api/external-order',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      productId: current.id,
+      productName: current.name,
+      customerPrice: current.price,
+      source: 'auto',
+      sourceUrl: `https://www.alibaba.com/trade/search?searchText=${q}`,
+      time: new Date()
+    })
+  }).catch(()=>{});
+
+  // --- Only show box if YOU are admin ---
+  const isAdmin = window.location.search.includes('admin=emart2024') || localStorage.getItem('isAdmin') === 'true';
+  if(isAdmin){
+    document.getElementById('adminSourcingBox').style.display = 'block';
+  } else {
+    // Customer sees NOTHING - hide completely
+    return;
+  }
+  
+  // Rest of your CHECK/SOURCE buttons code here...
   const q=encodeURIComponent(current.name);
   const links=[{name:'Alibaba',url:`https://www.alibaba.com/trade/search?searchText=${q}`,note:`Factory ~KSh ${Math.floor(current.price*0.65)}`},{name:'1688',url:`https://s.1688.com/selloffer/offer_search.htm?keywords=${q}`,note:`Wholesale profit KSh ${Math.floor(current.price*0.45)}`},{name:'Made-in-China',url:`https://www.made-in-china.com/productdirectory?word=${q}`,note:`Verified`},{name:'eBay',url:`https://www.ebay.com/sch/i.html?_nkw=${q}`,note:`USA stock`},{name:'Jumia KE',url:`https://www.jumia.co.ke/catalog/?q=${q}`,note:`Local`}];
   document.getElementById('sourcingLinks').innerHTML=links.map(l=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border:1px solid #caf0f8;border-radius:8px"><div><b style="font-size:13px;color:#023e8a">${l.name}</b><div style="font-size:11px;color:#555">${l.note}</div></div><div><a href="${l.url}" target="_blank" style="background:#023e8a;color:#fff;padding:6px 10px;border-radius:12px;font-size:11px;text-decoration:none;margin-right:6px">CHECK</a><button onclick="sourceOrder('${l.name}','${l.url}')" style="background:#0096c7;color:#fff;border:none;padding:6px 10px;border-radius:12px;font-size:11px">SOURCE</button></div></div>`).join('');
