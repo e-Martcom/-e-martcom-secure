@@ -1,37 +1,46 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>E-MARTCOM Admin - Oceanic Dashboard</title>
+<html>
+<head>
+<title>E-MARTCOM ADMIN 🌊</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Segoe UI,Arial;background:#eef6fb;padding:16px}
-.header{background:linear-gradient(90deg,#0a4a7a,#06b6d4);color:#fff;padding:18px;border-radius:16px;display:flex;justify-content:space-between;align-items:center}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:16px 0}
-.card{background:#fff;padding:16px;border-radius:14px;border:1px solid #e0f2fe;box-shadow:0 4px 12px rgba(10,74,122,.06)}
-.card h2{font-size:22px;color:#0a4a7a}
-.card p{font-size:11px;color:#64748b;font-weight:700}
-.table-wrap{background:#fff;border-radius:14px;overflow:auto;border:1px solid #e0f2fe;box-shadow:0 4px 12px rgba(10,74,122,.06)}
-table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f0f9ff;color:#0a4a7a;padding:10px;text-align:left;font-weight:900;position:sticky;top:0}td{padding:10px;border-top:1px solid #e0f2fe}
-.status-paid{background:#dcfce7;color:#166534;padding:3px 8px;border-radius:20px;font-weight:800;font-size:10px}
-.status-sent{background:#e0f2fe;color:#0a4a7a;padding:3px 8px;border-radius:20px;font-weight:800;font-size:10px}
-.status-fail{background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:20px;font-weight:800;font-size:10px}
-button{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:800}
-</style></head><body>
-<div class="header"><h2>🌊 E-MARTCOM ADMIN - Oceanic Orders</h2><div><a href="/" style="color:#fff;text-decoration:none;background:rgba(255,255,255,.2);padding:8px 14px;border-radius:8px">← Store</a> <button onclick="clearOrders()" style="background:#ef4444;color:#fff;margin-left:8px">Clear All</button></div></div>
-<div class="stats">
-<div class="card"><p>TOTAL SALES (PAID)</p><h2 id="totalSales">KSh 0</h2></div>
-<div class="card"><p>TOTAL ORDERS</p><h2 id="totalOrders">0</h2></div>
-<div class="card"><p>PAID ORDERS</p><h2 id="paidOrders">0</h2></div>
-<div class="card"><p>PENDING STK</p><h2 id="pending">0</h2></div>
+body{font-family:Inter, sans-serif; background:#f0f8ff; padding:20px}
+.card{background:white; border-radius:16px; padding:20px; box-shadow:0 4px 20px rgba(0,119,182,.1); margin-bottom:20px}
+.badge{padding:6px 12px; border-radius:20px; font-weight:700}
+.paid{background:#d1fae5; color:#065f46}.failed{background:#fee2e2; color:#991b1b}.pending{background:#fef3c7; color:#92400e}
+table{width:100%; border-collapse:collapse} th{ text-align:left; padding:12px; background:#023e8a; color:white} td{padding:12px; border-bottom:1px solid #e5e7eb}
+.img{width:50px; height:50px; object-fit:cover; border-radius:8px}
+</style>
+</head>
+<body>
+<div class="card"><h1>🌊 E-MARTCOM ADMIN - Oceanic Orders</h1>
+<p>TOTAL ORDERS: <b id="total">0</b> | TOTAL SALES (PAID): <b id="sales">KSh 0</b> | <a href="/api/orders/clear" onclick="return confirm('Clear all?')">Clear</a> | <a href="/">Store</a></p>
+<p>📲 WhatsApp Alerts go to: 254713367205 - Check Render Logs for link</p>
 </div>
-<div class="table-wrap"><table><thead><tr><th>Date</th><th>Phone</th><th>Amount</th><th>CheckoutID</th><th>Receipt</th><th>Status</th></tr></thead><tbody id="ordersBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:#94a3b8">Loading oceanic orders... 🌊</td></tr></tbody></table></div>
+<div class="card"><table id="tbl"><tr><th>Image</th><th>Date</th><th>Phone / Card</th><th>Items</th><th>Amount</th><th>Status / Receipt</th><th>Action</th></tr></table></div>
 <script>
 async function load(){
-  let r=await fetch('/api/orders'); let d=await r.json(); let orders=d.orders||[];
-  document.getElementById('totalSales').innerText='KSh '+ (d.totalSales||0);
-  document.getElementById('totalOrders').innerText=orders.length;
-  document.getElementById('paidOrders').innerText=orders.filter(o=>o.status.includes('PAID')).length;
-  document.getElementById('pending').innerText=orders.filter(o=>o.status.includes('STK')).length;
-  document.getElementById('ordersBody').innerHTML=orders.length?orders.map(o=>`<tr><td>${o.date}</td><td><b>${o.phone}</b></td><td style="font-weight:900;color:#0a4a7a">KSh ${o.amount}</td><td style="font-size:10px">${o.CheckoutRequestID}</td><td>${o.receipt||'-'}</td><td><span class="${o.status.includes('PAID')?'status-paid':o.status.includes('STK')?'status-sent':'status-fail'}">${o.status}</span></td></tr>`).join(''):`<tr><td colspan="6" style="text-align:center;padding:30px">No orders yet - Your KSh 5300 order will appear here! 🌊</td></tr>`;
+  const res = await fetch('/api/orders'); const data = await res.json();
+  let sales=0;
+  document.getElementById('total').innerText=data.orders.length;
+  let html='<tr><th>Image</th><th>Date</th><th>Phone / Card</th><th>Items</th><th>Amount</th><th>Status</th><th>WhatsApp</th></tr>';
+  data.orders.forEach(o=>{
+    if(o.status.includes('PAID')) sales+=parseInt(o.amount);
+    const img = o.items?.[0]?.image? `<img class="img" src="${o.items[0].image}">` : '🛒';
+    const waMsg = `Hi ${o.phone}, your order ${o.CheckoutRequestID} of KSh ${o.amount} is ${o.status}`;
+    html+=`<tr>
+      <td>${img}</td>
+      <td>${new Date(o.date).toLocaleString()}</td>
+      <td>${o.phone}</td>
+      <td>${o.itemsText || ''}</td>
+      <td><b>KSh ${o.amount}</b></td>
+      <td><span class="badge ${o.status.includes('PAID')?'paid':o.status.includes('FAILED')?'failed':'pending'}">${o.status}<br>${o.receipt||''}</span></td>
+      <td><a target="_blank" href="https://wa.me/${o.phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(waMsg)}">Send WA</a></td>
+    </tr>`;
+  });
+  document.getElementById('tbl').innerHTML=html;
+  document.getElementById('sales').innerText='KSh '+sales;
 }
-async function clearOrders(){if(!confirm('Clear all orders?'))return; await fetch('/api/orders',{method:'DELETE'}); load();}
-load(); setInterval(load,5000);
-</script></body></html>
+load(); setInterval(load,3000);
+</script>
+</body>
+</html>
