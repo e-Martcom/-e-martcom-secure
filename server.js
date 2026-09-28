@@ -15,18 +15,14 @@ if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, JSON.stringify({o
 
 function saveOrder(order) {
   const data = JSON.parse(fs.readFileSync(ORDERS_FILE));
-  data.orders.unshift(order); // newest first
+  data.orders.unshift(order);
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2));
-
-  // 3. WHATSAPP ALERT
-  const msg = `🌊 NEW ORDER! ${order.status}\n💰 KSh ${order.amount}\n📱 ${order.phone}\n🛒 ${order.items?.map(i=>i.name).join(', ') || order.itemsText || 'N/A'}\nID: ${order.CheckoutRequestID || order.id}`;
+  const msg = `🌊 NEW ORDER! ${order.status}\n💰 KSh ${order.amount}\n📱 ${order.phone}\n🛒 ${order.itemsText || 'N/A'}\nID: ${order.CheckoutRequestID || order.id}`;
   console.log(`📲 WHATSAPP ALERT: ${msg}`);
   console.log(`👉 Click to send: https://wa.me/254713367205?text=${encodeURIComponent(msg)}`);
-
   return order;
 }
 
-// M-PESA CONFIG
 async function getToken() {
   const auth = Buffer.from(`${process.env.MPESA_CONSUMER_KEY}:${process.env.MPESA_CONSUMER_SECRET}`).toString('base64');
   const res = await axios.get('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
@@ -35,45 +31,58 @@ async function getToken() {
   return res.data.access_token;
 }
 
+async function stkPushLogic(phone, amount, items) {
+  const token = await getToken();
+  const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
+  const password = Buffer.from(`174379${process.env.MPESA_PASSKEY}${timestamp}`).toString('base64');
+  const stkRes = await axios.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
+    BusinessShortCode: 174379,
+    Password: password,
+    Timestamp: timestamp,
+    TransactionType: 'CustomerPayBillOnline',
+    Amount: amount,
+    PartyA: phone,
+    PartyB: 174379,
+    PhoneNumber: phone,
+    CallBackURL: `${process.env.BASE_URL}/api/callback`,
+    AccountReference: 'E-MARTCOM',
+    TransactionDesc: 'Oceanic Store Payment'
+  }, { headers: { Authorization: `Bearer ${token}` } });
+  const order = {
+    id: Date.now(),
+    CheckoutRequestID: stkRes.data.CheckoutRequestID,
+    MerchantRequestID: stkRes.data.MerchantRequestID,
+    phone, amount, items,
+    itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '),
+    status: 'STK Sent - Awaiting PIN',
+    date: new Date().toISOString()
+  };
+  saveOrder(order);
+  return stkRes.data;
+}
+
 app.post('/api/stkpush', async (req, res) => {
   try {
     const { phone, amount, items } = req.body;
-    const token = await getToken();
-    const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
-    const password = Buffer.from(`174379${process.env.MPESA_PASSKEY}${timestamp}`).toString('base64');
-
-    const stkRes = await axios.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
-      BusinessShortCode: 174379,
-      Password: password,
-      Timestamp: timestamp,
-      TransactionType: 'CustomerPayBillOnline',
-      Amount: amount,
-      PartyA: phone,
-      PartyB: 174379,
-      PhoneNumber: phone,
-      CallBackURL: `${process.env.BASE_URL}/api/callback`,
-      AccountReference: 'E-MARTCOM',
-      TransactionDesc: 'Oceanic Store Payment'
-    }, { headers: { Authorization: `Bearer ${token}` } });
-
-    const order = {
-      id: Date.now(),
-      CheckoutRequestID: stkRes.data.CheckoutRequestID,
-      MerchantRequestID: stkRes.data.MerchantRequestID,
-      phone, amount, items,
-      itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '),
-      status: 'STK Sent - Awaiting PIN',
-      date: new Date().toISOString()
-    };
-    saveOrder(order);
-    res.json(stkRes.data);
+    const data = await stkPushLogic(phone, amount, items);
+    res.json(data);
   } catch (e) {
     console.error(e.response?.data || e.message);
     res.status(500).json(e.response?.data || { error: e.message });
   }
 });
 
-// 5. VISA CARD NOW SAVES TOO!
+app.post('/api/mpesa/stk', async (req, res) => {
+  try {
+    const { phone, amount, items } = req.body;
+    const data = await stkPushLogic(phone, amount, items);
+    res.json({ success: true, data, CheckoutRequestID: data.CheckoutRequestID });
+  } catch (e) {
+    console.error(e.response?.data || e.message);
+    res.status(500).json(e.response?.data || { error: e.message });
+  }
+});
+
 app.post('/api/card-payment', (req, res) => {
   const { amount, items, cardLast4, customerName } = req.body;
   const order = {
@@ -102,7 +111,6 @@ app.post('/api/callback', (req, res) => {
           const meta = stk.CallbackMetadata?.Item || [];
           order.status = 'PAID ✅ - M-PESA';
           order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value;
-          order.phone = meta.find(i=>i.Name==='PhoneNumber')?.Value || order.phone;
         } else {
           order.status = `FAILED: ${stk.ResultDesc}`;
         }
@@ -123,42 +131,5 @@ app.get('/api/orders/clear', (req, res) => {
   res.json({ cleared: true });
 });
 
-const PORT =// COMPATIBILITY: old frontend calls /api/mpesa/stk
-app.post('/api/mpesa/stk', async (req, res) => {
-  req.url = '/api/stkpush';
-  // re-route internally
-  try {
-    const { phone, amount, items } = req.body;
-    const token = await getToken();
-    const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
-    const password = Buffer.from(`174379${process.env.MPESA_PASSKEY}${timestamp}`).toString('base64');
-    const stkRes = await axios.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
-      BusinessShortCode: 174379,
-      Password: password,
-      Timestamp: timestamp,
-      TransactionType: 'CustomerPayBillOnline',
-      Amount: amount,
-      PartyA: phone,
-      PartyB: 174379,
-      PhoneNumber: phone,
-      CallBackURL: `${process.env.BASE_URL}/api/callback`,
-      AccountReference: 'E-MARTCOM',
-      TransactionDesc: 'Oceanic Store Payment'
-    }, { headers: { Authorization: `Bearer ${token}` } });
-    const order = {
-      id: Date.now(),
-      CheckoutRequestID: stkRes.data.CheckoutRequestID,
-      MerchantRequestID: stkRes.data.MerchantRequestID,
-      phone, amount, items,
-      itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '),
-      status: 'STK Sent - Awaiting PIN',
-      date: new Date().toISOString()
-    };
-    saveOrder(order);
-    res.json({ success: true, data: stkRes.data, CheckoutRequestID: stkRes.data.CheckoutRequestID });
-  } catch (e) {
-    console.error(e.response?.data || e.message);
-    res.status(500).json(e.response?.data || { error: e.message });
-  }
-}); process.env.PORT || 10000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🌊 Oceanic Server Live on ${PORT}`));
