@@ -179,5 +179,15 @@ app.get('/api/orders/clear', (req, res) => {
   res.json({ cleared: true });
 });
 
+// External product link - hidden sourcing
+app.post('/api/external-order', async (req,res)=>{
+  const { productId, externalUrl, source } = req.body;
+  // source = 'alibaba' | '1688' | 'jumia' | 'ebay' | 'madeinchina'
+  console.log(`Sourcing ${productId} from ${source}: ${externalUrl}`);
+  // Here you will later add automatic ordering via API
+  // For now, we log it for you to order manually
+  // You earn difference: Customer pays you KSh 23500, you buy at $150
+  res.json({ok:true, msg:`Order will be sourced from ${source}`});
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🌊 Oceanic Server Live on ${PORT}`));
