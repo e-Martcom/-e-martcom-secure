@@ -45,20 +45,35 @@ async function getToken() {
 async function stkPushLogic(phone, amount, items) {
   const token = await getToken();
   const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
-  const password = Buffer.from(`174379${process.env.MPESA_PASSKEY}${timestamp}`).toString('base64');
+  const shortcode = process.env.MPESA_SHORTCODE || 174379;
+  const passkey = process.env.MPESA_PASSKEY;
+  
+  // FIXED: Ensure callback is ALWAYS valid https URL
+  let baseUrl = process.env.BASE_URL || "https://e-martcom-secure.onrender.com";
+  baseUrl = baseUrl.replace(/\/$/, ''); // remove trailing slash
+  if (!baseUrl.startsWith('https://')) {
+    baseUrl = baseUrl.replace('http://', 'https://');
+    if (!baseUrl.startsWith('https://')) baseUrl = 'https://' + baseUrl;
+  }
+  const callbackUrl = `${baseUrl}/api/callback`;
+  
+  console.log(`🔗 Using CallBackURL: ${callbackUrl}`);
+
+  const password = Buffer.from(`${shortcode}${passkey}${timestamp}`).toString('base64');
   const stkRes = await axios.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
-    BusinessShortCode: 174379,
+    BusinessShortCode: shortcode,
     Password: password,
     Timestamp: timestamp,
     TransactionType: 'CustomerPayBillOnline',
     Amount: amount,
     PartyA: phone,
-    PartyB: 174379,
+    PartyB: shortcode,
     PhoneNumber: phone,
-    CallBackURL: `${process.env.BASE_URL}/api/callback`,
+    CallBackURL: callbackUrl,
     AccountReference: 'E-MARTCOM',
     TransactionDesc: 'Oceanic Store Payment'
   }, { headers: { Authorization: `Bearer ${token}` } });
+  
   const order = {
     id: Date.now(),
     CheckoutRequestID: stkRes.data.CheckoutRequestID,
@@ -112,6 +127,28 @@ app.post('/api/card-payment', (req, res) => {
 
 app.post('/api/callback', (req, res) => {
   console.log('CALLBACK:', JSON.stringify(req.body, null, 2));
+  try {
+    const data = JSON.parse(fs.readFileSync(ORDERS_FILE));
+    const stk = req.body.Body?.stkCallback;
+    if (stk) {
+      const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID);
+      if (order) {
+        if (stk.ResultCode === 0) {
+          const meta = stk.CallbackMetadata?.Item || [];
+          order.status = 'PAID ✅ - M-PESA';
+          order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value;
+        } else {
+          order.status = `FAILED: ${stk.ResultDesc}`;
+        }
+        fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2));
+      }
+    }
+  } catch (e) { console.error(e); }
+  res.json({ ResultCode: 0, ResultDesc: 'Accepted' });
+});
+
+app.post('/api/mpesa/callback', (req, res) => {
+  console.log('CALLBACK MPESA:', JSON.stringify(req.body, null, 2));
   try {
     const data = JSON.parse(fs.readFileSync(ORDERS_FILE));
     const stk = req.body.Body?.stkCallback;
