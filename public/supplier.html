@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Supplier - E-MARTCOM</title>
+<style>*{box-sizing:border-box;font-family:Arial}body{background:#f0f8ff;padding:20px} .card{background:#fff;max-width:600px;margin:20px auto;padding:24px;border-radius:16px;border:1px solid #caf0f8} input,textarea,select{width:100%;padding:12px;margin:8px 0;border:1px solid #90e0ef;border-radius:8px} button{background:linear-gradient(90deg,#023e8a,#0096c7);color:#fff;border:none;padding:14px;width:100%;border-radius:24px;font-weight:900}</style></head><body>
+<div class="card"><h2 style="color:#023e8a">🌊 Supplier Registration - E-MARTCOM</h2><p style="font-size:13px;color:#555">Join 500+ suppliers selling in Kenya</p>
+<input id="sName" placeholder="Company / Supplier Name">
+<input id="sPhone" placeholder="M-Pesa / WhatsApp Phone 254...">
+<input id="sEmail" placeholder="Email">
+<select id="sCat"><option>Apparel</option><option>Electronics</option><option>Home & Garden</option><option>Beauty</option><option>Industrial Machinery</option><option>Construction</option><option>Furniture</option><option>Renewable Energy</option><option>All Categories</option></select>
+<textarea id="sDesc" placeholder="What products do you supply?"></textarea>
+<h3 style="margin-top:16px;color:#023e8a">Add Product</h3>
+<input id="pName" placeholder="Product Name">
+<input id="pPrice" type="number" placeholder="Your Price KSh">
+<input id="pImg" placeholder="Image Link (or upload later)">
+<input id="pStock" type="number" placeholder="Stock Quantity">
+<button onclick="registerSupplier()">Register & Add Product 🌊</button>
+<div id="msg" style="margin-top:12px;font-weight:700"></div>
+</div>
+<script>
+async function registerSupplier(){
+  let data={
+    supplier:{name:document.getElementById('sName').value, phone:document.getElementById('sPhone').value, email:document.getElementById('sEmail').value, category:document.getElementById('sCat').value, desc:document.getElementById('sDesc').value},
+    product:{name:document.getElementById('pName').value, price:document.getElementById('pPrice').value, image:document.getElementById('pImg').value, stock:document.getElementById('pStock').value}
+  };
+  document.getElementById('msg').innerText='Sending...';
+  let res = await fetch('/api/supplier/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  let j = await res.json();
+  document.getElementById('msg').innerText = j.ok ? '✅ Success! Admin will approve in 2 hours. Karibu E-MARTCOM!' : '❌ Error';
+}
+</script></body></html>
