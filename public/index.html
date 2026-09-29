@@ -1,92 +1,97 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>E-MARTCOM Global - Any Country to Any Country</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial;background:#f5f5f5;color:#0f172a}:root{--ocean:#0a4a7a;--cyan:#06b6d4;--orange:#f68b1e}header{background:linear-gradient(90deg,var(--ocean),#0e7490);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;flex-wrap:wrap}.logo{font-weight:900;color:#fff;font-size:22px;cursor:pointer}.logo span{color:var(--cyan)}.search{flex:1;display:flex;max-width:480px}.search input{flex:1;padding:10px;border:none;border-radius:20px 0 0 20px}.search button{border:none;background:var(--cyan);color:#fff;padding:10px 16px;border-radius:0 20px 20px 0;font-weight:900}.filters{max-width:1350px;margin:10px auto;padding:0 10px;display:flex;gap:6px;overflow:auto;flex-wrap:wrap}.fbtn{padding:7px 12px;border-radius:20px;border:1px solid #e0f2fe;background:#fff;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.fbtn.active{background:var(--ocean);color:#fff;border-color:var(--ocean)}.wrap{max-width:1350px;margin:8px auto;padding:0 10px;display:grid;grid-template-columns:200px 1fr;gap:10px}.side{background:#fff;border-radius:12px;padding:10px;height:fit-content}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}.card{background:#fff;border-radius:12px;padding:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;position:relative}.card img{width:100%;height:150px;object-fit:contain;background:#fff;border-radius:8px}.badge{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:3px 6px;border-radius:4px}.origin-tag{display:inline-block;background:#ecfeff;color:var(--ocean);font-size:8px;font-weight:800;padding:2px 5px;border-radius:10px;margin:2px;border:1px solid #bae6fd}.price{font-weight:900;color:var(--ocean);font-size:14px}.old{font-size:10px;color:#94a3b8;text-decoration:line-through;margin-left:4px}@media(max-width:900px){.wrap{grid-template-columns:1fr}.side{display:none}}</style></head><body>
-<header>
-<div class="logo" onclick="location.href='/'">E-MART<span>COM</span></div>
-<div class="search"><input id="q" placeholder="Search 50 products worldwide..."><button onclick="doSearch()">SEARCH</button></div>
-<select id="destTop" onchange="setDest(this.value)" style="padding:8px;border-radius:20px;border:none;font-weight:800;font-size:11px"><option value="ke">Ship to: Kenya</option><option value="ug">Uganda</option><option value="ng">Nigeria</option><option value="gh">Ghana</option><option value="za">South Africa</option><option value="us">USA</option><option value="ca">Canada</option><option value="jp">Japan</option><option value="gb">UK</option><option value="de">Germany/EU</option><option value="ae">UAE</option></select>
-<div id="geo" style="color:#fff;font-size:11px;font-weight:800">🌍 Detecting...</div>
-<div onclick="location.href='/cart.html'" style="background:#fff;color:var(--ocean);padding:7px 14px;border-radius:20px;font-weight:900;cursor:pointer">🛒 <span id="cartCount">0</span></div>
-</header>
-
-<div class="filters">
-<button class="fbtn active" onclick="filterOrigin('all')">🌍 All Origins</button>
-<button class="fbtn" onclick="filterOrigin('china')">🇨🇳 China</button>
-<button class="fbtn" onclick="filterOrigin('kenya')">🇰🇪 Kenya</button>
-<button class="fbtn" onclick="filterOrigin('canada')">🇨🇦 Canada</button>
-<button class="fbtn" onclick="filterOrigin('japan')">🇯🇵 Japan</button>
-<button class="fbtn" onclick="filterOrigin('usa')">🇺🇸 USA</button>
-<button class="fbtn" onclick="filterOrigin('germany')">🇩🇪 Germany</button>
-<button class="fbtn" onclick="filterOrigin('uk')">🇬🇧 UK</button>
-<button class="fbtn" onclick="filterOrigin('uae')">🇦🇪 UAE</button>
-<button class="fbtn" onclick="filterOrigin('turkey')">🇹🇷 Turkey</button>
-<select id="shipMethodTop" onchange="setMethod(this.value)" style="padding:7px;border-radius:20px;border:2px solid #e0f2fe;font-size:11px;font-weight:800"><option value="air">Air 3-7 days</option><option value="eparcel">E-parcel 10-20d</option><option value="sea">Sea 20-45d cheap</option><option value="rail">Rail 15-25d</option></select>
-</div>
-
-<div class="wrap">
-<div class="side">
-<h4 style="font-size:12px">Categories</h4><div id="cats" style="margin-top:8px"></div>
-<h4 style="font-size:12px;margin-top:12px">Ship From Origins</h4>
-<div style="font-size:11px;line-height:1.8;margin-top:6px">
-🇨🇳 China (Alibaba)<br>🇰🇪 Kenya Nanyuki<br>🇨🇦 Canada Toronto<br>🇯🇵 Japan Tokyo<br>🇺🇸 USA Texas<br>🇩🇪 Germany<br>🇬🇧 UK London<br>🇦🇪 UAE Dubai<br>🇹🇷 Turkey Istanbul
-</div>
-</div>
-<div><div class="grid" id="grid"></div></div>
-</div>
-
+<title>E-MARTCOM Global - 50 Products - Any Country to Any Country</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial;background:#f5f5f5;color:#0f172a}header{background:linear-gradient(90deg,#0a4a7a,#0e7490);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;flex-wrap:wrap}.logo{font-weight:900;color:#fff;font-size:22px}.logo span{color:#06b6d4}.search{flex:1;display:flex;max-width:480px}.search input{flex:1;padding:10px;border:none;border-radius:20px 0 0 20px}.search button{border:none;background:#06b6d4;color:#fff;padding:10px 16px;border-radius:0 20px 20px 0;font-weight:900}.filters{max-width:1350px;margin:10px auto;padding:0 10px;display:flex;gap:6px;overflow:auto}.fbtn{padding:7px 12px;border-radius:20px;border:1px solid #e0f2fe;background:#fff;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.fbtn.active{background:#0a4a7a;color:#fff}.wrap{max-width:1350px;margin:8px auto;padding:0 10px;display:grid;grid-template-columns:200px 1fr;gap:10px}.side{background:#fff;border-radius:12px;padding:10px;height:fit-content}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}.card{background:#fff;border-radius:12px;padding:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;position:relative}.card img{width:100%;height:140px;object-fit:contain;background:#fff;border-radius:8px}.badge{position:absolute;top:6px;left:6px;background:#f68b1e;color:#fff;font-size:9px;font-weight:800;padding:3px 6px;border-radius:4px}.origin-tag{display:inline-block;background:#ecfeff;color:#0a4a7a;font-size:7px;font-weight:800;padding:2px 4px;border-radius:10px;margin:1px;border:1px solid #bae6fd}.price{font-weight:900;color:#0a4a7a;font-size:13px}.old{font-size:9px;color:#94a3b8;text-decoration:line-through}@media(max-width:900px){.wrap{grid-template-columns:1fr}.side{display:none}}</style></head><body>
+<header><div class="logo" onclick="location.href='/'">E-MART<span>COM</span></div><div class="search"><input id="q" placeholder="Search 50 products..."><button onclick="doSearch()">SEARCH</button></div>
+<select id="destTop" onchange="setDest(this.value)" style="padding:8px;border-radius:20px;border:none;font-weight:800;font-size:11px"><option value="ke">To: Kenya</option><option value="ug">Uganda</option><option value="ng">Nigeria</option><option value="gh">Ghana</option><option value="za">SA</option><option value="us">USA</option><option value="ca">Canada</option><option value="jp">Japan</option><option value="gb">UK</option><option value="de">Germany</option><option value="ae">UAE</option></select>
+<select id="methodTop" onchange="setMethod(this.value)" style="padding:8px;border-radius:20px;border:none;font-weight:800;font-size:11px"><option value="air">Air 3-7d</option><option value="eparcel">E-parcel</option><option value="sea">Sea cheap</option><option value="rail">Rail</option></select>
+<div id="geo" style="color:#fff;font-size:11px;font-weight:800">🌍 Global</div><div onclick="location.href='/cart.html'" style="background:#fff;color:#0a4a7a;padding:7px 14px;border-radius:20px;font-weight:900;cursor:pointer">🛒 <span id="cartCount">0</span></div></header>
+<div class="filters"><button class="fbtn active" onclick="filterO('all',event)">All Origins</button><button class="fbtn" onclick="filterO('china',event)">🇨🇳 China</button><button class="fbtn" onclick="filterO('kenya',event)">🇰🇪 Kenya</button><button class="fbtn" onclick="filterO('canada',event)">🇨🇦 Canada</button><button class="fbtn" onclick="filterO('japan',event)">🇯🇵 Japan</button><button class="fbtn" onclick="filterO('usa',event)">🇺🇸 USA</button><button class="fbtn" onclick="filterO('germany',event)">🇩🇪 Germany</button><button class="fbtn" onclick="filterO('uk',event)">🇬🇧 UK</button><button class="fbtn" onclick="filterO('uae',event)">🇦🇪 UAE</button><button class="fbtn" onclick="filterO('turkey',event)">🇹🇷 Turkey</button></div>
+<div class="wrap"><div class="side"><h4 style="font-size:12px">Categories</h4><div id="cats"></div><h4 style="font-size:11px;margin-top:12px">How Origins Work</h4><p style="font-size:10px;line-height:1.4;margin-top:4px">Product shows all warehouses that have it. Cheapest shipping from your origin to destination is shown.<br><br>🇨🇳 China = Alibaba 7 days<br>🇰🇪 Kenya = Nanyuki same day<br>🇨🇦 Canada = Toronto 5 days<br>🇯🇵 Japan = Tokyo 4 days<br>🇺🇸 USA = Texas<br>🇩🇪 Germany = Berlin<br>🇬🇧 UK = London<br>🇦🇪 UAE = Dubai<br>🇹🇷 Turkey = Istanbul</p></div><div><div class="grid" id="grid"></div></div></div>
 <script>
 const BASE_AIR={china:{ke:12,ug:15,ng:18,us:20,ca:20,jp:14,gb:20,de:20,ae:16,gh:18,za:18},kenya:{ke:1.5,ug:8,ng:15,us:18,ca:22,jp:24,gb:18,de:18,ae:15,gh:15,za:15},canada:{ke:24,ug:26,ng:28,us:12,ca:2,jp:18,gb:14,de:15,ae:20,gh:28,za:26},japan:{ke:26,ug:28,ng:30,us:22,ca:18,jp:2,gb:16,de:16,ae:18,gh:30,za:28},usa:{ke:20,ug:22,ng:24,us:2,ca:12,jp:22,gb:14,de:14,ae:16,gh:24,za:22},germany:{ke:18,ug:20,ng:22,us:14,ca:15,jp:16,gb:6,de:2,ae:12,gh:22,za:20},uk:{ke:18,ug:20,ng:22,us:14,ca:14,jp:16,gb:2,de:6,ae:12,gh:22,za:20},uae:{ke:12,ug:14,ng:16,us:16,ca:20,jp:18,gb:12,de:12,ae:2,gh:16,za:14},turkey:{ke:14,ug:16,ng:18,us:15,ca:16,jp:17,gb:8,de:7,ae:6,gh:18,za:16}};
-const METHOD_M={air:1,eparcel:0.65,sea:0.35,rail:0.55};
+const MM={air:1,eparcel:0.65,sea:0.35,rail:0.55};
 
 let allProducts=[
-{id:1,name:"Nike Cotton T-Shirt Pack 3pcs",price:13.85,old:17,cat:"Apparel",brand:"Nike",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",weight:0.2,origins:["china","turkey","kenya"]},
-{id:2,name:"Samsung Galaxy A15 128GB",price:180.77,old:200,cat:"Consumer Electronics",brand:"Samsung",img:"https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400",weight:0.4,origins:["china","kenya","uae"]},
-{id:3,name:"Puma Dumbbells 20kg Pair",price:34.62,old:42,cat:"Sports",brand:"Puma",img:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",weight:20,origins:["kenya"]},
-{id:4,name:"Casio Smart Watch T800",price:19.23,old:26.92,cat:"Jewellery",brand:"Casio",img:"https://images.unsplash.com/photo-1555421689-3f034debb7a6?w=400",weight:0.15,origins:["japan","china","usa"]},
-{id:5,name:"Bata Leather Shoes",price:21.54,old:26.92,cat:"Shoes",brand:"Bata",img:"https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400",weight:0.8,origins:["kenya","turkey"]},
+{id:1,name:"Nike Cotton T-Shirt Pack 3pcs",price:13.85,old:17,cat:"Apparel",brand:"Nike",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",weight:0.2,origins:["turkey","china","kenya"]},
+{id:2,name:"Samsung Galaxy A15 128GB",price:180.77,old:200,cat:"Electronics",brand:"Samsung",img:"https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400",weight:0.4,origins:["china","kenya","uae"]},
+{id:3,name:"Puma Gym Dumbbells 20kg Pair",price:34.62,old:42,cat:"Sports",brand:"Puma",img:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",weight:20,origins:["kenya"]},
+{id:4,name:"Casio Smart Watch T800",price:19.23,old:26.92,cat:"Watches",brand:"Casio",img:"https://images.unsplash.com/photo-1555421689-3f034debb7a6?w=400",weight:0.15,origins:["japan","china","usa"]},
+{id:5,name:"Bata Leather Official Shoes",price:21.54,old:26.92,cat:"Shoes",brand:"Bata",img:"https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400",weight:0.8,origins:["kenya","turkey","china"]},
 {id:6,name:"Nunix Sufuria Set 7pcs",price:34.62,old:42,cat:"Home",brand:"Nunix",img:"https://images.unsplash.com/photo-1585837071057-4ea1e5a1b0a4?w=400",weight:3.5,origins:["kenya","china"]},
-{id:24,name:"iPhone 13 128GB",price:576.92,old:653,cat:"Consumer Electronics",brand:"Apple",img:"https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400",weight:0.35,origins:["usa","japan","uk","china","canada"]},
-{id:25,name:"Tecno Camon 20 Pro",price:188.46,old:207,cat:"Consumer Electronics",brand:"Tecno",img:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",weight:0.4,origins:["china","kenya"]},
-{id:26,name:"Sony WH-1000XM4 Headset",price:142.31,old:161,cat:"Consumer Electronics",brand:"Sony",img:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",weight:0.5,origins:["japan","usa","china"]},
-{id:27,name:"JBL Boombox Speaker",price:96.15,old:115,cat:"Consumer Electronics",brand:"JBL",img:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400",weight:1.2,origins:["china","usa","germany"]},
-{id:28,name:"Canada Goose Jacket",price:450,old:550,cat:"Apparel",brand:"Canada Goose",img:"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400",weight:0.9,origins:["canada","usa"]},
-{id:29,name:"Toyota Genuine Oil Filter Japan",price:12,old:18,cat:"Automotive",brand:"Toyota",img:"https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400",weight:0.3,origins:["japan","uae"]},
-{id:30,name:"German Bosch Drill Machine",price:89,old:110,cat:"Home",brand:"Bosch",img:"https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400",weight:2.2,origins:["germany","uk","china"]},
-{id:31,name:"UAE Gold Plated Watch",price:65,old:90,cat:"Jewellery",brand:"Dubai Gold",img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400",weight:0.2,origins:["uae","turkey"]},
-{id:32,name:"UK Dr Martens Boots",price:110,old:140,cat:"Shoes",brand:"Dr Martens",img:"https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400",weight:1.1,origins:["uk","germany"]}
+{id:7,name:"Nivea Body Lotion 400ml",price:5,old:6.15,cat:"Beauty",brand:"Nivea",img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400",weight:0.5,origins:["germany","uk","kenya"]},
+{id:8,name:"Samsonite School Bag Wheels",price:21.54,old:26.92,cat:"Bags",brand:"Samsonite",img:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",weight:0.9,origins:["china","usa","germany"]},
+{id:9,name:"HP Laptop 15 8GB 512GB",price:420,old:500,cat:"Electronics",brand:"HP",img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400",weight:1.8,origins:["usa","china","germany","uae"]},
+{id:10,name:"Adidas Sneakers Run",price:45,old:60,cat:"Shoes",brand:"Adidas",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",weight:0.7,origins:["germany","turkey","china","kenya"]},
+{id:11,name:"Toyota Oil Filter Japan Genuine",price:12,old:18,cat:"Automotive",brand:"Toyota",img:"https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400",weight:0.3,origins:["japan","uae"]},
+{id:12,name:"Bosch Drill Machine Germany",price:89,old:110,cat:"Home",brand:"Bosch",img:"https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400",weight:2.2,origins:["germany","uk","china"]},
+{id:13,name:"UAE Gold Plated Watch Dubai",price:65,old:90,cat:"Watches",brand:"Dubai Gold",img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400",weight:0.2,origins:["uae","turkey"]},
+{id:14,name:"UK Dr Martens Boots",price:110,old:140,cat:"Shoes",brand:"Dr Martens",img:"https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400",weight:1.1,origins:["uk","germany"]},
+{id:15,name:"Canada Goose Jacket Winter",price:450,old:550,cat:"Apparel",brand:"Canada Goose",img:"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400",weight:0.9,origins:["canada","usa","uk"]},
+{id:16,name:"iPhone 13 128GB Global",price:576.92,old:653,cat:"Electronics",brand:"Apple",img:"https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400",weight:0.35,origins:["usa","japan","uk","china","canada","uae"]},
+{id:17,name:"Tecno Camon 20 Pro",price:188.46,old:207,cat:"Electronics",brand:"Tecno",img:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",weight:0.4,origins:["china","kenya","uae"]},
+{id:18,name:"Sony WH-1000XM4 Headset",price:142.31,old:161,cat:"Electronics",brand:"Sony",img:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",weight:0.5,origins:["japan","usa","china","germany"]},
+{id:19,name:"JBL Boombox Speaker Waterproof",price:96.15,old:115,cat:"Electronics",brand:"JBL",img:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400",weight:1.2,origins:["china","usa","germany","uae"]},
+{id:20,name:"Solar Panel 300W China",price:120,old:150,cat:"Home",brand:"Solar",img:"https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400",weight:12,origins:["china","germany","usa"]},
+{id:21,name:"Japanese Anime Figure Naruto",price:35,old:50,cat:"Toys",brand:"Japan Anime",img:"https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=400",weight:0.4,origins:["japan"]},
+{id:22,name:"Canadian Maple Syrup 1L",price:18,old:25,cat:"Home",brand:"Canada Maple",img:"https://images.unsplash.com/photo-1558642084-fd43571b4b8a?w=400",weight:1.3,origins:["canada"]},
+{id:23,name:"Turkish Carpet Handmade 2x3m",price:280,old:350,cat:"Home",brand:"Turkey Carpet",img:"https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400",weight:5,origins:["turkey"]},
+{id:24,name:"UAE Oud Perfume 100ml",price:55,old:75,cat:"Beauty",brand:"UAE Oud",img:"https://images.unsplash.com/photo-1541643600914-78b084683601?w=400",weight:0.3,origins:["uae"]},
+{id:25,name:"German BMW Brake Pads",price:75,old:95,cat:"Automotive",brand:"BMW",img:"https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400",weight:1.5,origins:["germany"]},
+{id:26,name:"UK Twinnings Tea 100 bags",price:12,old:16,cat:"Home",brand:"Twinnings UK",img:"https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400",weight:0.3,origins:["uk"]},
+{id:27,name:"USA Vitamins Centrum 100pcs",price:22,old:30,cat:"Beauty",brand:"Centrum USA",img:"https://images.unsplash.com/photo-1559757175-5700dde675bc?w=400",weight:0.2,origins:["usa"]},
+{id:28,name:"China LED Strip Lights 10m",price:15,old:22,cat:"Home",brand:"China LED",img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",weight:0.6,origins:["china"]},
+{id:29,name:"Kenya AA Coffee 1kg",price:18,old:25,cat:"Home",brand:"Kenya Coffee",img:"https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=400",weight:1,origins:["kenya"]},
+{id:30,name:"Japan Sushi Knife Chef",price:85,old:110,cat:"Home",brand:"Japan Knife",img:"https://images.unsplash.com/photo-1593618998160-e34014e67546?w=400",weight:0.4,origins:["japan"]},
+{id:31,name:"Canada Hockey Stick Pro",price:95,old:130,cat:"Sports",brand:"Canada Hockey",img:"https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=400",weight:0.8,origins:["canada","usa"]},
+{id:32,name:"Turkey Olive Oil 5L",price:28,old:38,cat:"Home",brand:"Turkey Olive",img:"https://images.unsplash.com/photo-1474979266404-7ea7438af6c9?w=400",weight:5,origins:["turkey"]},
+{id:33,name:"UAE Dates Premium 1kg",price:14,old:20,cat:"Home",brand:"UAE Dates",img:"https://images.unsplash.com/photo-1603190287605-e6ade32fa852?w=400",weight:1,origins:["uae"]},
+{id:34,name:"USA Levis Jeans 501",price:55,old:75,cat:"Apparel",brand:"Levis USA",img:"https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400",weight:0.6,origins:["usa","turkey"]},
+{id:35,name:"Sony PS5 Japan Version",price:480,old:550,cat:"Electronics",brand:"Sony",img:"https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400",weight:4.5,origins:["japan","usa","china"]},
+{id:36,name:"Xiaomi Smart TV 55 inch China",price:320,old:400,cat:"Electronics",brand:"Xiaomi",img:"https://images.unsplash.com/photo-1593359677879-a4bb92f367d8?w=400",weight:12,origins:["china","uae","kenya"]},
+{id:37,name:"German Coffee Machine Bosch",price:135,old:170,cat:"Home",brand:"Bosch Germany",img:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",weight:3.2,origins:["germany","uk"]},
+{id:38,name:"UK Dyson Vacuum V15",price:380,old:450,cat:"Home",brand:"Dyson UK",img:"https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400",weight:3,origins:["uk","usa","germany"]},
+{id:39,name:"Turkey Leather Jacket",price:120,old:160,cat:"Apparel",brand:"Turkey Leather",img:"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400",weight:1,origins:["turkey","uk"]},
+{id:40,name:"UAE Abaya Dress Dubai",price:45,old:65,cat:"Apparel",brand:"UAE Abaya",img:"https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400",weight:0.5,origins:["uae","turkey"]},
+{id:41,name:"Apple Watch Series 9 USA",price:320,old:399,cat:"Watches",brand:"Apple",img:"https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400",weight:0.2,origins:["usa","china","japan"]},
+{id:42,name:"DJI Drone Mini 3 China",price:380,old:450,cat:"Electronics",brand:"DJI",img:"https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=400",weight:0.9,origins:["china","usa","germany"]},
+{id:43,name:"Kenya Maasai Shuka Blanket",price:15,old:22,cat:"Apparel",brand:"Maasai Kenya",img:"https://images.unsplash.com/photo-1520903922316-be9b4022b530?w=400",weight:0.6,origins:["kenya"]},
+{id:44,name:"Maize Mill Machine 20HP Kenya",price:850,old:1000,cat:"Industrial",brand:"Maize Mill",img:"https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400",weight:150,origins:["kenya","china"]},
+{id:45,name:"Wheelbarrow Heavy Duty Kenya",price:45,old:60,cat:"Home",brand:"Wheelbarrow",img:"https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400",weight:18,origins:["kenya"]},
+{id:46,name:"Cement Mixer 300L",price:650,old:800,cat:"Industrial",brand:"Cement",img:"https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400",weight:120,origins:["kenya","china"]},
+{id:47,name:"Japan Used Engine Toyota",price:900,old:1200,cat:"Automotive",brand:"Toyota Japan",img:"https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400",weight:180,origins:["japan"]},
+{id:48,name:"Canada Lumber Wood 2x4 10pcs",price:65,old:85,cat:"Home",brand:"Canada Wood",img:"https://images.unsplash.com/photo-1416339442236-8ceb164046f8?w=400",weight:25,origins:["canada"]},
+{id:49,name:"Turkey Ceramic Tiles 1sqm",price:22,old:32,cat:"Home",brand:"Turkey Tiles",img:"https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=400",weight:12,origins:["turkey"]},
+{id:50,name:"USA Protein Whey 2kg",price:38,old:50,cat:"Sports",brand:"USA Protein",img:"https://images.unsplash.com/photo-1593095948071-474c5cc2989b?w=400",weight:2.2,origins:["usa","canada"]}
 ];
-// ADD remaining 18 to reach 50 - copy same structure and add origins
 
-let rates={USD:1},cur=localStorage.getItem('userCurrency')||'USD',dest='ke',method='air',filterO='all',q='';
-function format(usd){let r=rates[cur]||1;let c=usd*r;if(cur=='UGX')return `UGX ${Math.round(c).toLocaleString()}`;if(cur=='NGN')return `₦${Math.round(c).toLocaleString()}`;if(cur=='KES')return `KSh ${Math.round(c).toLocaleString()}`;if(cur=='GHS')return `GH₵ ${c.toFixed(2)}`;if(cur=='GBP')return `£${c.toFixed(2)}`;if(cur=='EUR')return `€${c.toFixed(2)}`;return `$${c.toFixed(2)}`;}
-function base(o,d,w){let b=BASE_AIR[o]?.[d]||20;let wm=w<=0.5?1:w<=1?1.5:w<=2?2.2:w<=5?3.8:6.5;return b*wm;}
+let rates={USD:1},cur=localStorage.getItem('userCurrency')||'USD',dest=localStorage.getItem('shipDest')||'ke',method=localStorage.getItem('shipMethod')||'air',filterOriginVal='all',q='';
+function format(usd){let r=rates[cur]||1;let c=usd*r;if(cur=='UGX')return `UGX ${Math.round(c).toLocaleString()}`;if(cur=='NGN')return `₦${Math.round(c).toLocaleString()}`;if(cur=='KES')return `KSh ${Math.round(c).toLocaleString()}`;if(cur=='GBP')return `£${c.toFixed(2)}`;if(cur=='EUR')return `€${c.toFixed(2)}`;return `$${c.toFixed(2)}`;}
+function base(o,d,w){let b=BASE_AIR[o]?.[d]||20;let wm=w<=0.5?1:w<=1?1.5:w<=2?2.2:w<=5?3.8:w<=10?6.5:12;return b*wm;}
 function render(){
 let grid=document.getElementById('grid');
-let filtered=allProducts.filter(p=>{
-if(filterO!='all' &&!p.origins.includes(filterO)) return false;
-if(q &&!p.name.toLowerCase().includes(q.toLowerCase())) return false;
-return true;
-});
+let filtered=allProducts.filter(p=>{if(filterOriginVal!='all'&&!p.origins.includes(filterOriginVal))return false;if(q&&!p.name.toLowerCase().includes(q.toLowerCase())&&!p.cat.toLowerCase().includes(q.toLowerCase()))return false;return true;});
 let cats=[...new Set(allProducts.map(p=>p.cat))];
-document.getElementById('cats').innerHTML=cats.map(c=>`<div style="font-size:11px;padding:4px;cursor:pointer" onclick="q='${c}';render()">${c}</div>`).join('');
+document.getElementById('cats').innerHTML=cats.map(c=>`<div style="font-size:11px;padding:4px;cursor:pointer;border-radius:6px" onclick="q='${c}';render()">${c}</div>`).join('');
 grid.innerHTML=filtered.map(p=>{
-let cheapest=Math.min(...p.origins.map(o=>base(o,dest,p.weight)*METHOD_M[method]));
-let cheapestOrigin=p.origins.reduce((best,o)=>{let cost=base(o,dest,p.weight)*METHOD_M[method];return cost<best.cost?{o,cost}:{...best}},{o:p.origins[0],cost:Infinity}).o;
+let costs=p.origins.map(o=>({o,c:base(o,dest,p.weight)*MM[method]}));
+let cheapest=costs.reduce((a,b)=>a.c<b.c?a:b);
+let total=p.price+cheapest.c;
+let isHeavy=p.weight>10;
 return `<div class="card" onclick="location.href='/product.html?id=${p.id}'">
 <div class="badge">-${Math.round((1-p.price/p.old)*100)}%</div>
-<img src="${p.img}"><div style="font-size:11px;font-weight:700;margin-top:4px">${p.name.slice(0,32)}</div>
-<div style="margin:2px 0">${p.origins.map(o=>`<span class="origin-tag">${o.toUpperCase()}</span>`).join('')}</div>
+<img src="${p.img}"><div style="font-size:11px;font-weight:800;margin-top:4px;line-height:1.2">${p.name.slice(0,34)}</div>
+<div style="margin:3px 0">${p.origins.map(o=>`<span class="origin-tag" style="${o==cheapest.o?'background:#0a4a7a;color:#fff':''}">${o.toUpperCase()}</span>`).join('')}</div>
 <div class="price">${format(p.price)} <span class="old">${format(p.old)}</span></div>
-<div style="font-size:9px;color:#0a4a7a">🚚 From ${cheapestOrigin.toUpperCase()} → ${dest.toUpperCase()} ${method.toUpperCase()}: ${format(cheapest)}</div>
-<div style="font-size:9px;color:#64748b">Total ~${format(p.price+cheapest)} • ${p.weight}kg</div>
+<div style="font-size:9px;color:#0a4a7a;font-weight:700">🚚 ${cheapest.o.toUpperCase()}→${dest.toUpperCase()} ${method.toUpperCase()}: ${format(cheapest.c)} ${isHeavy&&method!='sea'?'• Sea cheaper':''}</div>
+<div style="font-size:9px;color:#334155">Total ~${format(total)} • ${p.weight}kg • ${p.brand}</div>
 </div>`;
 }).join('');
 document.getElementById('cartCount').innerText=JSON.parse(localStorage.getItem('cart')||'[]').reduce((s,i)=>s+i.qty,0);
 }
-function filterOrigin(o){filterO=o;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');render();}
-function setDest(d){dest=d;render();}
-function setMethod(m){method=m;render();}
+function filterO(o,e){filterOriginVal=o;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));if(e)e.target.classList.add('active');render();}
+function setDest(d){dest=d;localStorage.setItem('shipDest',d);render();}
+function setMethod(m){method=m;localStorage.setItem('shipMethod',m);render();}
 function doSearch(){q=document.getElementById('q').value;render();}
-async function init(){try{let ip=await fetch('https://ipapi.co/json/').then(r=>r.json());let map={KE:'ke',UG:'ug',NG:'ng',GH:'gh',ZA:'za',US:'us',CA:'ca',JP:'jp',GB:'gb',DE:'de',AE:'ae'};if(map[ip.country_code]){dest=map[ip.country_code];document.getElementById('destTop').value=dest;}let mapC={UG:'UGX',NG:'NGN',KE:'KES',GH:'GHS',ZA:'ZAR',GB:'GBP',DE:'EUR',US:'USD',CA:'CAD',JP:'JPY',AE:'AED'};if(!localStorage.getItem('userCurrency'))cur=mapC[ip.country_code]||'USD';let data=await fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json());rates=data.rates;document.getElementById('geo').innerText=`📍 ${ip.country_name} • ${cur} • To:${dest.toUpperCase()}`;}catch{}render();}
+async function init(){try{let ip=await fetch('https://ipapi.co/json/').then(r=>r.json());let map={KE:'ke',UG:'ug',NG:'ng',GH:'gh',ZA:'za',US:'us',CA:'ca',JP:'jp',GB:'gb',DE:'de',AE:'ae'};if(map[ip.country_code]){dest=map[ip.country_code];document.getElementById('destTop').value=dest;}let mapC={UG:'UGX',NG:'NGN',KE:'KES',GH:'GHS',ZA:'ZAR',GB:'GBP',DE:'EUR',US:'USD',CA:'CAD',JP:'JPY',AE:'AED'};if(!localStorage.getItem('userCurrency'))cur=mapC[ip.country_code]||'USD';let data=await fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json());rates=data.rates;document.getElementById('geo').innerText=`📍 ${ip.country_name} • ${cur} → ${dest.toUpperCase()}`;}catch{}render();}
 init();
 </script></body></html>
