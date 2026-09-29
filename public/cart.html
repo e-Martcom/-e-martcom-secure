@@ -1,173 +1,81 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cart - E-MARTCOM Worldwide - Real Shipping Costs</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial;background:#f5f5f5;color:#0f172a}:root{--ocean:#0a4a7a;--cyan:#06b6d4}header{background:linear-gradient(90deg,var(--ocean),#0e7490);padding:12px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}.logo{font-weight:900;color:#fff;font-size:22px;cursor:pointer}.logo span{color:var(--cyan)}.wrap{max-width:1300px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:1fr 380px;gap:14px}.card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}.item{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid #eef2f7;border-radius:10px;margin-bottom:8px}.item img{width:60px;height:60px;object-fit:cover;border-radius:8px}.qty{display:flex;align-items:center;gap:6px;margin-top:4px}.qty button{width:26px;height:26px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer}.price{font-weight:900;color:var(--ocean)}.tabs{display:flex;gap:6px;margin:10px 0}.tab{flex:1;padding:9px;border:2px solid #e0f2fe;border-radius:10px;text-align:center;font-weight:800;cursor:pointer;background:#f8fafc;font-size:11px}.tab.active{border-color:var(--cyan);background:#ecfeff;color:var(--ocean)}input,select{width:100%;padding:11px;border:2px solid #e0f2fe;border-radius:10px;margin:5px 0;outline:none}.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:900;cursor:pointer}.btn-mpesa{background:linear-gradient(90deg,#00a651,#0e7490);color:#fff}.btn-card{background:linear-gradient(90deg,var(--ocean),#0e7490);color:#fff}.btn-paypal{background:#ffc439;color:#000}.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}.summary-total{font-weight:900;font-size:17px;color:var(--ocean);border-top:2px solid #eef2f7;padding-top:10px;margin-top:8px}@media(max-width:900px){.wrap{grid-template-columns:1fr}}</style></head><body>
-<header><div class="logo" onclick="location.href='/'">E-MART<span>COM</span></div><div style="flex:1"></div><div id="geoInfo" style="color:#fff;font-size:11px;font-weight:800">🌍 Detecting...</div><a href="/" style="color:#fff;text-decoration:none;font-weight:800;margin-left:10px">← Shop</a></header>
-
-<div class="wrap">
-<div class="card"><h3 style="color:var(--ocean)">🛒 Cart (<span id="count">0</span>)</h3><div id="list" style="margin-top:10px"></div><div id="empty" style="text-align:center;padding:30px;color:#94a3b8;display:none">Empty 🌍<br><a href="/">Shop</a></div></div>
-
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart - Global Ship - Any to Any</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial;background:#f5f5f5}header{background:linear-gradient(90deg,#0a4a7a,#0e7490);padding:12px 16px;display:flex;gap:10px;align-items:center;position:sticky;top:0;z-index:20}.logo{font-weight:900;color:#fff;font-size:22px}.wrap{max-width:1350px;margin:14px auto;padding:0 10px;display:grid;grid-template-columns:1fr 400px;gap:12px}.card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.item{display:flex;gap:8px;padding:8px;border:1px solid #eef2f7;border-radius:10px;margin-bottom:6px}.ship-option{border:2px solid #e0f2fe;border-radius:10px;padding:8px;margin:4px 0;cursor:pointer;font-size:11px;display:flex;justify-content:space-between}.ship-option.active{border-color:#0a4a7a;background:#ecfeff}select,input{width:100%;padding:10px;border:2px solid #e0f2fe;border-radius:8px;margin:4px 0}.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;cursor:pointer}.btn-pay{background:#ffc439}.summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}.total{font-weight:900;font-size:18px;border-top:2px solid #eee;padding-top:8px;color:#0a4a7a}@media(max-width:900px){.wrap{grid-template-columns:1fr}}</style></head><body>
+<header><div class="logo" onclick="location.href='/'">E-MART<span style="color:#06b6d4">COM</span> GLOBAL SHIP</div><div style="flex:1"></div><div id="geo" style="color:#fff;font-size:11px;font-weight:800">Any → Any</div><a href="/" style="color:#fff;text-decoration:none;font-weight:800">← Shop</a></header>
+<div class="wrap"><div class="card"><h3>🛒 Cart (<span id="cnt">0</span>) - Global Shipping</h3><div id="list"></div></div>
 <div><div class="card">
-<h4>CART SUMMARY</h4>
-<div class="summary-row"><span>Subtotal (Products)</span><span id="sub">$0</span></div>
-
-<div style="margin:10px 0;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e0f2fe">
-<label style="font-size:11px;font-weight:900">SHIP TO COUNTRY (for shipping cost):</label>
-<select id="destCountry" onchange="calculateShipping()">
-<option value="KE">Kenya (Nairobi, Nanyuki...)</option>
-<option value="UG">Uganda (Kampala)</option>
-<option value="TZ">Tanzania</option>
-<option value="NG">Nigeria (Lagos)</option>
-<option value="GH">Ghana</option>
-<option value="ZA">South Africa</option>
-<option value="US">USA</option>
-<option value="GB">UK</option>
-<option value="DE">Germany / EU</option>
-<option value="AE">UAE / Dubai</option>
-<option value="IN">India</option>
-</select>
-
-<label style="font-size:11px;font-weight:900;margin-top:6px;display:block">DELIVERY ADDRESS:</label>
-<input id="address" placeholder="e.g Kampala, Uganda - Ntinda Rd" oninput="calculateShipping()">
-<div id="shipBreakdown" style="font-size:10px;color:#334155;margin-top:6px;line-height:1.4"></div>
+<h4>🌍 SHIPPING CALCULATOR - Any Country to Any Country</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+<div><label style="font-size:10px;font-weight:900">SHIP FROM (Origin)</label><select id="origin" onchange="calcShip()"><option value="china">China (Alibaba)</option><option value="kenya">Kenya (Nanyuki)</option><option value="canada">Canada</option><option value="japan">Japan</option><option value="usa">USA</option><option value="germany">Germany/EU</option><option value="uk">UK</option><option value="uae">UAE/Dubai</option><option value="turkey">Turkey</option></select></div>
+<div><label style="font-size:10px;font-weight:900">SHIP TO (Destination)</label><select id="dest" onchange="calcShip()"><option value="ke">Kenya</option><option value="ug">Uganda</option><option value="ng">Nigeria</option><option value="gh">Ghana</option><option value="za">South Africa</option><option value="us">USA</option><option value="ca">Canada</option><option value="jp">Japan</option><option value="gb">UK</option><option value="de">Germany</option><option value="ae">UAE</option></select></div>
 </div>
-
-<div class="summary-row"><span>Ship From</span><span id="shipFrom" style="font-size:10px;font-weight:800">CHINA / KENYA</span></div>
-<div class="summary-row"><span>Shipping (DHL/FedEx)</span><span id="shipCost" style="font-weight:900;color:#0a4a7a">$0</span></div>
-<div class="summary-row"><span>Currency</span><span id="currShow">USD</span></div>
-<div class="summary-row summary-total"><span>Grand Total</span><span id="tot">$0</span></div>
-
-<div class="tabs">
-<div class="tab active" id="tPaypal" onclick="setPay('paypal')">PayPal</div>
-<div class="tab" id="tCard" onclick="setPay('card')">Card</div>
-<div class="tab" id="tMpesa" onclick="setPay('mpesa')">M-Pesa KE</div>
+<input id="addr" placeholder="Full address for quote" oninput="calcShip()">
+<div style="margin:8px 0"><b style="font-size:11px">Choose Shipping Method:</b>
+<div id="methods"></div>
 </div>
-
-<div id="paypalBox"><button class="btn btn-paypal" onclick="payPaypal()">PAY WITH PAYPAL - <span id="paypalTot">$0</span></button><p style="font-size:10px;margin-top:5px">PayPal protection worldwide</p></div>
-<div id="mpesaBox" style="display:none"><input id="phone" placeholder="2547..."><button class="btn btn-mpesa" id="btnMpesa" onclick="payMpesa()">LIPA M-PESA STK - <span id="mpesaTot">KSh 0</span></button></div>
-<div id="cardBox" style="display:none"><input id="cName" placeholder="Full Name"><input id="cNum" placeholder="Card Number"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input id="cExp" placeholder="MM/YY"><input id="cCvc" placeholder="CVC"></div><button class="btn btn-card" onclick="payCard()">PAY WITH CARD - <span id="cardTot">$0</span></button></div>
-
-<p id="result" style="font-size:10px;margin-top:8px;background:#f8fafc;padding:6px;border-radius:6px;word-break:break-all"></p>
-</div>
-
-<div class="card" style="margin-top:12px"><h4 style="font-size:11px">🚚 How Shipping Works</h4><p style="font-size:10px;line-height:1.5;margin-top:4px">✅ <b>Source China:</b> Alibaba supplier ships via DHL to you (5-10 days)<br>✅ <b>Source Kenya:</b> We ship from Nanyuki warehouse<br>✅ Tracking provided<br>✅ Heavy items >5kg = Sea freight quote via WhatsApp</p></div>
-</div></div>
-
+<div class="summary-row"><span>Products</span><span id="sub">$0</span></div>
+<div class="summary-row"><span>Weight</span><span id="wt">0kg</span></div>
+<div class="summary-row"><span>Route</span><span id="route" style="font-size:10px">-</span></div>
+<div class="summary-row"><span>Shipping (<span id="methodName">Air</span>)</span><span id="shipC">$0</span></div>
+<div class="summary-row total"><span>Grand Total</span><span id="grand">$0</span></div>
+<button class="btn btn-pay" onclick="checkout()">PAY WITH PAYPAL/CARD - <span id="grand2">$0</span></button>
+<div id="breakdown" style="font-size:10px;color:#334155;margin-top:8px;line-height:1.4"></div>
+</div></div></div>
 <script>
-// SHIPPING COSTS - EDIT THESE TO YOUR REAL COSTS
-const SHIPPING_MATRIX = {
-  china: { // From Alibaba China
-    KE: {0.5:12, 1:18, 2:28, 5:45, 10:80},
-    UG: {0.5:15, 1:22, 2:32, 5:55, 10:95},
-    TZ: {0.5:14, 1:20, 2:30, 5:50, 10:90},
-    NG: {0.5:18, 1:25, 2:38, 5:65, 10:110},
-    GH: {0.5:18, 1:25, 2:38, 5:65, 10:110},
-    ZA: {0.5:18, 1:25, 2:38, 5:65, 10:110},
-    US: {0.5:20, 1:28, 2:40, 5:70, 10:120},
-    GB: {0.5:20, 1:28, 2:40, 5:70, 10:120},
-    DE: {0.5:20, 1:28, 2:40, 5:70, 10:120},
-    AE: {0.5:16, 1:22, 2:34, 5:58, 10:100},
-    IN: {0.5:16, 1:22, 2:34, 5:58, 10:100}
-  },
-  kenya: { // From your Nanyuki store
-    KE: {0.5:1.5, 1:2.3, 2:3.8, 5:6, 10:10},
-    UG: {0.5:8, 1:12, 2:18, 5:28, 10:45},
-    TZ: {0.5:7, 1:11, 2:17, 5:26, 10:42},
-    NG: {0.5:15, 1:20, 2:30, 5:45, 10:75},
-    GH: {0.5:15, 1:20, 2:30, 5:45, 10:75},
-    ZA: {0.5:15, 1:20, 2:30, 5:45, 10:75},
-    US: {0.5:18, 1:25, 2:35, 5:55, 10:90},
-    GB: {0.5:18, 1:25, 2:35, 5:55, 10:90},
-    DE: {0.5:18, 1:25, 2:35, 5:55, 10:90},
-    AE: {0.5:15, 1:20, 2:30, 5:48, 10:80},
-    IN: {0.5:15, 1:20, 2:30, 5:48, 10:80}
-  }
+// BASE AIR COST for 0.5kg USD - Matrix Origin -> Dest
+const BASE_AIR = {
+  china:{ke:12,ug:15,tz:14,ng:18,gh:18,za:18,us:20,ca:20,jp:14,gb:20,de:20,ae:16},
+  kenya:{ke:1.5,ug:8,tz:7,ng:15,gh:15,za:15,us:18,ca:22,jp:24,gb:18,de:18,ae:15},
+  canada:{ke:24,ug:26,ng:28,gh:28,za:26,us:12,ca:2,jp:18,gb:14,de:15,ae:20},
+  japan:{ke:26,ug:28,ng:30,gh:30,za:28,us:22,ca:18,jp:2,gb:16,de:16,ae:18},
+  usa:{ke:20,ug:22,ng:24,gh:24,za:22,us:2,ca:12,jp:22,gb:14,de:14,ae:16},
+  germany:{ke:18,ug:20,ng:22,gh:22,za:20,us:14,ca:15,jp:16,gb:6,de:2,ae:12},
+  uk:{ke:18,ug:20,ng:22,gh:22,za:20,us:14,ca:14,jp:16,gb:2,de:6,ae:12},
+  uae:{ke:12,ug:14,ng:16,gh:16,za:14,us:16,ca:20,jp:18,gb:12,de:12,ae:2},
+  turkey:{ke:14,ug:16,ng:18,gh:18,za:16,us:15,ca:16,jp:17,gb:8,de:7,ae:6}
 };
+const METHOD_MULTIPLIER = {air:1.0, eparcel:0.65, sea:0.35, rail:0.55};
+const METHOD_TIME = {air:"3-7 days", eparcel:"10-20 days", sea:"20-45 days", rail:"15-25 days"};
+const WEIGHT_MULT = {0.5:1, 1:1.5, 2:2.2, 5:3.8, 10:6.5};
 
-function getShipCost(source, dest, weight){
-  let table = SHIPPING_MATRIX[source] && SHIPPING_MATRIX[source][dest]? SHIPPING_MATRIX[source][dest] : SHIPPING_MATRIX['china']['US'];
-  if(weight<=0.5) return table[0.5];
-  if(weight<=1) return table[1];
-  if(weight<=2) return table[2];
-  if(weight<=5) return table[5];
-  return table[10];
-}
+let cart=JSON.parse(localStorage.getItem('cart')||'[]').map(i=>({weight:i.weight||0.5, source:i.source||'china', priceUSD:i.priceUSD||i.price,...i}));
+let rates={USD:1}, cur=localStorage.getItem('userCurrency')||'USD', selectedMethod='air';
 
-let cart=JSON.parse(localStorage.getItem('cart')||'[]');
-// Add weight & source if missing (old cart)
-cart = cart.map(it=>{
-  if(!it.weight) it.weight = 0.5; // default
-  if(!it.source) it.source = 'china'; // default from Alibaba
-  if(!it.priceUSD) it.priceUSD = it.price;
-  return it;
+function format(usd){let r=rates[cur]||1;let c=usd*r;if(cur=='UGX')return `UGX ${Math.round(c).toLocaleString()}`;if(cur=='NGN')return `₦${Math.round(c).toLocaleString()}`;if(cur=='KES')return `KSh ${Math.round(c).toLocaleString()}`;return `$${c.toFixed(2)}`;}
+function getBase(origin,dest,weight){let base=BASE_AIR[origin]?.[dest]||20;let wMult=weight<=0.5?1:weight<=1?1.5:weight<=2?2.2:weight<=5?3.8:6.5;return base*wMult;}
+
+function renderCart(){let h='',sub=0,w=0;cart.forEach((it,i)=>{sub+=it.priceUSD*it.qty;w+=it.weight*it.qty;h+=`<div class="item"><img src="${it.image||it.img}" style="width:50px;height:50px;object-fit:cover;border-radius:6px"><div style="flex:1"><b style="font-size:12px">${it.name.slice(0,30)}</b><br><small style="font-size:10px">Src:${it.source} ${it.weight}kg x${it.qty} • ${format(it.priceUSD)}</small></div><b style="font-size:12px">${format(it.priceUSD*it.qty)}</b></div>`;});document.getElementById('list').innerHTML=h||'Empty';document.getElementById('cnt').innerText=cart.reduce((s,i)=>s+i.qty,0);document.getElementById('sub').innerText=format(sub);document.getElementById('wt').innerText=w.toFixed(1)+'kg';calcShip();}
+
+function calcShip(){
+let origin=document.getElementById('origin').value;
+let dest=document.getElementById('dest').value;
+let totalW=cart.reduce((s,i)=>s+i.weight*i.qty,0)||0.5;
+let sub=cart.reduce((s,i)=>s+i.priceUSD*i.qty,0);
+let base=getBase(origin,dest,totalW);
+document.getElementById('route').innerText=`${origin.toUpperCase()} → ${dest.toUpperCase()} ${totalW.toFixed(1)}kg`;
+
+// render methods
+let methodsHtml='';
+Object.keys(METHOD_MULTIPLIER).forEach(m=>{
+  let cost=base*METHOD_MULTIPLIER[m];
+  let available=true;
+  if(m=='rail' && (['ca','us','ng','gh','za','ke','ug'].includes(dest) && origin!='china' && origin!='germany' && origin!='turkey')) available=false;
+  if(m=='sea' && totalW<0.5) cost+=2;
+  let label=`${m.toUpperCase()} - ${METHOD_TIME[m]} - ${format(cost)}`;
+  methodsHtml+=`<div class="ship-option ${selectedMethod==m?'active':''} ${!available?'':' '}" onclick="selectedMethod='${m}';calcShip()" style="${!available?'opacity:0.4;pointer-events:none':''}"><span>✈️ ${label}</span><span>${!available?'N/A':''}</span></div>`;
 });
+document.getElementById('methods').innerHTML=methodsHtml;
 
-let rates={USD:1}, userCurrency=localStorage.getItem('userCurrency')||'USD', payMode='paypal', finalGrand=0, finalShip=0;
-
-function save(){localStorage.setItem('cart',JSON.stringify(cart));}
-function formatPrice(usd){let r=rates[userCurrency]||1;let c=usd*r;if(userCurrency=='UGX')return `UGX ${Math.round(c).toLocaleString()}`;if(userCurrency=='NGN')return `₦${Math.round(c).toLocaleString()}`;if(userCurrency=='KES')return `KSh ${Math.round(c).toLocaleString()}`;if(userCurrency=='GHS')return `GH₵ ${c.toFixed(2)}`;if(userCurrency=='ZAR')return `R${c.toFixed(2)}`;if(userCurrency=='GBP')return `£${c.toFixed(2)}`;if(userCurrency=='EUR')return `€${c.toFixed(2)}`;return `$${c.toFixed(2)}`;}
-
-function render(){
-let list=document.getElementById('list'), sub=0;
-document.getElementById('count').innerText=cart.reduce((s,i)=>s+i.qty,0);
-if(cart.length==0){list.style.display='none';document.getElementById('empty').style.display='block';}else{list.style.display='block';document.getElementById('empty').style.display='none';}
-let h='';
-cart.forEach((it,idx)=>{
-let usdPrice=it.priceUSD||it.price; sub+=usdPrice*it.qty;
-h+=`<div class="item"><img src="${it.image||it.img}"><div style="flex:1"><b style="font-size:12px">${it.name}</b><br><small style="font-size:10px;color:#64748b">From: ${it.source.toUpperCase()} • ${it.weight}kg • ${formatPrice(usdPrice)}</small><br><div class="qty"><button onclick="chg(${idx},-1)">-</button><span style="min-width:20px;text-align:center;font-weight:800;font-size:12px">${it.qty}</span><button onclick="chg(${idx},1)">+</button><button onclick="rem(${idx})" style="background:#ef4444;color:#fff;border:none;margin-left:6px">✕</button></div></div><div style="font-weight:900;font-size:12px">${formatPrice(usdPrice*it.qty)}</div></div>`;
-});
-list.innerHTML=h;
-document.getElementById('sub').innerText=formatPrice(sub);
-document.getElementById('currShow').innerText=userCurrency;
-calculateShipping();
+let shipCost=base*METHOD_MULTIPLIER[selectedMethod];
+document.getElementById('shipC').innerText=format(shipCost);
+document.getElementById('methodName').innerText=selectedMethod.toUpperCase();
+document.getElementById('grand').innerText=format(sub+shipCost);
+document.getElementById('grand2').innerText=format(sub+shipCost);
+document.getElementById('breakdown').innerHTML=`Route: ${origin} → ${dest}<br>Air base 0.5kg: $${BASE_AIR[origin]?.[dest]||20} → weight ${totalW}kg = $${base.toFixed(2)} → ${selectedMethod} x${METHOD_MULTIPLIER[selectedMethod]} = <b>${format(shipCost)}</b><br>Example: Canada→Nigeria Air ${format(BASE_AIR.canada.ng||28)} Sea ${format(BASE_AIR.canada.ng*0.35)}`;
 }
 
-function calculateShipping(){
-let dest = document.getElementById('destCountry').value;
-let address = document.getElementById('address').value;
-let sub = cart.reduce((s,i)=>s+(i.priceUSD||i.price)*i.qty,0);
-let totalShipUSD=0, totalWeight=0, breakdown='';
-let sources=[];
-cart.forEach(it=>{
-  let cost = getShipCost(it.source, dest, it.weight) * it.qty;
-  totalShipUSD += cost;
-  totalWeight += it.weight * it.qty;
-  if(!sources.includes(it.source)) sources.push(it.source);
-  breakdown += `${it.name.slice(0,20)} (${it.source} ${it.weight}kg x${it.qty}) → ${formatPrice(cost)}<br>`;
-});
-document.getElementById('shipFrom').innerText = sources.join(' + ').toUpperCase() || 'CHINA / KENYA';
-document.getElementById('shipCost').innerText = formatPrice(totalShipUSD);
-document.getElementById('shipBreakdown').innerHTML = breakdown + `<b>Total Weight: ${totalWeight.toFixed(1)}kg to ${dest}</b>`;
-finalShip = totalShipUSD;
-finalGrand = sub + totalShipUSD;
+async function init(){try{let ip=await fetch('https://ipapi.co/json/').then(r=>r.json());let map={KE:'ke',UG:'ug',NG:'ng',GH:'gh',ZA:'za',US:'us',CA:'ca',JP:'jp',GB:'gb',DE:'de',AE:'ae'};if(map[ip.country_code])document.getElementById('dest').value=map[ip.country_code];let d=await fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json());rates=d.rates;document.getElementById('geo').innerText=ip.country_name;}catch{}renderCart();}
+function checkout(){let g=document.getElementById('grand').innerText;window.open(`https://wa.me/254713367205?text=Order ${cart.length} items Total ${g} Method ${selectedMethod} From ${document.getElementById('origin').value} To ${document.getElementById('dest').value} ${document.getElementById('addr').value}`);}
 
-document.getElementById('tot').innerText = formatPrice(finalGrand);
-document.getElementById('paypalTot').innerText = formatPrice(finalGrand);
-document.getElementById('cardTot').innerText = formatPrice(finalGrand);
-let kesRate = rates['KES']||130;
-document.getElementById('mpesaTot').innerText = `KSh ${Math.round(finalGrand*kesRate).toLocaleString()}`;
-}
-
-function chg(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);save();render();}
-function rem(i){cart.splice(i,1);save();render();}
-function setPay(m){payMode=m;['Paypal','Card','Mpesa'].forEach(id=>document.getElementById('t'+id).classList.remove('active'));document.getElementById('t'+payMode.charAt(0).toUpperCase()+payMode.slice(1)).classList.add('active');document.getElementById('paypalBox').style.display=m=='paypal'?'block':'none';document.getElementById('cardBox').style.display=m=='card'?'block':'none';document.getElementById('mpesaBox').style.display=m=='mpesa'?'block':'none';}
-
-async function initCurrency(){
-try{
-let ip=await fetch('https://ipapi.co/json/').then(r=>r.json());
-let map={UG:'UGX',NG:'NGN',KE:'KES',GH:'GHS',ZA:'ZAR',GB:'GBP',DE:'EUR',FR:'EUR',IN:'INR',AE:'AED',US:'USD'};
-if(!localStorage.getItem('userCurrency')) userCurrency=map[ip.country_code]||'USD';
-document.getElementById('destCountry').value = ip.country_code || 'KE';
-let data=await fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json());
-rates=data.rates;
-document.getElementById('geoInfo').innerText=`📍 ${ip.country_name} • ${userCurrency}`;
-render();
-}catch(e){try{let data=await fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json());rates=data.rates;render();}catch{render();}}
-}
-
-async function payMpesa(){let phone=document.getElementById('phone').value.trim();if(!phone)return alert('Enter phone');let btn=document.getElementById('btnMpesa');btn.innerText='Sending...';let kesRate=rates['KES']||130;let amountKES=Math.round(finalGrand*kesRate);try{let r=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,amount:amountKES,items:cart,shipping:finalShip,destination:document.getElementById('destCountry').value})});let d=await r.json();document.getElementById('result').innerText=JSON.stringify(d,null,2);if(d.CheckoutRequestID||d.success){alert(`STK SENT KES ${amountKES}`);cart=[];save();render();}}catch(e){alert(e.message)}btn.innerText='LIPA M-PESA STK';}
-function payPaypal(){if(finalGrand==0)return alert('Cart empty');let dest=document.getElementById('destCountry').value;let addr=document.getElementById('address').value;window.open(`https://wa.me/254713367205?text=Order PayPal: ${cart.length} items, Ship to ${dest} ${addr}, Subtotal ${document.getElementById('sub').innerText}, Shipping ${document.getElementById('shipCost').innerText}, TOTAL ${formatPrice(finalGrand)}`);}
-function payCard(){alert(`Card payment ${formatPrice(finalGrand)} - Add Stripe key`);}
-
-render();initCurrency();
+init();
 </script></body></html>
