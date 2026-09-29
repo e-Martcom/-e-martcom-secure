@@ -18,20 +18,34 @@ if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, JSON.stringify({o
 const EXTERNAL_FILE = path.join(__dirname, 'external_orders.json');
 if (!fs.existsSync(EXTERNAL_FILE)) fs.writeFileSync(EXTERNAL_FILE, JSON.stringify([]));
 
+// --- CONFIGURE YOUR MAIN SUPPLIER ONCE HERE ---
+const MAIN_SUPPLIER_PHONE = process.env.SUPPLIER_PHONE || "254722000000"; // Change to your Kamukunji guy
+const MAIN_SUPPLIER_NAME = "Kamukunji Supplier"
+
 function saveOrder(order) {
   const data = JSON.parse(fs.readFileSync(ORDERS_FILE));
   data.orders.unshift(order);
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2));
   const msg = `🌊 NEW ORDER! ${order.status}\n💰 KSh ${order.amount}\n📱 ${order.phone}\n🛒 ${order.itemsText || 'N/A'}\nID: ${order.CheckoutRequestID || order.id}`;
-  console.log(`📲 WHATSAPP ALERT: ${msg}`);
+  console.log(`📲 CUSTOMER ALERT: ${msg}`);
   return order;
+}
+
+function notifySupplier(order){
+  const cost = Math.floor((order.amount||0)*0.55);
+  const profit = Math.floor((order.amount||0)*0.45)-100;
+  const supplierMsg = `*DROPSHIP ORDER* \nCustomer: ${order.phone}\nProduct: ${order.itemsText}\nCustomer Paid: KSh ${order.amount}\nBuy for: ~KSh ${cost}\nYour Profit: KSh ${profit}\nDeliver to: ${order.phone} (Ask customer location)\nReceipt: ${order.receipt||order.CheckoutRequestID}`;
+  const waLink = `https://wa.me/${MAIN_SUPPLIER_PHONE}?text=${encodeURIComponent(supplierMsg)}`;
+  console.log(`\n🏭 SUPPLIER NOTIFY -> ${MAIN_SUPPLIER_NAME} ${MAIN_SUPPLIER_PHONE}`);
+  console.log(waLink + "\n");
+  return waLink;
 }
 
 function normalizePhone(phone){
   let p = String(phone).replace(/\s+/g,'').replace(/^\+/,'');
-  if(p.startsWith('0')) p = '254' + p.slice(1);
+  if(p.startsWith('07')) p = '254' + p.slice(1);
   if(p.startsWith('7')) p = '254' + p;
-  if(!p.startsWith('254')) p = '254' + p.replace(/^254/,'');
+  if(p.startsWith('0')) p = '254' + p.slice(1);
   return p;
 }
 
@@ -65,7 +79,8 @@ async function stkPushLogic(phone, amount, items) {
     id: Date.now(), CheckoutRequestID: stkRes.data.CheckoutRequestID,
     MerchantRequestID: stkRes.data.MerchantRequestID,
     phone, amount, items, itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '),
-    status: 'STK Sent - Awaiting PIN', date: new Date().toISOString()
+    status: 'STK Sent - Awaiting PIN', date: new Date().toISOString(),
+    supplierNotified: false
   };
   saveOrder(order);
   return stkRes.data;
@@ -81,20 +96,39 @@ app.post('/api/mpesa/stk', async (req, res) => {
 });
 app.post('/api/card-payment', (req, res) => {
   const { amount, items, cardLast4, customerName } = req.body;
-  const order = { id: Date.now(), CheckoutRequestID: 'CARD_' + Date.now(), phone: customerName || 'CARD-'+(cardLast4||'****'), amount, items, itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '), status: 'PAID ✅ - VISA CARD', receipt: 'CARD_' + Math.random().toString(36).toUpperCase().slice(2,8), date: new Date().toISOString() };
-  saveOrder(order); res.json({ success: true, order });
+  const order = { id: Date.now(), CheckoutRequestID: 'CARD_' + Date.now(), phone: customerName || 'CARD-'+(cardLast4||'****'), amount, items, itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '), status: 'PAID ✅ - VISA CARD', receipt: 'CARD_' + Math.random().toString(36).toUpperCase().slice(2,8), date: new Date().toISOString(), supplierNotified: false };
+  saveOrder(order); 
+  notifySupplier(order);
+  res.json({ success: true, order, supplierLink: notifySupplier(order) });
 });
 app.post('/api/callback', (req, res) => {
   console.log('CALLBACK:', JSON.stringify(req.body, null, 2));
-  try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE)); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' });
+  try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE)); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; order.paidAt = new Date().toISOString(); notifySupplier(order); order.supplierNotified = true; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' });
 });
-app.post('/api/mpesa/callback', (req, res) => { console.log('CALLBACK MPESA:', JSON.stringify(req.body, null, 2)); try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE)); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' }); });
+app.post('/api/mpesa/callback', (req, res) => { 
+  console.log('CALLBACK MPESA:', JSON.stringify(req.body, null, 2)); 
+  try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE)); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; order.paidAt = new Date().toISOString(); notifySupplier(order); order.supplierNotified = true; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' }); 
+});
+
+// DROPSHIP FULFILL - Admin clicks to forward
+app.post('/api/dropship/fulfill', (req,res)=>{
+  const { orderId } = req.body;
+  const data = JSON.parse(fs.readFileSync(ORDERS_FILE));
+  const order = data.orders.find(o=>o.id==orderId || o.CheckoutRequestID==orderId);
+  if(!order) return res.status(404).json({error:'Order not found'});
+  const link = notifySupplier(order);
+  order.supplierNotified = true;
+  order.fulfilledAt = new Date().toISOString();
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2));
+  res.json({ok:true, supplierLink: link, message: 'Supplier notified via WhatsApp link'});
+});
+
 app.get('/api/orders', (req, res) => { const data = JSON.parse(fs.readFileSync(ORDERS_FILE)); res.json(data); });
 app.get('/api/orders/clear', (req, res) => { fs.writeFileSync(ORDERS_FILE, JSON.stringify({orders: []})); res.json({ cleared: true }); });
-app.post('/api/external-order', (req,res)=>{ try{ let list = JSON.parse(fs.readFileSync(EXTERNAL_FILE)); const entry = {...req.body, time: new Date().toISOString()}; list.unshift(entry); fs.writeFileSync(EXTERNAL_FILE, JSON.stringify(list, null, 2)); console.log(`🌊 SECRET LOGGED: ${entry.productName} | KSh ${entry.customerPrice}`); res.json({ok:true, count: list.length}); }catch(e){ console.error(e); res.json({ok:true}); } });
+app.post('/api/external-order', (req,res)=>{ try{ let list = JSON.parse(fs.readFileSync(EXTERNAL_FILE)); const entry = {...req.body, time: new Date().toISOString(), sourcingLink: `https://www.google.com/search?q=${encodeURIComponent((req.body.productName||'')+' wholesale price 1688 Alibaba')}`}; list.unshift(entry); fs.writeFileSync(EXTERNAL_FILE, JSON.stringify(list, null, 2)); console.log(`🌊 SECRET LOGGED: ${entry.productName} | KSh ${entry.customerPrice} | Source: ${entry.sourcingLink}`); res.json({ok:true, count: list.length, sourcingLink: entry.sourcingLink}); }catch(e){ console.error(e); res.json({ok:true}); } });
 app.get('/api/external-orders', (req,res)=>{ try{ const list = JSON.parse(fs.readFileSync(EXTERNAL_FILE)); res.json(list); }catch(e){ res.json([]); } });
 let suppliers = []; let pendingProducts = [];
 app.post('/api/supplier/register', (req,res)=>{ const { supplier, product } = req.body; suppliers.push({...supplier, id:Date.now(), date:new Date()}); if(product.name){ pendingProducts.push({...product, id:Date.now(), supplier:supplier.name, status:'pending'}); } console.log('NEW SUPPLIER:', supplier.name, supplier.phone); res.json({ok:true}); });
 app.get('/api/supplier/pending', (req,res)=>{ res.json({suppliers, pendingProducts}); });
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`🌊 Oceanic Server Live on ${PORT}`));
+app.listen(PORT, () => console.log(`🌊 Oceanic Dropship Server Live on ${PORT} - Supplier: ${MAIN_SUPPLIER_PHONE}`));
