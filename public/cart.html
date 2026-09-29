@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart - E-MARTCOM | Jumia Style</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box} body{font-family:'Segoe UI',Arial;background:#f5f5f5;color:#0f172a}
+:root{--ocean:#0a4a7a;--cyan:#06b6d4;--orange:#f68b1e}
+header{background:linear-gradient(90deg,var(--ocean),#0e7490);padding:12px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
+.logo{font-weight:900;color:#fff;font-size:22px;cursor:pointer}.logo span{color:var(--cyan)}
+.wrap{max-width:1300px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:1fr 360px;gap:14px}
+.card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.item{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid #eef2f7;border-radius:10px;margin-bottom:10px}
+.item img{width:70px;height:70px;object-fit:cover;border-radius:8px}
+.qty{display:flex;align-items:center;gap:6px;margin-top:6px}
+.qty button{width:28px;height:28px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer}
+.price{font-weight:900;color:var(--ocean)}
+.tabs{display:flex;gap:8px;margin:10px 0}
+.tab{flex:1;padding:10px;border:2px solid #e0f2fe;border-radius:10px;text-align:center;font-weight:800;cursor:pointer;background:#f8fafc}
+.tab.active{border-color:var(--cyan);background:#ecfeff;color:var(--ocean)}
+input{width:100%;padding:12px;border:2px solid #e0f2fe;border-radius:10px;margin:6px 0;outline:none}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;cursor:pointer}
+.btn-mpesa{background:linear-gradient(90deg,#00a651,#0e7490);color:#fff}
+.btn-card{background:linear-gradient(90deg,var(--ocean),#0e7490);color:#fff}
+.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.summary-total{font-weight:900;font-size:18px;color:var(--ocean);border-top:2px solid #eef2f7;padding-top:10px;margin-top:8px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+</style></head><body>
+<header>
+<div class="logo" onclick="location.href='/'">E-MART<span>COM</span></div>
+<div style="flex:1"></div>
+<a href="/" style="color:#fff;text-decoration:none;font-weight:800">← Continue Shopping</a>
+</header>
+
+<div class="wrap">
+<div class="card">
+<h3 style="color:var(--ocean)">🛒 Cart (<span id="count">0</span>) - Oceanic Store</h3>
+<div id="list" style="margin-top:12px"></div>
+<div id="empty" style="text-align:center;padding:30px;color:#94a3b8;display:none">Cart Empty 🌊<br><a href="/">Go Shopping</a></div>
+</div>
+
+<div>
+<div class="card">
+<h4>CART SUMMARY</h4>
+<div class="summary-row"><span>Subtotal</span><span id="sub">KSh 0</span></div>
+<div class="summary-row"><span>Delivery</span><span style="color:#00a651">FREE (Nairobi >5k)</span></div>
+<div class="summary-row summary-total"><span>Total</span><span id="tot">KSh 0</span></div>
+
+<div class="tabs">
+<div class="tab active" id="tMpesa" onclick="setPay('mpesa')">📱 M-PESA</div>
+<div class="tab" id="tCard" onclick="setPay('card')">💳 CARD</div>
+</div>
+
+<div id="mpesaBox">
+<input id="phone" value="254713367205" placeholder="2547... (07... auto fixed)">
+<input id="phone2" placeholder="Delivery location e.g Nanyuki" value="Nanyuki">
+<button class="btn btn-mpesa" id="btnMpesa" onclick="payMpesa()">LIPA NA M-PESA - STK PUSH</button>
+<p style="font-size:10px;color:#64748b;margin-top:6px">Phone 07... will auto convert to 2547... ✅</p>
+</div>
+
+<div id="cardBox" style="display:none">
+<input id="cName" placeholder="Full Name">
+<input id="cNum" placeholder="4242 4242 4242 4242">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input id="cExp" placeholder="MM/YY"><input id="cCvc" placeholder="CVC"></div>
+<button class="btn btn-card" onclick="payCard()">PAY WITH CARD - KSh <span id="cardTot">0</span></button>
+</div>
+
+<p id="result" style="font-size:11px;margin-top:10px;background:#f8fafc;padding:8px;border-radius:8px;word-break:break-all"></p>
+</div>
+
+<div class="card" style="margin-top:12px">
+<h4 style="font-size:12px">🚚 Delivery & Returns</h4>
+<p style="font-size:11px;line-height:1.5;color:#334155;margin-top:6px">
+✅ Free delivery Nairobi orders >5k<br>
+✅ Express 24hrs KSh 300<br>
+✅ 7 days free return<br>
+✅ Payment on delivery available
+</p>
+</div>
+</div>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+let payMode='mpesa';
+
+function render(){
+let list=document.getElementById('list'), sub=0;
+document.getElementById('count').innerText = cart.reduce((s,i)=>s+i.qty,0);
+if(cart.length==0){list.style.display='none'; document.getElementById('empty').style.display='block';}
+else {list.style.display='block'; document.getElementById('empty').style.display='none';}
+let h='';
+cart.forEach((it,idx)=>{
+sub+=it.price*it.qty;
+h+=`<div class="item">
+<img src="${it.image}" onclick="location.href='/product.html?id=${it.id}'" style="cursor:pointer">
+<div style="flex:1"><b style="font-size:13px">${it.name}</b><br><small style="color:#64748b">${it.brand}</small><br><span class="price">KSh ${it.price.toLocaleString()}</span> x ${it.qty} = <b>KSh ${(it.price*it.qty).toLocaleString()}</b>
+<div class="qty"><button onclick="chg(${idx},-1)">-</button><span style="min-width:24px;text-align:center;font-weight:800">${it.qty}</span><button onclick="chg(${idx},1)">+</button><button onclick="rem(${idx})" style="background:#ef4444;color:#fff;border:none;margin-left:8px">✕</button></div>
+</div></div>`;
+});
+list.innerHTML=h;
+document.getElementById('sub').innerText='KSh '+sub.toLocaleString();
+document.getElementById('tot').innerText='KSh '+sub.toLocaleString();
+document.getElementById('cardTot').innerText=sub.toLocaleString();
+}
+function chg(i,d){cart[i].qty+=d; if(cart[i].qty<=0) cart.splice(i,1); save(); render();}
+function rem(i){cart.splice(i,1); save(); render();}
+function save(){localStorage.setItem('cart',JSON.stringify(cart));}
+function setPay(m){payMode=m; document.getElementById('tMpesa').classList.toggle('active',m=='mpesa'); document.getElementById('tCard').classList.toggle('active',m=='card'); document.getElementById('mpesaBox').style.display=m=='mpesa'?'block':'none'; document.getElementById('cardBox').style.display=m=='card'?'block':'none';}
+
+async function payMpesa(){
+let phone=document.getElementById('phone').value.trim();
+let amount=cart.reduce((s,i)=>s+i.price*i.qty,0);
+if(!phone) return alert('Enter phone 2547... or 07...');
+if(amount<1) return alert('Cart empty');
+let btn=document.getElementById('btnMpesa'), resEl=document.getElementById('result');
+btn.innerText='🌊 Sending STK to '+phone+'...'; btn.disabled=true;
+resEl.innerText='Sending STK Push... KSh '+amount+' to '+phone;
+try{
+let r=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,amount,items:cart})});
+if(!r.ok){ r=await fetch('/api/mpesa/stk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,amount,items:cart})});}
+let d=await r.json();
+resEl.innerText=JSON.stringify(d,null,2);
+if(d.CheckoutRequestID || d.data?.CheckoutRequestID || d.success){
+alert(`✅ STK SENT!\nCheck phone ${phone}\nEnter PIN\nAmount KSh ${amount}\n\nWe will WhatsApp you receipt!`);
+cart=[]; save(); render();
+setTimeout(()=>location.href='/',2000);
+} else alert('Failed: '+(d.error||JSON.stringify(d)));
+}catch(e){resEl.innerText='Error: '+e.message; alert(e.message)}
+btn.innerText='LIPA NA M-PESA - STK PUSH'; btn.disabled=false;
+}
+
+async function payCard(){
+let amount=cart.reduce((s,i)=>s+i.price*i.qty,0);
+if(amount==0) return alert('Cart empty');
+let name=document.getElementById('cName').value||'Card Customer';
+let last4=document.getElementById('cNum').value.slice(-4)||'4242';
+try{
+let r=await fetch('/api/card-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount,items:cart,cardLast4:last4,customerName:name})});
+let d=await r.json();
+if(d.success){alert(`✅ CARD PAID!\nReceipt: ${d.order.receipt}\nKSh ${amount}`); cart=[]; save(); render(); location.href='/';}
+}catch(e){alert('Card error '+e.message)}
+}
+
+render();
+</script>
+</body></html>
