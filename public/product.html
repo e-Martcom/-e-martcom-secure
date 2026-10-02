@@ -1,36 +1,52 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product - Variations INCLUSIVE</title>
+<style>body{font-family:Arial;background:#fff;margin:0}header{background:#0a4a7a;padding:12px;color:#fff;display:flex;gap:10px;position:sticky;top:0;z-index:20}.wrap{max-width:1250px;margin:auto;display:grid;grid-template-columns:1fr 420px;gap:10px;padding:10px}.card{border:1px solid #eee;border-radius:10px;padding:12px}.var{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid #eee}.qty{display:flex;gap:6px;margin-left:auto;align-items:center}.qty button{width:28px;height:28px;border:1px solid #ddd;border-radius:20px;background:#fff;cursor:pointer}.totalBox{background:#f8fafc;padding:12px;border-radius:10px;border:2px solid #0a4a7a;margin-top:10px}.btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:8px}.btn-cart{background:#fff;border:2px solid #0a4a7a;color:#0a4a7a}.btn-order{background:#f68b1e;color:#fff}@media(max-width:900px){.wrap{grid-template-columns:1fr}}</style></head><body>
+<header><a href="index.html" style="color:#fff;text-decoration:none;font-weight:900">← Back</a><div style="flex:1"></div><a href="cart.html" style="background:#fff;color:#0a4a7a;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:900">🛒 <span id="cc">0</span> Cart</a></header>
+<div class="wrap"><div id="left"></div><div id="right"></div></div>
 <script>
-function addToCartAndGo(go){
-let totalQty=Object.values(qtys).reduce((s,q)=>s+parseInt(q||0),0);
-if(totalQty==0){alert('Select qty first - click + button');return;}
+const BASE={china:{ke:12,ug:15,ng:18,us:20,ae:16,gb:20,de:20},kenya:{ke:1.5,ug:8,ng:15,us:18,ae:15,gb:18,de:18},usa:{ke:20,ug:22,ng:24,us:2,ae:16,gb:14,de:14},japan:{ke:26,ug:28,ng:30,us:22,ae:18,gb:16,de:16},uk:{ke:18,ug:20,ng:22,us:14,ae:12,gb:2,de:6},uae:{ke:12,ug:14,ng:16,us:16,ae:2,gb:12,de:12},turkey:{ke:14,ug:16,ng:18,us:15,ae:6,gb:8,de:7},germany:{ke:18,ug:20,ng:22,us:14,ae:12,gb:6,de:2}};
+const MM={air:{m:1,t:"Air 3-7d"},sea:{m:0.35,t:"Sea 20-45d -65% CHEAP"},eparcel:{m:0.65,t:"E-parcel 10-20d"},rail:{m:0.55,t:"Rail 15-25d"}};
+let all=[{id:1,n:"Clover Bracelet 18K Gold 6 Variations",p:1.87,old:3.2,w:0.05,o:["china","kenya"],img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",vars:["Gold-purple_LZ0692","Gold-red-LZ0692","Gold-pink-LZ0692","Gold-blue-LZ0692","Gold-orange-LZ0692","Gold-green-LZ0692"]}];
+let pid=new URLSearchParams(location.search).get('id')||1;let pr=all.find(x=>x.id==pid)||all[0];
+let dest=localStorage.getItem('shipDest')||'ke';let method=localStorage.getItem('shipMethod')||'air';let origin=pr.o[0];
+let qtys={};pr.vars.forEach(v=>qtys[v]=0);
+function base(o,d,w){let b=BASE[o]?.[d]||20;return b*(w<=0.5?1:1.5)*MM[method].m;}
+function toNum(v){let n=parseFloat(v);return isNaN(n)?0:n;}
+function updateCartCount(){let c=JSON.parse(localStorage.getItem('cart')||'[]');document.getElementById('cc').innerText=c.reduce((s,i)=>s+toNum(i.qty),0);}
+function render(){
+let subQty=Object.values(qtys).reduce((s,q)=>s+toNum(q),0);let subProd=subQty*pr.p;let shipOne=base(origin,dest,pr.w);let shipTotal=shipOne*subQty;let fee=subProd*0.03;let grand=subProd+shipTotal+fee;
+document.getElementById('left').innerHTML=`<div class="card"><img src="${pr.img}" style="width:100%;height:280px;object-fit:contain"><h3>${pr.n}</h3><p>Weight ${pr.w}kg per piece • Origins: ${pr.o.join(', ')}</p>
+<div>Ship To: <select onchange="dest=this.value;localStorage.setItem('shipDest',dest);render()"><option value="ke" ${dest=='ke'?'selected':''}>Kenya</option><option value="ug" ${dest=='ug'?'selected':''}>Uganda</option><option value="ng" ${dest=='ng'?'selected':''}>Nigeria</option><option value="us" ${dest=='us'?'selected':''}>USA</option><option value="ae" ${dest=='ae'?'selected':''}>UAE</option><option value="gb" ${dest=='gb'?'selected':''}>UK</option></select></div>
+<div style="margin-top:8px">${pr.o.map(o=>`<div style="border:2px solid ${o==origin?'#0a4a7a':'#eee'};padding:8px;border-radius:8px;margin:4px 0;cursor:pointer" onclick="origin='${o}';render()">${o.toUpperCase()} - $${base(o,dest,pr.w).toFixed(2)}/pc ${o==origin?'✅':''}</div>`).join('')}</div>
+<div style="margin-top:8px">${Object.keys(MM).map(m=>`<div style="border:2px solid ${m==method?'#f68b1e':'#eee'};padding:8px;border-radius:8px;margin:4px 0;cursor:pointer" onclick="method='${m}';localStorage.setItem('shipMethod',m);render()">${MM[m].t} - $${(BASE[origin]?.[dest]||20)*(pr.w<=0.5?1:1.5)*MM[m].m.toFixed(2)}/pc = $${(pr.p+(BASE[origin]?.[dest]||20)*(pr.w<=0.5?1:1.5)*MM[m].m).toFixed(2)} INCL ${m==method?'✅':''}</div>`).join('')}</div></div>`;
+let varsHtml=`<div class="card"><h3>Select variations and quantity</h3>${(pr.vars||["Default"]).map(v=>`<div class="var"><img src="${pr.img}" style="width:40px;height:40px;object-fit:contain"><div><b style="font-size:11px">${v}</b><br><small>$${pr.p}</small></div><div class="qty"><button onclick="qtys['${v}']=Math.max(0,toNum(qtys['${v}'])-1);render()">-</button><span style="min-width:20px;text-align:center;font-weight:800">${toNum(qtys[v])}</span><button onclick="qtys['${v}']=toNum(qtys['${v}'])+1;render()">+</button></div></div>`).join('')}
+<div class="totalBox">
+<div style="display:flex;justify-content:space-between"><span>Subtotal (${subQty} pcs)</span><span>$${subProd.toFixed(2)}</span></div>
+<div style="display:flex;justify-content:space-between;color:#0a4a7a"><span>Shipping ${origin.toUpperCase()}→${dest.toUpperCase()} ${method}</span><span>$${shipTotal.toFixed(2)}</span></div>
+<div style="display:flex;justify-content:space-between"><span>Fee 3%</span><span>$${fee.toFixed(2)}</span></div>
+<div style="display:flex;justify-content:space-between;font-weight:900;font-size:18px;border-top:2px solid #0a4a7a;margin-top:8px;padding-top:8px"><span>Pay in USD</span><span id="grandPay">$${grand.toFixed(2)} INCL</span></div>
+</div>
+<button class="btn btn-cart" onclick="addToCart(false)">Add to cart - $${grand.toFixed(2)} INCL (${subQty} pcs)</button>
+<button class="btn btn-order" onclick="addToCart(true)">Start order → $${grand.toFixed(2)}</button>
+</div>`;
+document.getElementById('right').innerHTML=varsHtml;updateCartCount();
+}
+function addToCart(go){
+let totalQty=Object.values(qtys).reduce((s,q)=>s+toNum(q),0);
+if(totalQty==0){alert('Click + to add quantity');return;}
 let cart=JSON.parse(localStorage.getItem('cart')||'[]');
 Object.keys(qtys).forEach(v=>{
- if(qtys[v]>0){
+ if(toNum(qtys[v])>0){
   let ship=base(origin,dest,pr.w);
-  cart.push({
-    id:pr.id+'_'+v.replace(/\s/g,'_'),
-    name:pr.n+' '+v,
-    price:pr.p,
-    priceUSD:pr.p,
-    p:pr.p,
-    qty:parseInt(qtys[v]),
-    weight:pr.w,
-    w:pr.w,
-    source:origin,
-    o:origin,
-    shipMethod:method,
-    dest:dest,
-    shipCost:ship,
-    variation:v,
-    image:pr.img,
-    img:pr.img
-  });
+  cart.push({id:pr.id+'_'+v, name:pr.n+' '+v, price:pr.p, priceUSD:pr.p, p:pr.p, qty:toNum(qtys[v]), weight:pr.w, w:pr.w, source:origin, o:origin, shipMethod:method, dest:dest, shipCost:ship, variation:v, image:pr.img, img:pr.img});
  }
 });
 localStorage.setItem('cart',JSON.stringify(cart));
 localStorage.setItem('shipDest',dest);
 localStorage.setItem('shipMethod',method);
-console.log('SAVED CART',cart);
-alert('✅ Added '+totalQty+' pcs\nNow Cart has '+cart.reduce((s,i)=>s+i.qty,0)+' items\nGrand '+document.getElementById('grandPay')?.innerText);
-if(go){ location.href='cart.html?v='+Date.now(); }
+updateCartCount();
+alert('✅ Added '+totalQty+' pcs - Cart now '+cart.reduce((s,i)=>s+toNum(i.qty),0)+' items');
+if(go){ window.location.href='cart.html?t='+Date.now(); }
 }
-</script>
+render();
+</script></body></html>
