@@ -32,13 +32,14 @@ function saveOrder(order) {
   return order;
 }
 
-// 🔒 FIXED - HIDES AMOUNT AND PROFIT FROM SUPPLIER
+// 🚀 FIXED: DIRECT TO CUSTOMER + PRICE HIDDEN
 function notifySupplier(order){
   const customer = order.customerName||'Customer';
   const realPhone = order.actualPhone||order.phone||'';
-  const supplierMsg = `*DROPSHIP ORDER - E-MARTCOM* \n\n📦 *PRODUCT TO BUY:*\n${order.itemsText}\n\n👤 *DELIVER TO:*\nName: ${customer}\nPhone: ${realPhone}\nAddress: ${order.address||'Nairobi'}\n\n🧾 Receipt: ${order.receipt||order.CheckoutRequestID}\n\n✅ Please confirm availability and delivery cost to Nanyuki.\nThank you!`;
+  const address = order.address||'Nairobi';
+  const supplierMsg = `*NEW ORDER - E-MARTCOM DIRECT DELIVERY* \n\n📦 *PRODUCT TO PACK:*\n${order.itemsText}\n\n👤 *SHIP DIRECTLY TO CUSTOMER (DO NOT SHIP TO E-MARTCOM/NANYUKI):*\nName: ${customer}\nPhone: ${realPhone}\nAddress: ${address}\n\n⚠️ *DIRECT DROPSHIP RULES:*\n1. Ship DIRECT to customer above\n2. Use sender: E-MARTCOM GLOBAL (hide your shop name)\n3. Do NOT put invoice with your price\n4. Put E-MARTCOM receipt: ${order.receipt||order.CheckoutRequestID}\n5. Send tracking number after shipping\n\n🧾 Order: ${order.receipt||order.CheckoutRequestID}\n\n✅ Confirm stock now.`;
   const waLink = `https://wa.me/${MAIN_SUPPLIER_PHONE}?text=${encodeURIComponent(supplierMsg)}`;
-  console.log(`\n🏭 SUPPLIER NOTIFY (PRICE HIDDEN) -> ${MAIN_SUPPLIER_NAME} ${MAIN_SUPPLIER_PHONE}\n${waLink}\n`);
+  console.log(`\n🏭 DIRECT DROPSHIP -> ${MAIN_SUPPLIER_NAME} ${MAIN_SUPPLIER_PHONE}\n${waLink}\n`);
   return waLink;
 }
 
@@ -110,7 +111,7 @@ app.post('/api/mpesa/callback', (req, res) => {
 app.post('/api/dropship/fulfill', (req,res)=>{
   const { orderId } = req.body;
   const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8'));
-  const order = data.orders.find(o=>o.id==orderId || o.CheckoutRequestID==orderId || o.CheckoutRequestID==orderId);
+  const order = data.orders.find(o=>o.id==orderId || o.CheckoutRequestID==orderId);
   if(!order) return res.status(404).json({error:'Order not found'});
   const link = notifySupplier(order);
   order.supplierNotified = true;
@@ -126,4 +127,4 @@ let suppliers = []; let pendingProducts = [];
 app.post('/api/supplier/register', (req,res)=>{ const { supplier, product } = req.body; suppliers.push({...supplier, id:Date.now(), date:new Date()}); if(product && product.name){ pendingProducts.push({...product, id:Date.now(), supplier:supplier.name, status:'pending'}); } res.json({ok:true}); });
 app.get('/api/supplier/pending', (req,res)=>{ res.json({suppliers, pendingProducts}); });
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`🌊 Oceanic Live on ${PORT} - PRICE HIDDEN FROM SUPPLIER`));
+app.listen(PORT, () => console.log(`🌊 Oceanic Live DIRECT DROPSHIP on ${PORT}`));
