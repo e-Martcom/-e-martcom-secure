@@ -9,7 +9,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve shop pages
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/product.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'product.html')));
 app.get('/cart.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cart.html')));
@@ -32,20 +31,20 @@ function saveOrder(order) {
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2));
   return order;
 }
+
+// 🔒 FIXED - HIDES AMOUNT AND PROFIT FROM SUPPLIER
 function notifySupplier(order){
-  const cost = Math.floor((order.amount||0)*0.55);
-  const profit = Math.floor((order.amount||0)*0.45)-100;
-  const customer = order.customerName||order.phone||'Customer';
+  const customer = order.customerName||'Customer';
   const realPhone = order.actualPhone||order.phone||'';
-  const supplierMsg = `*DROPSHIP ORDER* \nCustomer: ${customer} ${realPhone}\nPhone: ${realPhone}\nAddress: ${order.address||''}\nProduct: ${order.itemsText}\nCustomer Paid: KSh ${order.amount}\nBuy for: ~KSh ${cost}\nYour Profit: KSh ${profit}\nReceipt: ${order.receipt||order.CheckoutRequestID}`;
+  const supplierMsg = `*DROPSHIP ORDER - E-MARTCOM* \n\n📦 *PRODUCT TO BUY:*\n${order.itemsText}\n\n👤 *DELIVER TO:*\nName: ${customer}\nPhone: ${realPhone}\nAddress: ${order.address||'Nairobi'}\n\n🧾 Receipt: ${order.receipt||order.CheckoutRequestID}\n\n✅ Please confirm availability and delivery cost to Nanyuki.\nThank you!`;
   const waLink = `https://wa.me/${MAIN_SUPPLIER_PHONE}?text=${encodeURIComponent(supplierMsg)}`;
-  console.log(`\n🏭 SUPPLIER NOTIFY -> ${MAIN_SUPPLIER_NAME} ${MAIN_SUPPLIER_PHONE}\n${waLink}\n`);
+  console.log(`\n🏭 SUPPLIER NOTIFY (PRICE HIDDEN) -> ${MAIN_SUPPLIER_NAME} ${MAIN_SUPPLIER_PHONE}\n${waLink}\n`);
   return waLink;
 }
+
 function normalizePhone(phone){
   if(!phone) return '';
-  // If it's a name like TONY, don't convert
-  if(isNaN(String(phone).replace(/\D/g,'')) || String(phone).length < 7) return phone;
+  if(String(phone).length < 7) return phone;
   let p = String(phone).replace(/\s+/g,'').replace(/^\+/,'');
   if(p.startsWith('07')) p = '254' + p.slice(1);
   if(p.startsWith('7')) p = '254' + p;
@@ -75,24 +74,9 @@ async function stkPushLogic(phone, amount, items, customerName, address) {
     PartyA: realPhone, PartyB: shortcode, PhoneNumber: realPhone,
     CallBackURL: callbackUrl, AccountReference: 'E-MARTCOM', TransactionDesc: 'Oceanic Store Payment'
   }, { headers: { Authorization: `Bearer ${token}` } });
-  const order = { 
-    id: Date.now(), 
-    CheckoutRequestID: stkRes.data.CheckoutRequestID, 
-    MerchantRequestID: stkRes.data.MerchantRequestID, 
-    phone: realPhone,
-    actualPhone: realPhone,
-    customerName: customerName||realPhone,
-    amount, 
-    items, 
-    itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '), 
-    address: address||'',
-    status: 'STK Sent - Awaiting PIN', 
-    date: new Date().toISOString(), 
-    supplierNotified: false 
-  };
+  const order = { id: Date.now(), CheckoutRequestID: stkRes.data.CheckoutRequestID, MerchantRequestID: stkRes.data.MerchantRequestID, phone: realPhone, actualPhone: realPhone, customerName: customerName||realPhone, amount, items, itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '), address: address||'', status: 'STK Sent - Awaiting PIN', date: new Date().toISOString(), supplierNotified: false };
   saveOrder(order); return stkRes.data;
 }
-
 app.post('/api/stkpush', async (req, res) => {
   try { const { phone, amount, items, customerName, address } = req.body; const data = await stkPushLogic(phone, amount, items, customerName, address); res.json(data); }
   catch (e) { console.error(e.response?.data || e.message); res.status(500).json(e.response?.data || { error: e.message }); }
@@ -101,53 +85,32 @@ app.post('/api/mpesa/stk', async (req, res) => {
   try { const { phone, amount, items, customerName, address } = req.body; const data = await stkPushLogic(phone, amount, items, customerName, address); res.json({ success: true, data, CheckoutRequestID: data.CheckoutRequestID }); }
   catch (e) { console.error(e.response?.data || e.message); res.status(500).json(e.response?.data || { error: e.message }); }
 });
-
-// FIXED CARD-PAYMENT - NOW SAVES NAME + PHONE SEPARATELY
 app.post('/api/card-payment', (req, res) => {
-  const { amount, items, cardLast4, customerName, phone, actualPhone, address } = req.body;
-  let cust = customerName||phone||'Customer';
-  // If phone field was actually a name (like TONY), fix it
-  let realPhone = actualPhone||'';
-  if(!realPhone && phone && String(phone).startsWith('254')) realPhone = phone;
+  const { amount, items, customerName, phone, actualPhone, address } = req.body;
+  let cust = customerName||'Customer';
+  let realPhone = actualPhone||phone||'';
+  if(realPhone &&!String(realPhone).startsWith('254')) realPhone = '254700000000';
   if(!realPhone) realPhone = '254700000000';
-  
-  const order = { 
-    id: Date.now(), 
-    CheckoutRequestID: 'CARD_' + Date.now(), 
-    phone: realPhone,
-    actualPhone: realPhone,
-    customerName: cust,
-    amount, 
-    items, 
-    itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '), 
-    address: address||'',
-    status: 'PAID ✅ - VISA CARD', 
-    receipt: 'CARD_' + Math.random().toString(36).toUpperCase().slice(2,8), 
-    date: new Date().toISOString(), 
-    supplierNotified: false 
-  };
-  saveOrder(order); 
+  const order = { id: Date.now(), CheckoutRequestID: 'CARD_' + Date.now(), phone: realPhone, actualPhone: realPhone, customerName: cust, amount, items, itemsText: items?.map(i=>`${i.name} x${i.qty}`).join(', '), address: address||'', status: 'PAID ✅ - VISA CARD', receipt: 'CARD_' + Math.random().toString(36).toUpperCase().slice(2,8), date: new Date().toISOString(), supplierNotified: false };
+  saveOrder(order);
   const link = notifySupplier(order);
-  order.supplierNotified = true;
-  // re-save with notified flag
-  const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')); 
+  const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8'));
   let idx = data.orders.findIndex(o=>o.CheckoutRequestID==order.CheckoutRequestID);
-  if(idx>=0) data.orders[idx]=order;
+  if(idx>=0){ data.orders[idx].supplierNotified=true; data.orders[idx].fulfilledAt=new Date().toISOString(); }
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(data,null,2));
   res.json({ success: true, order, supplierLink: link });
 });
-
 app.post('/api/callback', (req, res) => {
   console.log('CALLBACK:', JSON.stringify(req.body, null, 2));
   try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; order.paidAt = new Date().toISOString(); notifySupplier(order); order.supplierNotified = true; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' });
 });
-app.post('/api/mpesa/callback', (req, res) => { 
-  try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; order.paidAt = new Date().toISOString(); notifySupplier(order); order.supplierNotified = true; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' }); 
+app.post('/api/mpesa/callback', (req, res) => {
+  try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; order.paidAt = new Date().toISOString(); notifySupplier(order); order.supplierNotified = true; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' });
 });
 app.post('/api/dropship/fulfill', (req,res)=>{
   const { orderId } = req.body;
   const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8'));
-  const order = data.orders.find(o=>o.id==orderId || o.CheckoutRequestID==orderId);
+  const order = data.orders.find(o=>o.id==orderId || o.CheckoutRequestID==orderId || o.CheckoutRequestID==orderId);
   if(!order) return res.status(404).json({error:'Order not found'});
   const link = notifySupplier(order);
   order.supplierNotified = true;
@@ -162,6 +125,5 @@ app.get('/api/external-orders', (req,res)=>{ try{ const list = JSON.parse(fs.rea
 let suppliers = []; let pendingProducts = [];
 app.post('/api/supplier/register', (req,res)=>{ const { supplier, product } = req.body; suppliers.push({...supplier, id:Date.now(), date:new Date()}); if(product && product.name){ pendingProducts.push({...product, id:Date.now(), supplier:supplier.name, status:'pending'}); } res.json({ok:true}); });
 app.get('/api/supplier/pending', (req,res)=>{ res.json({suppliers, pendingProducts}); });
-
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`🌊 Oceanic Live on ${PORT} - FIXED phone/name split + admin fulfill`));
+app.listen(PORT, () => console.log(`🌊 Oceanic Live on ${PORT} - PRICE HIDDEN FROM SUPPLIER`));
