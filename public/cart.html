@@ -1,20 +1,18 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>E-MARTCOM CART - CHECKOUT LIVE</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>E-MARTCOM CART - FIXED CHECKOUT</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial;background:#f5f5f5}header{background:#0a4a7a;padding:12px;color:#fff;display:flex;gap:10px;position:sticky;top:0}.wrap{max-width:1350px;margin:10px auto;display:grid;grid-template-columns:1fr 400px;gap:10px;padding:10px}.card{background:#fff;border-radius:10px;padding:12px}.item{display:flex;gap:8px;padding:10px;border:1px solid #eee;border-radius:10px;margin-bottom:8px}.item img{width:60px;height:60px;object-fit:contain}.row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}.total{font-weight:900;font-size:18px;background:#ecfeff;padding:12px;border-radius:10px;border:2px solid #0a4a7a;margin-top:8px}.btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}.btn-paypal{background:#ffc439}.btn-card{background:#0a4a7a;color:#fff}.btn-mpesa{background:#00a651;color:#fff}select,input{padding:10px;border-radius:8px;border:1px solid #ddd;width:100%;margin-top:6px}@media(max-width:900px){.wrap{grid-template-columns:1fr}}</style></head><body>
-<header><a href="index.html" style="color:#fff;text-decoration:none;font-weight:900">← E-MARTCOM INCLUSIVE CART</a><div style="flex:1"></div></header>
+<header><a href="index.html" style="color:#fff;text-decoration:none;font-weight:900">← E-MARTCOM CART</a><div style="flex:1"></div></header>
 <div class="wrap"><div class="card"><h3>Cart (<span id="cnt">0</span>)</h3><div id="list"></div>
 <div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:10px">
 <label style="font-size:12px;font-weight:900">SHIP TO:</label><select id="destAll" onchange="changeAllDest()"><option value="ke">Kenya</option><option value="ug">Uganda</option><option value="ng">Nigeria</option><option value="us">USA</option><option value="ae">UAE</option><option value="gb">UK</option></select>
-<input id="addr" placeholder="Full delivery address + city">
-<input id="phone" placeholder="Phone 2547... for M-Pesa">
-<input id="custName" placeholder="Your name for Card">
+<input id="addr" placeholder="Full delivery address + city - REQUIRED">
+<input id="phone" placeholder="M-Pesa Phone 2547... - REQUIRED for M-Pesa">
+<input id="custName" placeholder="Your Name - for Card">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
 <button onclick="setAllMethod('air')" style="padding:8px;border-radius:8px">✈️ Air 3-7d</button>
 <button onclick="setAllMethod('sea')" style="padding:8px;border-radius:8px;background:#dcfce7">🚢 Sea -65%</button>
 <button onclick="setAllMethod('eparcel')" style="padding:8px;border-radius:8px">📦 E-parcel</button>
 <button onclick="setAllMethod('rail')" style="padding:8px;border-radius:8px">🚆 Rail</button>
-</div>
-<button onclick="clearCart()" style="margin-top:8px;padding:6px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px">Clear Cart</button>
+</div><button onclick="clearCart()" style="margin-top:8px;padding:6px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px">Clear Cart</button>
 </div></div>
 <div><div class="card"><h4>ORDER SUMMARY - INCLUSIVE</h4><div id="breakdown" style="font-size:11px;background:#f8fafc;padding:10px;border-radius:8px;margin:8px 0;max-height:180px;overflow:auto"></div>
 <div class="row"><span>Products Subtotal</span><span id="sub">$0</span></div><div class="row"><span>Weight</span><span id="wt">0kg</span></div><div class="row"><span>Shipping Total</span><span id="ship">$0</span></div><div class="row"><span>Processing 3%</span><span id="fee">$0</span></div>
@@ -31,7 +29,7 @@ let cart=JSON.parse(localStorage.getItem('cart')||'[]');let dest=localStorage.ge
 function toUSD(v){let n=parseFloat(v);return isNaN(n)?0:n;}function getPrice(it){return toUSD(it.priceUSD||it.price||it.p||0);}
 function baseCost(o,d,w){let b=BASE[o]?.[d]||20;let wm=w<=0.5?1:w<=1?1.5:w<=2?2.2:w<=5?3.8:w<=10?6.5:12;return b*wm;}
 function format(usd){return `$${toUSD(usd).toFixed(2)}`;}
-function render(){
+function render(){try{
 document.getElementById('destAll').value=dest;document.getElementById('cnt').innerText=cart.reduce((s,i)=>s+toUSD(i.qty||1),0);
 let sub=0,w=0,shipT=0,bd='',html='';
 if(cart.length==0){document.getElementById('list').innerHTML='<p style="text-align:center;padding:20px">Cart empty - <a href="index.html">Shop</a></p>';}
@@ -39,46 +37,39 @@ cart.forEach((it,idx)=>{
 let qty=toUSD(it.qty||1);let price=getPrice(it);let weight=toUSD(it.weight||0.05);let src=(it.source||'china').toLowerCase();let meth=(it.shipMethod||'air').toLowerCase();
 let shipOne=baseCost(src,dest,weight)*MM[meth];let prodTotal=price*qty;let shipTotal=shipOne*qty;
 sub+=prodTotal;w+=weight*qty;shipT+=shipTotal;
-bd+=`${(it.name||'Item').slice(0,30)} x${qty} = ${format(prodTotal+shipTotal)}<br>`;
+bd+=`${(it.name||'Item').slice(0,28)} x${qty} = ${format(prodTotal+shipTotal)}<br>`;
 html+=`<div class="item"><img src="${it.image||it.img||''}"><div style="flex:1"><b style="font-size:11px">${(it.name||'Item').slice(0,35)}</b><br><small>${src.toUpperCase()}→${dest.toUpperCase()} ${meth}</small><div style="display:flex;gap:6px;margin-top:6px"><button onclick="chg(${idx},-1)">-</button><span>${qty}</span><button onclick="chg(${idx},1)">+</button><button onclick="rem(${idx})" style="background:red;color:#fff">✕</button></div></div><div style="text-align:right;font-weight:900;color:#0a4a7a">${format(prodTotal+shipTotal)}<br><small>INCL</small></div></div>`;
 });
 document.getElementById('list').innerHTML=html;let fee=sub*0.03;let grand=sub+shipT+fee;
 document.getElementById('sub').innerText=format(sub);document.getElementById('wt').innerText=w.toFixed(2)+'kg';document.getElementById('ship').innerText=format(shipT);document.getElementById('fee').innerText=format(fee);
 document.getElementById('grand').innerText=format(grand)+' INCL';document.getElementById('grandPaypal').innerText=format(grand)+' INCL';document.getElementById('grandCard').innerText=format(grand)+' INCL';document.getElementById('grandMpesa').innerText='KSh '+Math.round(grand*129)+' INCL';
-document.getElementById('breakdown').innerHTML=bd+`<b>TOTAL ${format(grand)} INCLUSIVE</b>`;return grand;
-}
-function chg(i,d){cart[i].qty=toUSD(cart[i].qty||1)+d;if(cart[i].qty<=0)cart.splice(i,1);save();render();}
-function rem(i){cart.splice(i,1);save();render();}
-function save(){localStorage.setItem('cart',JSON.stringify(cart));}
-function changeAllDest(){dest=document.getElementById('destAll').value;localStorage.setItem('shipDest',dest);render();}
+document.getElementById('breakdown').innerHTML=bd+`<b>TOTAL ${format(grand)} INCLUSIVE</b>`;return grand;}catch(e){console.log('render error',e);return 0;}}
+function chg(i,d){cart[i].qty=toUSD(cart[i].qty||1)+d;if(cart[i].qty<=0)cart.splice(i,1);save();render();}function rem(i){cart.splice(i,1);save();render();}
+function save(){localStorage.setItem('cart',JSON.stringify(cart));}function changeAllDest(){dest=document.getElementById('destAll').value;localStorage.setItem('shipDest',dest);render();}
 function setAllMethod(m){cart.forEach(c=>c.shipMethod=m);localStorage.setItem('shipMethod',m);save();render();}
 function clearCart(){cart=[];save();render();}
 function showRes(txt){let el=document.getElementById('result');el.style.display='block';el.innerText=txt;}
 async function pay(type){
-let grand=render();if(grand==0){alert('Cart empty');return;}
-let addr=document.getElementById('addr').value;let phone=document.getElementById('phone').value||'2547';let custName=document.getElementById('custName').value||'Customer';
-if(!addr){alert('Enter delivery address first');document.getElementById('addr').focus();return;}
-let btn=document.getElementById(type=='paypal'?'btnPaypal':type=='card'?'btnCard':'btnMpesa');let old=btn.innerText;btn.innerText='Processing...';btn.disabled=true;
-try{
- if(type=='paypal'){
-  let msg=`*E-MARTCOM ORDER*%0AItems:${cart.length} To ${dest.toUpperCase()}%0AGrand INCLUSIVE: ${format(grand)}%0AAddr:${encodeURIComponent(addr)}%0APhone:${phone}%0A${encodeURIComponent(cart.map(c=>c.name+' x'+c.qty).join(', '))}`;
-  window.open(`https://wa.me/254713367205?text=${msg}`,'_blank');
-  showRes('PayPal via WhatsApp opened - '+format(grand)+' INCL');
- }
- if(type=='card'){
-  let r=await fetch('/api/card-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:Math.round(grand*129),items:cart,customerName:custName,cardLast4:'****',address:addr})});
-  let d=await r.json();console.log(d);showRes('CARD PAID ✅ '+JSON.stringify(d).slice(0,500));alert('CARD ORDER SAVED ✅ - Supplier notified! Order ID: '+d.order?.CheckoutRequestID);localStorage.removeItem('cart');cart=[];render();
- }
- if(type=='mpesa'){
-  if(!phone.startsWith('254')){alert('Enter M-Pesa as 2547...');btn.innerText=old;btn.disabled=false;return;}
-  let amt=Math.round(grand*129);if(amt<1)amt=1;
-  let r=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,amount:amt,items:cart})});
-  let d=await r.json();console.log(d);showRes('M-PESA STK SENT to '+phone+' KSh '+amt+' - '+JSON.stringify(d).slice(0,500));
-  if(d.CheckoutRequestID){alert('✅ STK Push sent to '+phone+'\nEnter PIN on phone\nKSh '+amt+' = '+format(grand)+' INCL');}
-  else{alert('STK Response: '+JSON.stringify(d));}
- }
-}catch(e){showRes('Error: '+e.message);alert('Checkout error: '+e.message);}
-btn.innerText=old;btn.disabled=false;
+ let grand=render();if(grand==0){alert('Cart empty');return;}
+ let addr=document.getElementById('addr').value.trim();let phone=document.getElementById('phone').value.trim();let custName=document.getElementById('custName').value||'Customer';
+ if(!addr){alert('Please enter delivery address first');document.getElementById('addr').focus();return;}
+ let btnId=type=='paypal'?'btnPaypal':type=='card'?'btnCard':'btnMpesa';let btn=document.getElementById(btnId);let oldText=btn?btn.innerHTML:'PAY';
+ try{
+  if(btn){btn.innerHTML='Processing...';btn.disabled=true;}
+  if(type=='paypal'){
+   let msg=`*E-MARTCOM ORDER*%0AItems:${cart.length} To ${dest.toUpperCase()}%0AGrand ${format(grand)} INCL%0AAddr:${encodeURIComponent(addr)}%0APhone:${phone}%0A${encodeURIComponent(cart.map(c=>c.name+' x'+c.qty).join(', '))}`;
+   window.open(`https://wa.me/254713367205?text=${msg}`,'_blank');showRes('PayPal WhatsApp opened - '+format(grand));
+  }
+  if(type=='card'){
+   let r=await fetch('/api/card-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:Math.round(grand*129),items:cart,customerName:custName,address:addr})});
+   let d=await r.json();console.log(d);showRes('✅ CARD ORDER SAVED - ID:'+d.order.CheckoutRequestID);alert('✅ CARD SAVED! Order ID: '+d.order.CheckoutRequestID+'\nCart will clear now. Check /api/orders');cart=[];localStorage.setItem('cart','[]');render();if(btn){btn.innerHTML='✅ PAID - Order '+d.order.CheckoutRequestID.slice(0,8);}return;
+  }
+  if(type=='mpesa'){
+   if(!phone||!phone.startsWith('254')){alert('Enter M-Pesa as 2547...');return;}
+   let amt=Math.round(grand*129);let r=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,amount:amt,items:cart})});
+   let d=await r.json();console.log(d);showRes('M-PESA STK sent to '+phone+' KSh '+amt+' - '+JSON.stringify(d));alert('✅ STK sent to '+phone+'\nEnter PIN\nKSh '+amt);
+  }
+ }catch(e){showRes('Checkout error: '+e.message);alert('Error: '+e.message);}finally{try{if(btn){btn.innerHTML=oldText;btn.disabled=false;}}catch(e){}}
 }
 render();
 </script></body></html>
