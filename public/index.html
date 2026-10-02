@@ -1,14 +1,113 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>E-MARTCOM</title>
-<style>body{font-family:Arial;background:#f5f5f5;margin:0}header{background:#0a4a7a;padding:12px;color:#fff;display:flex;gap:10px;position:sticky;top:0;z-index:20}.grid{max-width:1350px;margin:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:10px}.card{background:#fff;border-radius:10px;padding:8px;text-decoration:none;color:#000;display:block;border:2px solid #eee}.card:hover{border-color:#0a4a7a}.card img{width:100%;height:140px;object-fit:contain}.grand{background:#0a4a7a;color:#fff;padding:6px;border-radius:6px;text-align:center;font-weight:900;margin-top:6px;font-size:12px}</style></head><body>
-<header><div style="font-weight:900">E-MARTCOM GLOBAL</div><div style="flex:1"></div><a href="cart.html" style="background:#fff;color:#0a4a7a;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:900">🛒 <span id="cc">0</span></a></header>
-<div style="max-width:1350px;margin:auto;padding:10px"><select id="dest" onchange="localStorage.setItem('shipDest',this.value);render()"><option value="ke">To Kenya</option><option value="ug">Uganda</option><option value="ng">Nigeria</option><option value="us">USA</option><option value="ae">UAE</option><option value="gb">UK</option></select> <select id="method" onchange="localStorage.setItem('shipMethod',this.value);render()"><option value="air">Air 3-7d</option><option value="sea">Sea -65% Cheapest</option><option value="eparcel">E-parcel -35%</option><option value="rail">Rail -45%</option></select></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-MARTCOM GLOBAL - Oceanic Dropship</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial;background:#eef6fb;color:#0f172a}
+header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{font-weight:900;font-size:20px;letter-spacing:1px}.logo span{color:#06b6d4}
+.search{flex:1;max-width:500px;display:flex;gap:6px}
+.search input{flex:1;padding:10px 14px;border-radius:20px;border:none;outline:none}
+.search button{padding:10px 16px;border-radius:20px;border:none;background:#f68b1e;color:#fff;font-weight:800;cursor:pointer}
+.cart-btn{background:#fff;color:#0a4a7a;padding:8px 14px;border-radius:20px;text-decoration:none;font-weight:900;display:flex;align-items:center;gap:4px}
+.bar{background:#fff;padding:8px 14px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid #e0f2fe;position:sticky;top:52px;z-index:90}
+.chip{padding:6px 14px;border-radius:20px;border:2px solid #e0f2fe;background:#f8fafc;white-space:nowrap;cursor:pointer;font-size:12px;font-weight:700}
+.chip.active{background:#0a4a7a;color:#fff;border-color:#0a4a7a}
+.grid{max-width:1400px;margin:14px auto;padding:0 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px rgba(10,74,122,.08);border:1px solid #e0f2fe;cursor:pointer;transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(10,74,122,.15)}
+.card img{width:100%;height:180px;object-fit:contain;background:#f8fafc;padding:8px}
+.card-body{padding:10px}
+.card-body h4{font-size:13px;line-height:1.3;height:36px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.card-body.meta{font-size:11px;color:#64748b;margin:4px 0}
+.card-body.price{font-weight:900;color:#0a4a7a;font-size:14px}
+.card-body.btn{display:block;width:100%;margin-top:6px;padding:8px;background:#f68b1e;color:#fff;text-align:center;border-radius:20px;font-size:11px;font-weight:800;border:none;cursor:pointer}
+.dest-bar{max-width:1400px;margin:10px auto;padding:0 12px;display:flex;gap:8px;align-items:center}
+.dest-bar select{padding:8px 12px;border-radius:20px;border:2px solid #e0f2fe}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">E-MART<span>COM</span> GLOBAL</div>
+<div class="search">
+<input id="q" placeholder="Search bracelets, phone cases, t-shirts..." onkeyup="doSearch()">
+<button onclick="doSearch()">🔍</button>
+</div>
+<div style="flex:1"></div>
+<a href="cart.html" class="cart-btn">🛒 <span id="cartCount">0</span> CART</a>
+<a href="admin.html" style="background:#06b6d4;color:#fff;padding:8px 12px;border-radius:20px;text-decoration:none;font-weight:800;font-size:12px">Admin</a>
+</header>
+
+<div class="bar">
+<div class="chip active" onclick="filterCat('all',this)">All</div>
+<div class="chip" onclick="filterCat('bracelet',this)">Bracelets</div>
+<div class="chip" onclick="filterCat('phone',this)">Phone Cases</div>
+<div class="chip" onclick="filterCat('shirt',this)">T-Shirts / Shorts</div>
+<div class="chip" onclick="filterCat('china',this)">From China</div>
+<div class="chip" onclick="filterCat('kenya',this)">From Kenya</div>
+</div>
+
+<div class="dest-bar">
+<label style="font-size:12px;font-weight:800">Ship to:</label>
+<select id="dest" onchange="setDest(this.value)">
+<option value="ke">KENYA</option>
+<option value="ug">Uganda</option>
+<option value="ng">Nigeria</option>
+<option value="us">USA</option>
+<option value="ae">UAE</option>
+<option value="gb">UK</option>
+</select>
+<span id="methodLabel" style="font-size:12px;background:#fffbeb;padding:6px 10px;border-radius:20px;border:1px solid #fef3c7"></span>
+</div>
+
 <div class="grid" id="grid"></div>
+
 <script>
-const BASE={china:{ke:12,ug:15,ng:18,us:20,ae:16,gb:20},kenya:{ke:1.5,ug:8,ng:15,us:18,ae:15,gb:18},usa:{ke:20,ug:22,ng:24,us:2,ae:16,gb:14},japan:{ke:26,ug:28,ng:30,us:22,ae:18,gb:16},uk:{ke:18,ug:20,ng:22,us:14,ae:12,gb:2},uae:{ke:12,ug:14,ng:16,us:16,ae:2,gb:12},turkey:{ke:14,ug:16,ng:18,us:15,ae:6,gb:8},germany:{ke:18,ug:20,ng:22,us:14,ae:12,gb:6},canada:{ke:24,ug:26,ng:28,us:12,ae:20,gb:14}};
-const MM={air:1,sea:0.35,eparcel:0.65,rail:0.55};
-let all=[{id:1,n:"Clover Bracelet 18K Gold Variations",p:1.87,old:2.5,w:0.05,o:["china","kenya"],img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",vars:["Gold-purple_LZ0692","Gold-red-LZ0692","Gold-pink-LZ0692","Gold-blue-LZ0692","Gold-orange-LZ0692","Gold-green-LZ0692"]},{id:2,n:"Samsung A15 128GB",p:180.77,old:200,w:0.4,o:["china","kenya","uae"],img:"https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400"},{id:3,n:"Nike T-Shirt 3pcs",p:13.85,old:17,w:0.2,o:["turkey","china","kenya"],img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400"}];
-let dest=localStorage.getItem('shipDest')||'ke';let method=localStorage.getItem('shipMethod')||'air';
-document.getElementById('dest').value=dest;document.getElementById('method').value=method;
-function sc(o,d,w){let b=BASE[o]?.[d]||20;let m=w<=0.5?1:w<=1?1.5:w<=2?2.2:w<=5?3.8:6.5;return b*m*MM[method];}
-function render(){let h='';all.forEach(pr=>{let c=pr.o.map(o=>sc(o,dest,pr.w)).sort((a,b)=>a-b)[0];let g=pr.p+c;h+=`<a class="card" href="product.html?id=${pr.id}"><img src="${pr.img}"><div style="font-weight:800;font-size:12px">${pr.n.slice(0,35)}</div><div style="font-size:10px;color:#666">From ${pr.o[0].toUpperCase()} → ${dest.toUpperCase()} ${method.toUpperCase()}</div><div style="font-size:10px">Product $${pr.p} + Ship $${c.toFixed(2)}</div><div class="grand">$${g.toFixed(2)} INCLUSIVE • Tap to select variations</div></a>`});document.getElementById('grid').innerHTML=h;document.getElementById('cc').innerText=JSON.parse(localStorage.getItem('cart')||'[]').reduce((s,i)=>s+i.qty,0);}render();
-</script></body></html>
+// 🔒 FIXED PRODUCTS - ID 1=bracelet, 2=phone, 3=shorts (was all showing bracelet before)
+let allProducts=[
+{id:1,n:"Clover Bracelet 18K Gold 6 Variations",p:1.87,w:0.05,o:["china","kenya"],cat:"bracelet",img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",vars:6,desc:"6 Variations Gold-purple_LZ0692 etc"},
+{id:2,n:"Samsung A71 Phone Case Silicone",p:2.5,w:0.1,o:["china","kenya"],cat:"phone",img:"https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400",vars:4,desc:"Black, Blue, Red, Clear"},
+{id:3,n:"Nike T-Shirt Sports Shorts",p:5.2,w:0.2,o:["china","usa"],cat:"shirt",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",vars:6,desc:"White-M, White-L, White-XL, Black-M, Black-L, Black-XL - SHORTS"}
+];
+let products=[...allProducts];
+
+function setDest(d){localStorage.setItem('shipDest',d);render(products);updateMethodLabel();}
+function updateMethodLabel(){let m=localStorage.getItem('shipMethod')||'air';document.getElementById('methodLabel').innerText='Method: '+m.toUpperCase()+' ✅ Click product to change';}
+function updateCartCount(){let c=JSON.parse(localStorage.getItem('cart')||'[]');document.getElementById('cartCount').innerText=c.reduce((s,i)=>s+(parseInt(i.qty)||0),0);}
+function doSearch(){let q=document.getElementById('q').value.toLowerCase();let f=allProducts.filter(p=>p.n.toLowerCase().includes(q));render(f);}
+function filterCat(cat,el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));if(el)el.classList.add('active');if(cat=='all')return render(allProducts);let f=allProducts.filter(p=>cat=='china'||cat=='kenya'?p.o.includes(cat):p.cat.includes(cat)||p.n.toLowerCase().includes(cat));render(f);}
+
+function render(list){
+let dest=localStorage.getItem('shipDest')||'ke';
+let method=localStorage.getItem('shipMethod')||'air';
+// simple ship calc for card preview
+let base={china:12,kenya:1.5,usa:20}[list[0]?.o[0]||'china']||12;
+if(dest=='ug') base+=3; if(dest=='us') base+=8;
+let mult={air:1,sea:0.35,eparcel:0.65,rail:0.55}[method]||1;
+document.getElementById('grid').innerHTML=list.map(pr=>{
+let ship=(base*mult).toFixed(2);
+let total=(pr.p+parseFloat(ship)).toFixed(2);
+return `<div class="card" onclick="location.href='product.html?id=${pr.id}'">
+<img src="${pr.img}" alt="${pr.n}">
+<div class="card-body">
+<h4>${pr.n}</h4>
+<div class="meta">${pr.desc.slice(0,40)} • ${pr.o.join('/').toUpperCase()} → ${dest.toUpperCase()}</div>
+<div class="price">$${total} INCL • Ship $${ship}+$${pr.p} prod</div>
+<button onclick="event.stopPropagation();location.href='product.html?id=${pr.id}'">$${total} INCLUSIVE - Tap to select variations</button>
+</div></div>`;
+}).join('');
+if(list.length==0)document.getElementById('grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">No products found for "'+document.getElementById('q').value+'"</div>';
+updateCartCount();
+}
+
+// init
+document.getElementById('dest').value=localStorage.getItem('shipDest')||'ke';
+render(products);
+updateMethodLabel();
+updateCartCount();
+</script>
+</body>
+</html>
