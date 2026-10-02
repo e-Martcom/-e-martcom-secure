@@ -3,111 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>E-MARTCOM GLOBAL - Oceanic Dropship</title>
+<title>E-MARTCOM GLOBAL - Secure</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Arial;background:#eef6fb;color:#0f172a}
-header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
-.logo{font-weight:900;font-size:20px;letter-spacing:1px}.logo span{color:#06b6d4}
-.search{flex:1;max-width:500px;display:flex;gap:6px}
-.search input{flex:1;padding:10px 14px;border-radius:20px;border:none;outline:none}
-.search button{padding:10px 16px;border-radius:20px;border:none;background:#f68b1e;color:#fff;font-weight:800;cursor:pointer}
-.cart-btn{background:#fff;color:#0a4a7a;padding:8px 14px;border-radius:20px;text-decoration:none;font-weight:900;display:flex;align-items:center;gap:4px}
-.bar{background:#fff;padding:8px 14px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid #e0f2fe;position:sticky;top:52px;z-index:90}
-.chip{padding:6px 14px;border-radius:20px;border:2px solid #e0f2fe;background:#f8fafc;white-space:nowrap;cursor:pointer;font-size:12px;font-weight:700}
-.chip.active{background:#0a4a7a;color:#fff;border-color:#0a4a7a}
-.grid{max-width:1400px;margin:14px auto;padding:0 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px rgba(10,74,122,.08);border:1px solid #e0f2fe;cursor:pointer;transition:.2s}
-.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(10,74,122,.15)}
-.card img{width:100%;height:180px;object-fit:contain;background:#f8fafc;padding:8px}
-.card-body{padding:10px}
-.card-body h4{font-size:13px;line-height:1.3;height:36px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.card-body.meta{font-size:11px;color:#64748b;margin:4px 0}
-.card-body.price{font-weight:900;color:#0a4a7a;font-size:14px}
-.card-body.btn{display:block;width:100%;margin-top:6px;padding:8px;background:#f68b1e;color:#fff;text-align:center;border-radius:20px;font-size:11px;font-weight:800;border:none;cursor:pointer}
-.dest-bar{max-width:1400px;margin:10px auto;padding:0 12px;display:flex;gap:8px;align-items:center}
-.dest-bar select{padding:8px 12px;border-radius:20px;border:2px solid #e0f2fe}
+body{font-family:'Segoe UI',Arial;background:#f0f8ff;color:#0f172a}
+header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.logo{font-weight:900;font-size:20px;letter-spacing:.5px}.logo span{color:#06b6d4}
+.searchBox{flex:1;max-width:500px;display:flex;gap:6px;background:#fff;border-radius:24px;padding:4px 4px 14px;align-items:center}
+.searchBox input{flex:1;border:none;outline:none;font-size:13px;padding:6px}
+.searchBox button{background:#f68b1e;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;color:#fff;font-weight:900}
+.cartBtn{background:#fff;color:#0a4a7a;padding:8px 14px;border-radius:20px;text-decoration:none;font-weight:900;font-size:12px;display:flex;align-items:center;gap:4px}
+.filters{background:#fff;padding:10px 14px;display:flex;gap:8px;overflow-x:auto;position:sticky;top:56px;z-index:90;border-bottom:1px solid #e0f2fe}
+.filter{padding:8px 14px;border-radius:20px;border:1px solid #e0f2fe;background:#f8fafc;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap}
+.filter.active{background:#0a4a7a;color:#fff;border-color:#0a4a7a}
+.shipBar{background:#fffbeb;padding:8px 14px;display:flex;gap:12px;align-items:center;font-size:11px;border-bottom:1px solid #fef3c7;flex-wrap:wrap}
+.shipBar select{padding:6px 10px;border-radius:8px;border:1px solid #e0f2fe;font-weight:700;font-size:11px}
+.grid{max-width:1300px;margin:14px auto;padding:0 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #e0f2fe;cursor:pointer;transition:.2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(10,74,122,.15)}
+.card img{width:100%;height:220px;object-fit:contain;background:#f8fafc}
+.cardBody{padding:10px}
+.cardBody b{font-size:13px;display:block;line-height:1.3;height:34px;overflow:hidden}
+.cardBody .small{font-size:11px;color:#64748b;line-height:1.3;margin-top:4px}
+.priceLine{margin-top:6px;font-size:12px;font-weight:800;color:#0a4a7a}
+.selectBtn{width:100%;margin-top:8px;padding:8px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer}
+.selectBtn:hover{background:#0a4a7a;color:#fff}
+@media(max-width:600px){header{padding:10px}.logo{font-size:16px}.grid{grid-template-columns:1fr 1fr;gap:10px}.card img{height:160px}}
 </style>
 </head>
 <body>
 <header>
 <div class="logo">E-MART<span>COM</span> GLOBAL</div>
-<div class="search">
-<input id="q" placeholder="Search bracelets, phone cases, t-shirts..." onkeyup="doSearch()">
+<div class="searchBox">
+<input id="searchInput" placeholder="Search bracelets, phone cases, t-shirts..." onkeyup="doSearch()">
 <button onclick="doSearch()">🔍</button>
 </div>
 <div style="flex:1"></div>
-<a href="cart.html" class="cart-btn">🛒 <span id="cartCount">0</span> CART</a>
-<a href="admin.html" style="background:#06b6d4;color:#fff;padding:8px 12px;border-radius:20px;text-decoration:none;font-weight:800;font-size:12px">Admin</a>
+<!-- 🔒 FIXED: NO ADMIN BUTTON FOR CUSTOMERS -->
+<a href="cart.html" class="cartBtn">🛒 <span id="cartCount">0</span> CART</a>
 </header>
 
-<div class="bar">
-<div class="chip active" onclick="filterCat('all',this)">All</div>
-<div class="chip" onclick="filterCat('bracelet',this)">Bracelets</div>
-<div class="chip" onclick="filterCat('phone',this)">Phone Cases</div>
-<div class="chip" onclick="filterCat('shirt',this)">T-Shirts / Shorts</div>
-<div class="chip" onclick="filterCat('china',this)">From China</div>
-<div class="chip" onclick="filterCat('kenya',this)">From Kenya</div>
+<div class="filters">
+<div class="filter active" onclick="setCat('All',this)">All</div>
+<div class="filter" onclick="setCat('Bracelets',this)">Bracelets</div>
+<div class="filter" onclick="setCat('Phone Cases',this)">Phone Cases</div>
+<div class="filter" onclick="setCat('T-Shirts',this)">T-Shirts / Shorts</div>
+<div class="filter" onclick="setCat('From China',this)">From China</div>
+<div class="filter" onclick="setCat('From Kenya',this)">From Kenya</div>
 </div>
 
-<div class="dest-bar">
-<label style="font-size:12px;font-weight:800">Ship to:</label>
-<select id="dest" onchange="setDest(this.value)">
-<option value="ke">KENYA</option>
-<option value="ug">Uganda</option>
-<option value="ng">Nigeria</option>
-<option value="us">USA</option>
-<option value="ae">UAE</option>
-<option value="gb">UK</option>
-</select>
-<span id="methodLabel" style="font-size:12px;background:#fffbeb;padding:6px 10px;border-radius:20px;border:1px solid #fef3c7"></span>
+<div class="shipBar">
+<div>Ship to: <select id="shipTo" onchange="setShipTo(this.value)"><option value="KE">KENYA</option><option value="UG">UGANDA</option><option value="NG">NIGERIA</option><option value="US">USA</option></select></div>
+<div id="shipMethodLabel" style="background:#fff;padding:4px 10px;border-radius:12px;border:1px solid #fde68a">Method: <b id="methodText">EPARCEL</b> ✅ Click product to change</div>
 </div>
 
-<div class="grid" id="grid"></div>
+<div id="productGrid" class="grid"></div>
 
 <script>
-// 🔒 FIXED PRODUCTS - ID 1=bracelet, 2=phone, 3=shorts (was all showing bracelet before)
-let allProducts=[
-{id:1,n:"Clover Bracelet 18K Gold 6 Variations",p:1.87,w:0.05,o:["china","kenya"],cat:"bracelet",img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",vars:6,desc:"6 Variations Gold-purple_LZ0692 etc"},
-{id:2,n:"Samsung A71 Phone Case Silicone",p:2.5,w:0.1,o:["china","kenya"],cat:"phone",img:"https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400",vars:4,desc:"Black, Blue, Red, Clear"},
-{id:3,n:"Nike T-Shirt Sports Shorts",p:5.2,w:0.2,o:["china","usa"],cat:"shirt",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",vars:6,desc:"White-M, White-L, White-XL, Black-M, Black-L, Black-XL - SHORTS"}
+let allProducts = [
+{name:"Clover Bracelet 18K Gold 6 Variations",cat:"Bracelets",price:9.67,ship:7.8,prodShip:1.87,source:"CHINA/KENYA",img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",weight:0.1,vars:["Gold-purple_LZ0692","Gold-white","Gold-black","Gold-green","Gold-red","Gold-blue"]},
+{name:"Samsung A71 Phone Case Silicone",cat:"Phone Cases",price:10.30,ship:7.8,prodShip:2.5,source:"CHINA/KENYA",img:"https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=400",weight:0.2,vars:["Black","Blue","Red","Clear"]},
+{name:"Nike T-Shirt Sports Shorts",cat:"T-Shirts",price:13.00,ship:7.8,prodShip:5.2,source:"CHINA/USA",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",weight:0.3,vars:["White-M","White-L","White-XL","Black-M","Black-L"]},
+{name:"Oceanic Watch Luxury",cat:"Bracelets",price:15.5,ship:8.5,prodShip:2.2,source:"CHINA",img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400",weight:0.2,vars:["Black","Silver","Gold"]},
+{name:"iPhone 14 Pro Case",cat:"Phone Cases",price:8.9,ship:7.5,prodShip:2.0,source:"KENYA",img:"https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=400",weight:0.15,vars:["Clear","Black","Blue"]}
 ];
-let products=[...allProducts];
+let currentCat='All';
+let searchQ='';
 
-function setDest(d){localStorage.setItem('shipDest',d);render(products);updateMethodLabel();}
-function updateMethodLabel(){let m=localStorage.getItem('shipMethod')||'air';document.getElementById('methodLabel').innerText='Method: '+m.toUpperCase()+' ✅ Click product to change';}
-function updateCartCount(){let c=JSON.parse(localStorage.getItem('cart')||'[]');document.getElementById('cartCount').innerText=c.reduce((s,i)=>s+(parseInt(i.qty)||0),0);}
-function doSearch(){let q=document.getElementById('q').value.toLowerCase();let f=allProducts.filter(p=>p.n.toLowerCase().includes(q));render(f);}
-function filterCat(cat,el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));if(el)el.classList.add('active');if(cat=='all')return render(allProducts);let f=allProducts.filter(p=>cat=='china'||cat=='kenya'?p.o.includes(cat):p.cat.includes(cat)||p.n.toLowerCase().includes(cat));render(f);}
-
-function render(list){
-let dest=localStorage.getItem('shipDest')||'ke';
-let method=localStorage.getItem('shipMethod')||'air';
-// simple ship calc for card preview
-let base={china:12,kenya:1.5,usa:20}[list[0]?.o[0]||'china']||12;
-if(dest=='ug') base+=3; if(dest=='us') base+=8;
-let mult={air:1,sea:0.35,eparcel:0.65,rail:0.55}[method]||1;
-document.getElementById('grid').innerHTML=list.map(pr=>{
-let ship=(base*mult).toFixed(2);
-let total=(pr.p+parseFloat(ship)).toFixed(2);
-return `<div class="card" onclick="location.href='product.html?id=${pr.id}'">
-<img src="${pr.img}" alt="${pr.n}">
-<div class="card-body">
-<h4>${pr.n}</h4>
-<div class="meta">${pr.desc.slice(0,40)} • ${pr.o.join('/').toUpperCase()} → ${dest.toUpperCase()}</div>
-<div class="price">$${total} INCL • Ship $${ship}+$${pr.p} prod</div>
-<button onclick="event.stopPropagation();location.href='product.html?id=${pr.id}'">$${total} INCLUSIVE - Tap to select variations</button>
-</div></div>`;
-}).join('');
-if(list.length==0)document.getElementById('grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">No products found for "'+document.getElementById('q').value+'"</div>';
-updateCartCount();
+function getShipTo(){return localStorage.getItem('shipDest')||'KE';}
+function getShipMethod(){return localStorage.getItem('shipMethod')||'eparcel';}
+function setShipTo(v){localStorage.setItem('shipDest',v);render();}
+function setCat(cat,el){
+ currentCat=cat;
+ document.querySelectorAll('.filter').forEach(f=>f.classList.remove('active'));
+ if(el) el.classList.add('active');
+ render();
 }
-
-// init
-document.getElementById('dest').value=localStorage.getItem('shipDest')||'ke';
-render(products);
-updateMethodLabel();
+function doSearch(){searchQ=document.getElementById('searchInput').value.toLowerCase();render();}
+function updateCartCount(){
+ let cart=JSON.parse(localStorage.getItem('cart')||'[]');
+ let total=cart.reduce((s,i)=>s+(parseFloat(i.qty)||0),0);
+ document.getElementById('cartCount').innerText=total;
+ document.getElementById('shipTo').value=getShipTo();
+ document.getElementById('methodText').innerText=getShipMethod().toUpperCase();
+}
+function render(){
+ let grid=document.getElementById('productGrid');
+ let filtered=allProducts.filter(p=>{
+   let matchCat=currentCat=='All' || p.cat.includes(currentCat) || p.source.includes(currentCat.replace('From ',''));
+   let matchSearch=!searchQ || p.name.toLowerCase().includes(searchQ);
+   return matchCat && matchSearch;
+ });
+ if(filtered.length==0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">No products found</div>';return;}
+ grid.innerHTML=filtered.map((p,idx)=>`
+ <div class="card" onclick="goProduct(${allProducts.indexOf(p)})">
+ <img src="${p.img}" alt="${p.name}">
+ <div class="cardBody">
+ <b>${p.name}</b>
+ <div class="small">${p.vars.slice(0,3).join(', ')} • ${p.source} → ${getShipTo()}<br>
+ $${p.price.toFixed(2)} INCL • Ship $${p.ship.toFixed(2)}+$${p.prodShip} prod</div>
+ <div class="priceLine">$${p.price.toFixed(2)} INCLUSIVE - Tap to select variations</div>
+ <button class="selectBtn" onclick="event.stopPropagation();goProduct(${allProducts.indexOf(p)})">$${p.price.toFixed(2)} INCLUSIVE - Tap to select variations</button>
+ </div>
+ </div>
+ `).join('');
+}
+function goProduct(idx){
+ localStorage.setItem('selectedProduct', idx);
+ location.href='product.html?idx='+idx;
+}
 updateCartCount();
+render();
+
+// Load from localStorage products if exists
+try{
+ let stored = JSON.parse(localStorage.getItem('oceanicProducts')||'[]');
+ if(stored.length>0){ allProducts = stored.concat(allProducts); render(); }
+}catch(e){}
 </script>
 </body>
 </html>
