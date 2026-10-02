@@ -24,6 +24,16 @@ if (!fs.existsSync(EXTERNAL_FILE)) fs.writeFileSync(EXTERNAL_FILE, JSON.stringif
 
 const MAIN_SUPPLIER_PHONE = process.env.SUPPLIER_PHONE || "254722000000";
 const MAIN_SUPPLIER_NAME = "Kamukunji Supplier";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "TonyKitale2024!";
+
+// 🔒 Admin check
+function requireAdmin(req,res,next){
+  let key = req.headers['x-admin-key'] || req.query.adminKey || req.body.adminKey;
+  if(key!== ADMIN_PASSWORD){
+    return res.status(401).json({error:'Unauthorized - Admin only'});
+  }
+  next();
+}
 
 function saveOrder(order) {
   const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')||'{"orders":[]}');
@@ -32,14 +42,13 @@ function saveOrder(order) {
   return order;
 }
 
-// 🚀 FIXED: DIRECT TO CUSTOMER + PRICE HIDDEN
 function notifySupplier(order){
   const customer = order.customerName||'Customer';
   const realPhone = order.actualPhone||order.phone||'';
   const address = order.address||'Nairobi';
-  const supplierMsg = `*NEW ORDER - E-MARTCOM DIRECT DELIVERY* \n\n📦 *PRODUCT TO PACK:*\n${order.itemsText}\n\n👤 *SHIP DIRECTLY TO CUSTOMER (DO NOT SHIP TO E-MARTCOM/NANYUKI):*\nName: ${customer}\nPhone: ${realPhone}\nAddress: ${address}\n\n⚠️ *DIRECT DROPSHIP RULES:*\n1. Ship DIRECT to customer above\n2. Use sender: E-MARTCOM GLOBAL (hide your shop name)\n3. Do NOT put invoice with your price\n4. Put E-MARTCOM receipt: ${order.receipt||order.CheckoutRequestID}\n5. Send tracking number after shipping\n\n🧾 Order: ${order.receipt||order.CheckoutRequestID}\n\n✅ Confirm stock now.`;
+  const supplierMsg = `*NEW ORDER - E-MARTCOM DIRECT DELIVERY* \n\n📦 *PRODUCT TO PACK:*\n${order.itemsText}\n\n👤 *SHIP DIRECTLY TO CUSTOMER (DO NOT SHIP TO E-MARTCOM/NANYUKI):*\nName: ${customer}\nPhone: ${realPhone}\nAddress: ${address}\n\n⚠️ *DIRECT DROPSHIP RULES:*\n1. Ship DIRECT to customer above\n2. Use sender: E-MARTCOM GLOBAL\n3. Do NOT put invoice with price\n4. Send tracking after shipping\n\n🧾 Order: ${order.receipt||order.CheckoutRequestID}\n✅ Confirm stock now.`;
   const waLink = `https://wa.me/${MAIN_SUPPLIER_PHONE}?text=${encodeURIComponent(supplierMsg)}`;
-  console.log(`\n🏭 DIRECT DROPSHIP -> ${MAIN_SUPPLIER_NAME} ${MAIN_SUPPLIER_PHONE}\n${waLink}\n`);
+  console.log(`\n🏭 DIRECT DROPSHIP -> ${MAIN_SUPPLIER_NAME}\n${waLink}\n`);
   return waLink;
 }
 
@@ -108,7 +117,9 @@ app.post('/api/callback', (req, res) => {
 app.post('/api/mpesa/callback', (req, res) => {
   try { const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')); const stk = req.body.Body?.stkCallback; if (stk) { const order = data.orders.find(o => o.CheckoutRequestID === stk.CheckoutRequestID); if (order) { if (stk.ResultCode === 0) { const meta = stk.CallbackMetadata?.Item || []; order.status = 'PAID ✅ - M-PESA'; order.receipt = meta.find(i=>i.Name==='MpesaReceiptNumber')?.Value; order.paidAt = new Date().toISOString(); notifySupplier(order); order.supplierNotified = true; } else { order.status = `FAILED: ${stk.ResultDesc}`; } fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2)); } } } catch (e) { console.error(e); } res.json({ ResultCode: 0, ResultDesc: 'Accepted' });
 });
-app.post('/api/dropship/fulfill', (req,res)=>{
+
+// 🔒 PROTECTED ADMIN ROUTES
+app.post('/api/dropship/fulfill', requireAdmin, (req,res)=>{
   const { orderId } = req.body;
   const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8'));
   const order = data.orders.find(o=>o.id==orderId || o.CheckoutRequestID==orderId);
@@ -119,12 +130,12 @@ app.post('/api/dropship/fulfill', (req,res)=>{
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2));
   res.json({ok:true, supplierLink: link});
 });
-app.get('/api/orders', (req, res) => { const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')||'{"orders":[]}'); res.json(data); });
-app.get('/api/orders/clear', (req, res) => { fs.writeFileSync(ORDERS_FILE, JSON.stringify({orders: []})); res.json({ cleared: true }); });
+app.get('/api/orders', requireAdmin, (req, res) => { const data = JSON.parse(fs.readFileSync(ORDERS_FILE,'utf8')||'{"orders":[]}'); res.json(data); });
+app.get('/api/orders/clear', requireAdmin, (req, res) => { fs.writeFileSync(ORDERS_FILE, JSON.stringify({orders: []})); res.json({ cleared: true }); });
 app.post('/api/external-order', (req,res)=>{ try{ let list = JSON.parse(fs.readFileSync(EXTERNAL_FILE,'utf8')||'[]'); const entry = {...req.body, time: new Date().toISOString(), sourcingLink: `https://www.google.com/search?q=${encodeURIComponent((req.body.productName||'')+' wholesale price 1688 Alibaba')}`}; list.unshift(entry); fs.writeFileSync(EXTERNAL_FILE, JSON.stringify(list, null, 2)); res.json({ok:true, count: list.length, sourcingLink: entry.sourcingLink}); }catch(e){ res.json({ok:true}); } });
-app.get('/api/external-orders', (req,res)=>{ try{ const list = JSON.parse(fs.readFileSync(EXTERNAL_FILE,'utf8')||'[]'); res.json(list); }catch(e){ res.json([]); } });
+app.get('/api/external-orders', requireAdmin, (req,res)=>{ try{ const list = JSON.parse(fs.readFileSync(EXTERNAL_FILE,'utf8')||'[]'); res.json(list); }catch(e){ res.json([]); } });
 let suppliers = []; let pendingProducts = [];
 app.post('/api/supplier/register', (req,res)=>{ const { supplier, product } = req.body; suppliers.push({...supplier, id:Date.now(), date:new Date()}); if(product && product.name){ pendingProducts.push({...product, id:Date.now(), supplier:supplier.name, status:'pending'}); } res.json({ok:true}); });
-app.get('/api/supplier/pending', (req,res)=>{ res.json({suppliers, pendingProducts}); });
+app.get('/api/supplier/pending', requireAdmin, (req,res)=>{ res.json({suppliers, pendingProducts}); });
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`🌊 Oceanic Live DIRECT DROPSHIP on ${PORT}`));
+app.listen(PORT, () => console.log(`🌊 Oceanic Live SECURE + DIRECT on ${PORT} AdminPass:${ADMIN_PASSWORD}`));
