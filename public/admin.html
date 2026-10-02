@@ -1,6 +1,5 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin - E-MARTCOM Dropship Control</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin - E-MARTCOM Dropship Control FIXED</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box} body{font-family:'Segoe UI',Arial;background:#eef6fb;color:#0f172a}
 :root{--ocean:#0a4a7a;--cyan:#06b6d4;--green:#00a651}
@@ -8,8 +7,7 @@ header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:14px
 .logo{font-weight:900;font-size:22px}.logo span{color:var(--cyan)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1400px;margin:14px auto;padding:0 12px}
 .stat{background:#fff;border-radius:14px;padding:16px;box-shadow:0 4px 12px rgba(10,74,122,.08);border:1px solid #e0f2fe;text-align:center}
-.stat b{font-size:22px;color:var(--ocean);display:block}
-.stat small{font-size:11px;color:#64748b}
+.stat b{font-size:22px;color:var(--ocean);display:block}.stat small{font-size:11px;color:#64748b}
 .wrap{max-width:1400px;margin:14px auto;padding:0 12px;display:grid;grid-template-columns:1fr 380px;gap:14px}
 .card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 4px 12px rgba(10,74,122,.08);border:1px solid #e0f2fe}
 .tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
@@ -53,14 +51,12 @@ input,select{padding:10px;border:2px solid #e0f2fe;border-radius:10px;width:100%
 </div>
 
 <div style="display:flex;gap:8px;margin-bottom:10px">
-<input id="search" placeholder="Search phone, receipt, product..." onkeyup="doFilter()" style="flex:1">
-<select id="filterStatus" onchange="doFilter()" style="width:140px"><option value="All">All Status</option><option value="PAID">PAID Only</option><option value="STK">STK Sent</option><option value="FAILED">Failed</option></select>
+<input id="search" placeholder="Search TONY, receipt, product..." onkeyup="doFilter()" style="flex:1">
+<select id="filterStatus" onchange="doFilter()" style="width:140px"><option value="All">All Status</option><option value="PAID">PAID Only</option><option value="STK">STK Sent</option></select>
 </div>
 
-<div id="ordersBox"><table><thead><tr><th>Time</th><th>Phone</th><th>Amount</th><th>Items</th><th>Status</th><th>Profit</th><th>Dropship Action</th></tr></thead><tbody id="ordersTbody"><tr><td colspan="7" style="text-align:center;padding:20px;color:#94a3b8">Loading orders...</td></tr></tbody></table></div>
-
+<div id="ordersBox"><table><thead><tr><th>Time</th><th>Customer / Phone</th><th>Amount</th><th>Items</th><th>Status</th><th>Profit</th><th>Dropship Action</th></tr></thead><tbody id="ordersTbody"><tr><td colspan="7" style="text-align:center;padding:20px;color:#94a3b8">Loading orders...</td></tr></tbody></table></div>
 <div id="externalBox" style="display:none"><table><thead><tr><th>Time</th><th>Product</th><th>Customer Price</th><th>Source Cost</th><th>Profit</th><th>Source</th><th>Buy</th></tr></thead><tbody id="extTbody"></tbody></table></div>
-
 <div id="supBox" style="display:none"><div id="supList">Loading...</div></div>
 </div>
 
@@ -73,22 +69,12 @@ input,select{padding:10px;border:2px solid #e0f2fe;border-radius:10px;width:100%
 <div style="display:flex;justify-content:space-between;font-size:12px"><span>Supplier Cost (55%):</span><b id="calcCost">KSh 1,540</b></div>
 <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:900;color:var(--green);border-top:1px solid #bae6fd;margin-top:6px;padding-top:6px"><span>Your Profit:</span><b id="calcProfit">KSh 1,260</b></div>
 </div>
-<input id="calcInput" type="number" value="2800" placeholder="Enter customer price" oninput="calcProfit()">
+<input id="calcInput" type="number" value="2800" oninput="calcProfit()">
 
 <hr style="margin:12px 0;border:none;border-top:1px solid #eef2f7">
 <h4 style="font-size:12px">📲 Last Order WA</h4>
 <a id="waLast" href="#" target="_blank" style="display:block;background:#25D366;color:#fff;text-align:center;padding:10px;border-radius:10px;text-decoration:none;font-weight:800;margin-top:6px">Open WhatsApp to Customer</a>
 <a id="waSupplierLast" href="#" target="_blank" style="display:block;background:var(--ocean);color:#fff;text-align:center;padding:10px;border-radius:10px;text-decoration:none;font-weight:800;margin-top:6px">🏭 WhatsApp Supplier (Dropship)</a>
-
-<hr style="margin:12px 0;border:none;border-top:1px solid #eef2f7">
-<h4 style="font-size:12px">🔑 How Dropship Works</h4>
-<ul style="font-size:11px;line-height:1.6;margin-left:14px;color:#334155">
-<li>1. Customer pays YOU via M-Pesa</li>
-<li>2. You click FULFILL → Supplier gets WA</li>
-<li>3. You M-Pesa supplier 55%</li>
-<li>4. Supplier ships to Nanyuki</li>
-<li>5. Keep 45% profit - No stock!</li>
-</ul>
 </div>
 
 <div class="card" style="margin-top:12px">
@@ -99,145 +85,82 @@ input,select{padding:10px;border:2px solid #e0f2fe;border-radius:10px;width:100%
 </div>
 
 <script>
-let allOrders=[], allExternal=[];
+let allOrders=[];
 let SUPPLIER_PHONE = localStorage.getItem('supplierPhone') || '254722000000';
 document.getElementById('supplierPhoneInput').value = SUPPLIER_PHONE;
-
 function saveSupplierPhone(){
-  let p = document.getElementById('supplierPhoneInput').value.replace(/\D/g,'');
-  if(!p) return alert('Enter supplier phone');
-  if(p.startsWith('0')) p = '254'+p.slice(1);
-  if(p.startsWith('7')) p = '254'+p;
-  SUPPLIER_PHONE = p;
-  localStorage.setItem('supplierPhone', p);
-  alert('Supplier saved: '+p+'\nAlso update Render env SUPPLIER_PHONE='+p);
+  let p=document.getElementById('supplierPhoneInput').value.replace(/\D/g,'');
+  if(p.startsWith('0')) p='254'+p.slice(1);
+  if(p.startsWith('7')) p='254'+p;
+  SUPPLIER_PHONE=p; localStorage.setItem('supplierPhone',p);
+  alert('Supplier saved: '+p);
 }
-
 function setTab(t){
-document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');
-document.getElementById('ordersBox').style.display=t=='orders'?'block':'none';
-document.getElementById('externalBox').style.display=t=='external'?'block':'none';
-document.getElementById('supBox').style.display=t=='sup'?'block':'none';
-if(t=='external') loadExternal();
-if(t=='sup') loadSup();
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+ document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');
+ document.getElementById('ordersBox').style.display=t=='orders'?'block':'none';
+ document.getElementById('externalBox').style.display=t=='external'?'block':'none';
+ document.getElementById('supBox').style.display=t=='sup'?'block':'none';
+ if(t=='external') loadExternal();
+ if(t=='sup') loadSup();
 }
-
 async function loadOrders(){
-try{
-let r=await fetch('/api/orders'); let j=await r.json();
-allOrders=j.orders||[];
-let total=allOrders.reduce((s,o)=>s+parseInt(o.amount||0),0);
-let paid=allOrders.filter(o=>String(o.status).includes('PAID')).length;
-let profit=Math.floor(total*0.45);
-document.getElementById('sTotal').innerText='KSh '+total.toLocaleString();
-document.getElementById('sProfit').innerText='KSh '+profit.toLocaleString();
-document.getElementById('sOrders').innerText=allOrders.length;
-document.getElementById('sPaid').innerText=paid;
-let tbody=document.getElementById('ordersTbody');
-if(allOrders.length==0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:#94a3b8">No orders yet</td></tr>'; return;}
-tbody.innerHTML=allOrders.map(o=>{
-let st=o.status||'';
-let cls=st.includes('PAID')?'paid':st.includes('STK')?'stk':'fail';
-let profit=Math.floor((o.amount||0)*0.45);
-let items=o.itemsText||o.items?.map(i=>`${i.name} x${i.qty}`).join(', ')||'N/A';
-let time=new Date(o.date).toLocaleString();
-let receipt=o.receipt||o.CheckoutRequestID||'-';
-let supplierBtn = st.includes('PAID') ? `<button class="btn btn-fulfill" onclick="fulfillOrder('${o.CheckoutRequestID||o.id}')">🚀 FULFILL</button>` : `<small style="color:#94a3b8">${o.supplierNotified?'✅ Sent':''}</small>`;
-let waCustomer = `https://wa.me/${String(o.phone).replace(/\D/g,'')}?text=${encodeURIComponent(`Hello! Your E-MARTCOM order KSh ${o.amount} is ${st}. Receipt: ${receipt} - Delivery to Nanyuki`)}`;
-return `<tr>
-<td><small>${time}</small></td>
-<td><b>${o.phone}</b></td>
-<td><b>KSh ${parseInt(o.amount||0).toLocaleString()}</b></td>
-<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis" title="${items}">${items}</td>
-<td><span class="badge ${cls}">${st}</span><br><small>${receipt}</small><br><small>${o.supplierNotified?'🏭 Supplier Notified':''}</small></td>
-<td style="color:var(--green);font-weight:800">KSh ${profit}</td>
-<td><a class="btn btn-ws" target="_blank" href="${waCustomer}">WA Cust</a><br>${supplierBtn}</td>
-</tr>`;
-}).join('');
-if(allOrders[0]){
-let last=allOrders[0];
-let cost=Math.floor((last.amount||0)*0.55);
-let profitLast=Math.floor((last.amount||0)*0.45)-100;
-document.getElementById('waLast').href=`https://wa.me/${String(last.phone).replace(/\D/g,'')}?text=${encodeURIComponent(`🌊 NEW ORDER! ${last.status}\n💰 KSh ${last.amount}\n📱 ${last.phone}\n🛒 ${last.itemsText||''}\nReceipt: ${last.receipt||last.CheckoutRequestID}`)}`;
-let supMsg=`*DROPSHIP ORDER* \nCustomer: ${last.phone}\nProduct: ${last.itemsText}\nCustomer Paid: KSh ${last.amount}\nBuy for: ~KSh ${cost}\nYour Profit: KSh ${profitLast}\nDeliver to Nanyuki\nReceipt: ${last.receipt||last.CheckoutRequestID}`;
-document.getElementById('waSupplierLast').href=`https://wa.me/${SUPPLIER_PHONE}?text=${encodeURIComponent(supMsg)}`;
-document.getElementById('calcInput').value=last.amount||2800;
-calcProfit();
-document.getElementById('recent').innerHTML=`Last: <b>${last.phone}</b> KSh ${last.amount} - ${last.status}<br><small>${new Date(last.date).toLocaleString()}</small>`;
+ try{
+  let r=await fetch('/api/orders'); let j=await r.json();
+  allOrders=(j.orders||[]).slice().reverse();
+  let total=allOrders.reduce((s,o)=>s+parseInt(o.amount||0),0);
+  let paid=allOrders.filter(o=>String(o.status).includes('PAID')).length;
+  document.getElementById('sTotal').innerText='KSh '+total.toLocaleString();
+  document.getElementById('sProfit').innerText='KSh '+Math.floor(total*0.45).toLocaleString();
+  document.getElementById('sOrders').innerText=allOrders.length;
+  document.getElementById('sPaid').innerText=paid;
+  let tbody=document.getElementById('ordersTbody');
+  if(allOrders.length==0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px">No orders yet - Go buy from store</td></tr>';return;}
+  tbody.innerHTML=allOrders.map(o=>{
+   let st=o.status||''; let cls=st.includes('PAID')?'paid':st.includes('STK')?'stk':'fail';
+   let profit=Math.floor((o.amount||0)*0.45);
+   let items=o.itemsText||(o.items?o.items.map(i=>`${(i.name||'Item').slice(0,25)} x${i.qty}`).join(', '):'N/A');
+   let time=o.date? new Date(o.date).toLocaleString() : '-';
+   let receipt=o.receipt||o.CheckoutRequestID||'-';
+   let phoneDisplay=o.customerName||o.phone||'Customer';
+   let realPhone=o.actualPhone||o.phone||'';
+   let supplierBtn = st.includes('PAID')? `<button class="btn btn-fulfill" onclick="fulfillOrder('${o.CheckoutRequestID||o.id}')">🚀 FULFILL</button>` : `<small>${o.supplierNotified?'✅ Sent':''}</small>`;
+   let waCustomer=`https://wa.me/${String(realPhone).replace(/\D/g,'')||'254713367205'}?text=${encodeURIComponent(`Hello ${phoneDisplay}! Your E-MARTCOM order KSh ${o.amount} is ${st}. Receipt: ${receipt}`)}`;
+   return `<tr><td><small>${time}</small></td><td><b>${phoneDisplay}</b><br><small>${realPhone}</small></td><td><b>KSh ${parseInt(o.amount||0).toLocaleString()}</b></td><td style="max-width:180px" title="${items}">${items.slice(0,100)}</td><td><span class="badge ${cls}">${st}</span><br><small>${receipt.slice(0,20)}</small></td><td style="color:var(--green);font-weight:800">KSh ${profit}</td><td><a class="btn btn-ws" target="_blank" href="${waCustomer}">WA</a><br>${supplierBtn}</td></tr>`;
+  }).join('');
+  let last=allOrders[0];
+  if(last){
+   document.getElementById('waLast').href=`https://wa.me/${String(last.actualPhone||last.phone).replace(/\D/g,'')}?text=${encodeURIComponent(`🌊 NEW ORDER! ${last.status}\nKSh ${last.amount}\n${last.customerName||last.phone}`)}`;
+   let cost=Math.floor((last.amount||0)*0.55);
+   let supMsg=`*DROPSHIP ORDER*\nCustomer: ${last.customerName||last.phone} ${last.actualPhone||''}\nProduct: ${last.itemsText||''}\nPaid: KSh ${last.amount}\nBuy for ~KSh ${cost}\nReceipt: ${last.receipt||last.CheckoutRequestID}`;
+   document.getElementById('waSupplierLast').href=`https://wa.me/${SUPPLIER_PHONE}?text=${encodeURIComponent(supMsg)}`;
+   document.getElementById('calcInput').value=last.amount||2800; calcProfit();
+   document.getElementById('recent').innerHTML=`Last: <b>${last.customerName||last.phone}</b> KSh ${last.amount}<br><small>${new Date(last.date).toLocaleString()}</small>`;
+  }
+ }catch(e){document.getElementById('ordersTbody').innerHTML='<tr><td colspan="7">Error: '+e.message+'</td></tr>';}
 }
-doFilter();
-}catch(e){document.getElementById('ordersTbody').innerHTML='<tr><td colspan="7">Error: '+e.message+'</td></tr>';}
-}
-
 async function fulfillOrder(orderId){
- if(!confirm('Fulfill this order?\nThis will WhatsApp supplier '+SUPPLIER_PHONE+' and mark as sent.')) return;
+ if(!confirm('Fulfill order '+orderId+'?\nWill WhatsApp supplier '+SUPPLIER_PHONE)) return;
  try{
   let r=await fetch('/api/dropship/fulfill',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId})});
-  let j=await r.json();
-  if(j.supplierLink){ window.open(j.supplierLink,'_blank'); alert('Supplier notified! Now M-Pesa supplier 55% and they will ship.'); loadOrders(); }
-  else alert('Fulfilled but no link: '+JSON.stringify(j));
- }catch(e){ alert('Error: '+e.message); }
+  let j=await r.json(); if(j.supplierLink){window.open(j.supplierLink,'_blank'); alert('Supplier notified!'); loadOrders();}
+  else alert(JSON.stringify(j));
+ }catch(e){alert('Error: '+e.message);}
 }
-
-async function loadExternal(){
-try{
-let r=await fetch('/api/external-orders'); allExternal=await r.json();
-let tbody=document.getElementById('extTbody');
-if(allExternal.length==0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:#94a3b8">No secret logs yet</td></tr>'; return;}
-tbody.innerHTML=allExternal.slice(0,100).map(e=>{
-let price=parseInt(e.customerPrice||0);
-let cost=Math.floor(price*0.55);
-let prof=Math.floor(price*0.45)-100;
-let time=e.time? new Date(e.time).toLocaleString() : '-';
-let source=e.source||'product_view';
-let buyLink=e.sourcingLink||`https://www.google.com/search?q=${encodeURIComponent(e.productName+' '+e.brand+' wholesale 1688 price')}`;
-return `<tr>
-<td><small>${time}</small></td>
-<td><b>${e.productName||'-'}</b><br><small>${e.brand||''}</small></td>
-<td>KSh ${price.toLocaleString()}</td>
-<td style="color:#b45309">KSh ${cost.toLocaleString()}</td>
-<td style="color:var(--green);font-weight:800">KSh ${prof.toLocaleString()}</td>
-<td><small>${source}</small></td>
-<td><a href="${buyLink}" target="_blank" class="btn btn-ocean">🔍 1688</a></td>
-</tr>`;
-}).join('');
-}catch(e){document.getElementById('extTbody').innerHTML='<tr><td colspan="7">Error '+e.message+'</td></tr>';}
-}
-async function loadSup(){
-try{
-let r=await fetch('/api/supplier/pending'); let j=await r.json();
-let html=`<b>Suppliers: ${j.suppliers.length}</b><br>`;
-html+=j.suppliers.map(s=>`<div style="border:1px solid #e0f2fe;padding:8px;border-radius:8px;margin:6px 0"><b>${s.name}</b> - ${s.phone}<br><small>${s.business||''}</small></div>`).join('')||'<p style="color:#94a3b8">No suppliers</p>';
-document.getElementById('supList').innerHTML=html;
-}catch(e){document.getElementById('supList').innerText='Error '+e.message;}
-}
+async function loadExternal(){ try{ let r=await fetch('/api/external-orders'); let data=await r.json(); document.getElementById('extTbody').innerHTML=data.length==0?'<tr><td colspan="7" style="text-align:center">No logs</td></tr>':data.map(e=>`<tr><td><small>${e.time?new Date(e.time).toLocaleString():'-'}</small></td><td>${e.productName||'-'}</td><td>KSh ${e.customerPrice||0}</td><td>KSh ${Math.floor((e.customerPrice||0)*0.55)}</td><td>KSh ${Math.floor((e.customerPrice||0)*0.45)}</td><td>${e.source||''}</td><td><a href="${e.sourcingLink||'#'}" target="_blank">Buy</a></td></tr>`).join(''); }catch(e){}}
+async function loadSup(){ document.getElementById('supList').innerHTML=`Supplier: ${SUPPLIER_PHONE}<br><small>Change in box above</small>`; }
 function doFilter(){
-let q=document.getElementById('search').value.toLowerCase();
-let st=document.getElementById('filterStatus').value;
-let rows=document.querySelectorAll('#ordersTbody tr');
-allOrders.forEach((o,idx)=>{
-let row=rows[idx]; if(!row) return;
-let txt=`${o.phone} ${o.amount} ${o.itemsText||''} ${o.status} ${o.receipt}`.toLowerCase();
-let matchQ=!q||txt.includes(q);
-let matchS=st=='All'||(st=='PAID'&&o.status.includes('PAID'))||(st=='STK'&&o.status.includes('STK'))||(st=='FAILED'&&o.status.includes('FAILED'));
-row.style.display=matchQ&&matchS?'':'none';
-});
+ let q=document.getElementById('search').value.toLowerCase(); let st=document.getElementById('filterStatus').value;
+ document.querySelectorAll('#ordersTbody tr').forEach((row,idx)=>{
+  let o=allOrders[idx]; if(!o){row.style.display='none';return;}
+  let txt=`${o.customerName||''} ${o.phone||''} ${o.amount||''} ${o.itemsText||''} ${o.status||''}`.toLowerCase();
+  let matchQ=!q||txt.includes(q);
+  let matchS=st=='All'|| (st=='PAID'&&o.status.includes('PAID')) || (st=='STK'&&o.status.includes('STK'));
+  row.style.display=matchQ&&matchS?'':'none';
+ });
 }
-function calcProfit(){
-let price=parseInt(document.getElementById('calcInput').value)||0;
-let cost=Math.floor(price*0.55);
-let profit=Math.floor(price*0.45)-100;
-document.getElementById('calcSell').innerText='KSh '+price.toLocaleString();
-document.getElementById('calcCost').innerText='KSh '+cost.toLocaleString();
-document.getElementById('calcProfit').innerText='KSh '+profit.toLocaleString();
-}
-async function clearOrders(){
-if(!confirm('Clear ALL orders?')) return;
-await fetch('/api/orders/clear'); loadOrders();
-}
-setInterval(loadOrders,5000);
-loadOrders();
+function calcProfit(){ let p=parseInt(document.getElementById('calcInput').value)||0; document.getElementById('calcSell').innerText='KSh '+p.toLocaleString(); document.getElementById('calcCost').innerText='KSh '+Math.floor(p*0.55).toLocaleString(); document.getElementById('calcProfit').innerText='KSh '+(Math.floor(p*0.45)-100).toLocaleString(); }
+async function clearOrders(){ if(!confirm('Clear ALL orders?')) return; await fetch('/api/orders/clear'); loadOrders(); }
+setInterval(loadOrders,8000); loadOrders();
 document.getElementById('adminTime').innerText=new Date().toLocaleString();
-</script>
-</body></html>
+</script></body></html>
