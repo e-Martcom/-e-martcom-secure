@@ -4,4 +4,18 @@ services:
     env: node
     plan: free
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: npm start
+    envVars:
+            - key: NODE_ENV
+        value: production
+            - key: MPESA_ENV
+        value: sandbox
+      # --- SECRETS - DO NOT PUT VALUES HERE ---
+      # Go to Render Dashboard > Environment > Add these:
+      # ADMIN_PASSWORD
+      # MPESA_CONSUMER_KEY
+      # MPESA_CONSUMER_SECRET
+      # MPESA_SHORTCODE
+      # MPESA_PASSKEY
+      # BASE_URL
+      # SUPPLIER_PHONE
