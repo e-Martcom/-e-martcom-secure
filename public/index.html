@@ -1,125 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>E-MARTCOM GLOBAL - Secure</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-MARTCOM - Global Dropship Kenya</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Arial;background:#f0f8ff;color:#0f172a}
-header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
-.logo{font-weight:900;font-size:20px;letter-spacing:.5px}.logo span{color:#06b6d4}
-.searchBox{flex:1;max-width:500px;display:flex;gap:6px;background:#fff;border-radius:24px;padding:4px 4px 14px;align-items:center}
-.searchBox input{flex:1;border:none;outline:none;font-size:13px;padding:6px}
-.searchBox button{background:#f68b1e;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;color:#fff;font-weight:900}
-.cartBtn{background:#fff;color:#0a4a7a;padding:8px 14px;border-radius:20px;text-decoration:none;font-weight:900;font-size:12px;display:flex;align-items:center;gap:4px}
-.filters{background:#fff;padding:10px 14px;display:flex;gap:8px;overflow-x:auto;position:sticky;top:56px;z-index:90;border-bottom:1px solid #e0f2fe}
-.filter{padding:8px 14px;border-radius:20px;border:1px solid #e0f2fe;background:#f8fafc;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap}
-.filter.active{background:#0a4a7a;color:#fff;border-color:#0a4a7a}
-.shipBar{background:#fffbeb;padding:8px 14px;display:flex;gap:12px;align-items:center;font-size:11px;border-bottom:1px solid #fef3c7;flex-wrap:wrap}
-.shipBar select{padding:6px 10px;border-radius:8px;border:1px solid #e0f2fe;font-weight:700;font-size:11px}
-.grid{max-width:1300px;margin:14px auto;padding:0 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #e0f2fe;cursor:pointer;transition:.2s}
-.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(10,74,122,.15)}
-.card img{width:100%;height:220px;object-fit:contain;background:#f8fafc}
-.cardBody{padding:10px}
-.cardBody b{font-size:13px;display:block;line-height:1.3;height:34px;overflow:hidden}
-.cardBody .small{font-size:11px;color:#64748b;line-height:1.3;margin-top:4px}
-.priceLine{margin-top:6px;font-size:12px;font-weight:800;color:#0a4a7a}
-.selectBtn{width:100%;margin-top:8px;padding:8px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer}
-.selectBtn:hover{background:#0a4a7a;color:#fff}
-@media(max-width:600px){header{padding:10px}.logo{font-size:16px}.grid{grid-template-columns:1fr 1fr;gap:10px}.card img{height:160px}}
-</style>
-</head>
-<body>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial;background:#eef6fb;color:#0f172a}
+header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.logo{font-weight:900;font-size:20px;cursor:pointer}.logo span{color:#06b6d4}
+.search{flex:1;min-width:200px;display:flex;background:#fff;border-radius:24px;overflow:hidden}
+.search input{flex:1;padding:10px 14px;border:none;outline:none;font-size:14px}
+.search button{padding:10px 18px;border:none;background:#f68b1e;color:#fff;font-weight:900;cursor:pointer}
+.cartBtn{background:#fff;color:#0a4a7a;padding:8px 14px;border-radius:20px;font-weight:900;font-size:12px;cursor:pointer;border:none;text-decoration:none;display:inline-block}
+.wrap{max-width:1200px;margin:14px auto;padding:0 12px}
+.filters{display:flex;gap:8px;overflow:auto;padding:8px 0}
+.filters button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:2px solid #e0f2fe;background:#fff;font-weight:700;cursor:pointer;font-size:12px}
+.filters button.active{background:#0a4a7a;color:#fff;border-color:#0a4a7a}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+.card{background:#fff;border-radius:14px;padding:10px;box-shadow:0 4px 12px rgba(10,74,122,.08);border:1px solid #e0f2fe;cursor:pointer;transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(10,74,122,.15)}
+.card img{width:100%;height:140px;object-fit:contain;background:#f8fafc;border-radius:10px}
+.card b{display:block;font-size:12px;margin:6px 0;height:32px;overflow:hidden}
+.price{color:#0a4a7a;font-weight:900;font-size:14px}.small{font-size:10px;color:#64748b}
+.add{width:100%;padding:8px;border:none;border-radius:10px;background:#0a4a7a;color:#fff;font-weight:800;cursor:pointer;margin-top:6px;font-size:11px}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
 <header>
-<div class="logo">E-MART<span>COM</span> GLOBAL</div>
-<div class="searchBox">
-<input id="searchInput" placeholder="Search bracelets, phone cases, t-shirts..." onkeyup="doSearch()">
-<button onclick="doSearch()">🔍</button>
-</div>
-<div style="flex:1"></div>
-<!-- 🔒 FIXED: NO ADMIN BUTTON FOR CUSTOMERS -->
-<a href="cart.html" class="cartBtn">🛒 <span id="cartCount">0</span> CART</a>
+<div class="logo" onclick="location.href='/'">E-MART<span>COM</span> 🌊</div>
+<div class="search"><input id="q" placeholder="Search products e.g. bracelet, phone case..." onkeyup="if(event.key==='Enter')doSearch()"><button onclick="doSearch()">🔍</button></div>
+<a href="cart.html" class="cartBtn" id="cartBtn">🛒 0</a>
+<a href="supplier.html" style="background:#06b6d4;color:#fff;padding:8px 12px;border-radius:20px;font-weight:800;font-size:11px;text-decoration:none">Become Supplier</a>
+<a href="my-account.html" style="background:#fff;color:#0a4a7a;padding:8px 12px;border-radius:20px;font-weight:800;font-size:11px;text-decoration:none">👤 Account</a>
 </header>
 
-<div class="filters">
-<div class="filter active" onclick="setCat('All',this)">All</div>
-<div class="filter" onclick="setCat('Bracelets',this)">Bracelets</div>
-<div class="filter" onclick="setCat('Phone Cases',this)">Phone Cases</div>
-<div class="filter" onclick="setCat('T-Shirts',this)">T-Shirts / Shorts</div>
-<div class="filter" onclick="setCat('From China',this)">From China</div>
-<div class="filter" onclick="setCat('From Kenya',this)">From Kenya</div>
+<div class="wrap">
+<div style="background:linear-gradient(90deg,#fffbeb,#ecfeff);border:1px solid #fef3c7;padding:12px;border-radius:12px;font-size:12px">
+<b>🌍 Ships from China → Kenya direct!</b> E-parcel 10-20d • Air 3-7d • Sea 20-45d cheapest. Supplier ships DIRECT to your full address - no middleman!
 </div>
 
-<div class="shipBar">
-<div>Ship to: <select id="shipTo" onchange="setShipTo(this.value)"><option value="KE">KENYA</option><option value="UG">UGANDA</option><option value="NG">NIGERIA</option><option value="US">USA</option></select></div>
-<div id="shipMethodLabel" style="background:#fff;padding:4px 10px;border-radius:12px;border:1px solid #fde68a">Method: <b id="methodText">EPARCEL</b> ✅ Click product to change</div>
+<div class="filters" id="filters">
+<button class="active" onclick="filterCat('all',this)">All</button>
+<button onclick="filterCat('jewelry',this)">💍 Jewelry</button>
+<button onclick="filterCat('electronics',this)">📱 Electronics</button>
+<button onclick="filterCat('apparel',this)">👕 Apparel</button>
+<button onclick="filterCat('home',this)">🏠 Home</button>
 </div>
 
-<div id="productGrid" class="grid"></div>
+<div class="grid" id="grid"></div>
+</div>
 
 <script>
-let allProducts = [
-{name:"Clover Bracelet 18K Gold 6 Variations",cat:"Bracelets",price:9.67,ship:7.8,prodShip:1.87,source:"CHINA/KENYA",img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",weight:0.1,vars:["Gold-purple_LZ0692","Gold-white","Gold-black","Gold-green","Gold-red","Gold-blue"]},
-{name:"Samsung A71 Phone Case Silicone",cat:"Phone Cases",price:10.30,ship:7.8,prodShip:2.5,source:"CHINA/KENYA",img:"https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=400",weight:0.2,vars:["Black","Blue","Red","Clear"]},
-{name:"Nike T-Shirt Sports Shorts",cat:"T-Shirts",price:13.00,ship:7.8,prodShip:5.2,source:"CHINA/USA",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",weight:0.3,vars:["White-M","White-L","White-XL","Black-M","Black-L"]},
-{name:"Oceanic Watch Luxury",cat:"Bracelets",price:15.5,ship:8.5,prodShip:2.2,source:"CHINA",img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400",weight:0.2,vars:["Black","Silver","Gold"]},
-{name:"iPhone 14 Pro Case",cat:"Phone Cases",price:8.9,ship:7.5,prodShip:2.0,source:"KENYA",img:"https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=400",weight:0.15,vars:["Clear","Black","Blue"]}
+const PRODUCTS=[
+{id:1,name:"Clover Bracelet 18K Gold Plated - Lucky Clover",price:1.87,weight:0.05,source:"china",cat:"jewelry",img:"https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=300"},
+{id:2,name:"Samsung A71 Phone Case - Protective",price:2.5,weight:0.1,source:"china",cat:"electronics",img:"https://images.unsplash.com/photo-1583394838336-acd977736f90?w=300"},
+{id:3,name:"Nike T-Shirt Sports Shorts Set Men",price:5.2,weight:0.2,source:"china",cat:"apparel",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300"},
+{id:4,name:"Oceanic Watch Luxury Steel",price:2.2,weight:0.2,source:"china",cat:"jewelry",img:"https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=300"},
+{id:5,name:"iPhone 14 Pro Case Clear",price:2.0,weight:0.15,source:"china",cat:"electronics",img:"https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=300"},
 ];
-let currentCat='All';
-let searchQ='';
-
-function getShipTo(){return localStorage.getItem('shipDest')||'KE';}
-function getShipMethod(){return localStorage.getItem('shipMethod')||'eparcel';}
-function setShipTo(v){localStorage.setItem('shipDest',v);render();}
-function setCat(cat,el){
- currentCat=cat;
- document.querySelectorAll('.filter').forEach(f=>f.classList.remove('active'));
+let activeCat='all';
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function getCart(){return JSON.parse(localStorage.getItem('cart')||'[]');}
+function saveCart(c){localStorage.setItem('cart',JSON.stringify(c));updateCartBtn();}
+function updateCartBtn(){let c=getCart(); document.getElementById('cartBtn').innerText='🛒 '+c.reduce((s,i)=>s+(parseInt(i.qty)||0),0);}
+function goProduct(id){
+ // FIXED: was?idx= now?id= - matches product.html
+ location.href='product.html?id='+id;
+}
+function addToCart(id, e){
+ if(e) e.stopPropagation();
+ let cart=getCart();
+ let prod=PRODUCTS.find(p=>p.id===id);
+ if(!prod) return;
+ // FRAUD-PROOF: store only id/qty/source - price comes from server PRODUCT_DB
+ let found=cart.find(i=>parseInt(i.id)===id);
+ if(found) found.qty=parseInt(found.qty||1)+1;
+ else cart.push({id:prod.id, qty:1, source:prod.source, name:prod.name, image:prod.img, price:prod.price, weight:prod.weight});
+ saveCart(cart);
+ let btn=e?.target; if(btn){let t=btn.innerText; btn.innerText='✅ Added'; setTimeout(()=>btn.innerText=t,1000);}
+}
+function render(list){
+ let g=document.getElementById('grid');
+ g.innerHTML=list.map(p=>`
+ <div class="card" onclick="goProduct(${p.id})">
+ <img src="${esc(p.img)}" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=E-MARTCOM'">
+ <b>${esc(p.name)}</b>
+ <div class="small">${esc(p.source.toUpperCase())} → KE • ${p.weight}kg</div>
+ <div class="price">$${p.price.toFixed(2)} <span class="small">+ ship</span></div>
+ <button class="add" onclick="addToCart(${p.id},event)">Add to Cart 🛒</button>
+ </div>`).join('');
+}
+function filterCat(cat, el){
+ activeCat=cat;
+ document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
  if(el) el.classList.add('active');
- render();
+ let list=cat==='all'?PRODUCTS:PRODUCTS.filter(p=>p.cat===cat);
+ let q=document.getElementById('q').value.trim().toLowerCase();
+ if(q) list=list.filter(p=>p.name.toLowerCase().includes(q));
+ render(list);
 }
-function doSearch(){searchQ=document.getElementById('searchInput').value.toLowerCase();render();}
-function updateCartCount(){
- let cart=JSON.parse(localStorage.getItem('cart')||'[]');
- let total=cart.reduce((s,i)=>s+(parseFloat(i.qty)||0),0);
- document.getElementById('cartCount').innerText=total;
- document.getElementById('shipTo').value=getShipTo();
- document.getElementById('methodText').innerText=getShipMethod().toUpperCase();
+function doSearch(){
+ let q=document.getElementById('q').value.trim().toLowerCase();
+ let list=PRODUCTS.filter(p=> p.name.toLowerCase().includes(q) || (activeCat!=='all' && p.cat===activeCat) || activeCat==='all');
+ if(activeCat!=='all') list=list.filter(p=>p.cat===activeCat);
+ if(!q && activeCat==='all') list=PRODUCTS;
+ if(q && activeCat!=='all') list=PRODUCTS.filter(p=>p.name.toLowerCase().includes(q) && p.cat===activeCat);
+ if(q && activeCat==='all') list=PRODUCTS.filter(p=>p.name.toLowerCase().includes(q));
+ render(list);
 }
-function render(){
- let grid=document.getElementById('productGrid');
- let filtered=allProducts.filter(p=>{
-   let matchCat=currentCat=='All' || p.cat.includes(currentCat) || p.source.includes(currentCat.replace('From ',''));
-   let matchSearch=!searchQ || p.name.toLowerCase().includes(searchQ);
-   return matchCat && matchSearch;
- });
- if(filtered.length==0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">No products found</div>';return;}
- grid.innerHTML=filtered.map((p,idx)=>`
- <div class="card" onclick="goProduct(${allProducts.indexOf(p)})">
- <img src="${p.img}" alt="${p.name}">
- <div class="cardBody">
- <b>${p.name}</b>
- <div class="small">${p.vars.slice(0,3).join(', ')} • ${p.source} → ${getShipTo()}<br>
- $${p.price.toFixed(2)} INCL • Ship $${p.ship.toFixed(2)}+$${p.prodShip} prod</div>
- <div class="priceLine">$${p.price.toFixed(2)} INCLUSIVE - Tap to select variations</div>
- <button class="selectBtn" onclick="event.stopPropagation();goProduct(${allProducts.indexOf(p)})">$${p.price.toFixed(2)} INCLUSIVE - Tap to select variations</button>
- </div>
- </div>
- `).join('');
-}
-function goProduct(idx){
- localStorage.setItem('selectedProduct', idx);
- location.href='product.html?idx='+idx;
-}
-updateCartCount();
-render();
-
-// Load from localStorage products if exists
-try{
- let stored = JSON.parse(localStorage.getItem('oceanicProducts')||'[]');
- if(stored.length>0){ allProducts = stored.concat(allProducts); render(); }
-}catch(e){}
-</script>
-</body>
-</html>
+render(PRODUCTS); updateCartBtn();
+</script></body></html>
