@@ -1,1 +1,92 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Account - E-MARTCOM</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f5f5f5;padding-bottom:75px}.top{display:flex;align-items:center;gap:12px;background:#fff;padding:16px}.avatar{width:54px;height:54px;border-radius:50%;background:#ffe8d6;display:flex;align-items:center;justify-content:center;font-size:30px}.starbox{margin:10px;background:#ffecec;border-radius:12px;padding:16px;position:relative}.level{position:absolute;right:0;top:0;background:#e53935;color:#fff;padding:7px 16px;border-radius:0 12px 0 12px;font-weight:900}.bar{height:5px;background:#fff;border-radius:10px;margin-top:12px}.fill{width:62%;height:100%;background:#111;border-radius:10px}.card{background:#fff;margin-top:8px;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;text-align:center;font-size:13px}.grid span{font-size:26px;display:block}.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee}.active{color:#e53935;font-weight:900}</style></head><body><div class="top"><div class="avatar">👤</div><div><div style="font-weight:900;font-size:18px">Arther</div><div style="color:#666;font-size:13px">Royal Tyrant Ventures</div></div><div style="margin-left:auto">⛶ 🎧 ⚙️</div></div><div class="starbox"><div class="level">⭐ Level 2</div><div style="font-weight:800">Star Buyer</div><div style="color:#555;margin-top:6px">Complete your profile to be more trustable. <b>Go ></b></div><div class="bar"><div class="fill"></div></div></div><div class="card"><h3>Orders</h3><br><div class="grid"><div><span>📦</span>Orders</div><div><span>💲</span>Payments</div><div><span>↩️</span>Refund</div><div><span>🧾</span>Tax Info</div><div><span>👤✔️</span>Verify Account</div></div></div><div class="card"><h3>More features</h3><br><div class="grid"><div><span>♡</span>Favorites</div><div><span>🕒</span>History</div><div><span>✉️</span>Inquiries</div><div><span>🎯</span>Quotations</div><div><span>⭐</span>Reviews</div><div><span>☺️</span>Preferences</div><div><span>❓</span>Help</div></div></div><div class="card"><b style="color:red">M</b> Share App to my friends <span style="float:right">→</span></div><div class="nav"><div onclick="location.href='/'">🏠<br>Home</div><div>🛍️<br>Buy Now</div><div>💬<br>Messages</div><div class="active">👤<br>My Account</div></div></body></html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Account - E-MARTCOM</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial;background:#eef6fb;color:#0f172a}
+header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+header a{color:#fff;text-decoration:none;font-weight:900}
+.wrap{max-width:800px;margin:14px auto;padding:0 12px}
+.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 4px 12px rgba(10,74,122,.08);border:1px solid #e0f2fe;margin-bottom:12px}
+input{width:100%;padding:12px;border:2px solid #e0f2fe;border-radius:10px;margin:8px 0;outline:none}
+input:focus{border-color:#0a4a7a}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:8px}
+.btn-blue{background:#0a4a7a;color:#fff}.btn-green{background:#00a651;color:#fff}
+.badge{padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800;display:inline-block}
+.paid{background:#dcfce7;color:#166534}.stk{background:#fef3c7;color:#b45309}.fail{background:#fee2e2;color:#991b1b}
+table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f0f9ff;padding:8px;text-align:left;font-size:10px;color:#0a4a7a}td{padding:10px;border-top:1px solid #f1f5f9;vertical-align:top}
+.small{font-size:11px;color:#64748b}
+</style></head><body>
+<header><a href="index.html">← Store</a><div style="font-weight:900;margin-left:10px">E-MARTCOM - My Orders</div><div style="flex:1"></div><a href="cart.html" style="background:#fff;color:#0a4a7a;padding:8px 14px;border-radius:20px;font-size:12px;text-decoration:none;font-weight:800">🛒 Cart</a></header>
+
+<div class="wrap">
+<div class="card" id="loginCard">
+<h3 style="color:#0a4a7a">🔒 Track My Orders</h3>
+<p class="small" style="margin:6px 0">Enter phone number you used to pay. Only YOUR orders will show - secure.</p>
+<input id="phone" type="tel" placeholder="e.g. 0713367205 or 254713367205">
+<button class="btn btn-blue" onclick="loadMyOrders()">View My Orders 🔍</button>
+<p id="err" style="color:#ef4444;font-size:11px;display:none;background:#fee2e2;padding:8px;border-radius:8px;margin-top:8px"></p>
+<p class="small" style="margin-top:8px">🔐 Secure - we hide profit, only you see your orders via phone match.</p>
+</div>
+
+<div class="card" id="ordersCard" style="display:none">
+<h3>My Orders - <span id="phoneShow"></span></h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">
+<div style="background:#f0f9ff;padding:10px;border-radius:10px;text-align:center"><b id="totalOrders">0</b><br><small>Total Orders</small></div>
+<div style="background:#ecfeff;padding:10px;border-radius:10px;text-align:center"><b id="totalPaid">KSh 0</b><br><small>Total Paid</small></div>
+</div>
+<table><thead><tr><th>Date</th><th>Items</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead><tbody id="tbody"></tbody></table>
+<button class="btn" style="background:#fff;border:2px solid #e0f2fe;margin-top:12px" onclick="logout()">Logout / Change Phone</button>
+</div>
+</div>
+
+<script>
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function normalizePhone(p){
+ let c=p.replace(/\D/g,'');
+ if(c.startsWith('0')) c='254'+c.slice(1);
+ if(c.startsWith('7')) c='254'+c;
+ if(c.length===9) c='254'+c;
+ return c;
+}
+function getSavedPhone(){return localStorage.getItem('myPhone')||'';}
+function logout(){localStorage.removeItem('myPhone');location.reload();}
+function loadMyOrders(){
+ let raw=document.getElementById('phone').value.trim()||getSavedPhone();
+ let phone=normalizePhone(raw);
+ let err=document.getElementById('err');
+ if(phone.length<12){err.style.display='block';err.innerText='❌ Enter valid phone e.g. 0713367205';return;}
+ err.style.display='none';
+ localStorage.setItem('myPhone',phone);
+ fetchOrders(phone);
+}
+async function fetchOrders(phone){
+ try{
+  // Secure: server filters by phone, never sends all orders
+  let r=await fetch('/api/my-orders?phone='+encodeURIComponent(phone));
+  if(!r.ok) throw new Error('Server error');
+  let j=await r.json();
+  let orders=j.orders||[];
+  document.getElementById('loginCard').style.display='none';
+  document.getElementById('ordersCard').style.display='block';
+  document.getElementById('phoneShow').innerText=phone;
+  document.getElementById('totalOrders').innerText=orders.length;
+  let total=orders.reduce((s,o)=>s+parseInt(o.amount||0),0);
+  document.getElementById('totalPaid').innerText='KSh '+total.toLocaleString();
+  let tb=document.getElementById('tbody');
+  if(orders.length==0){tb.innerHTML='<tr><td colspan=5 style="text-align:center;padding:20px;color:#94a3b8">No orders found for this phone. Pay first with M-Pesa, then check here.</td></tr>';return;}
+  tb.innerHTML=orders.slice().reverse().map(o=>{
+   let st=esc(o.status||'');
+   let cls=st.includes('PAID')?'paid':st.includes('STK')?'stk':'fail';
+   let time=new Date(o.date).toLocaleString();
+   // NEVER show profit to customer - secure!
+   return `<tr><td><small>${esc(time)}</small></td><td style="max-width:180px"><small>${esc((o.itemsText||'').slice(0,120))}</small><br><small class="small">${esc(o.address||'').slice(0,80)}</small></td><td><b>KSh ${parseInt(o.amount||0).toLocaleString()}</b></td><td><span class="badge ${cls}">${st}</span></td><td><small>${esc(o.receipt||o.CheckoutRequestID||'-').slice(0,12)}</small></td></tr>`;
+  }).join('');
+ }catch(e){
+  document.getElementById('err').style.display='block';
+  document.getElementById('err').innerText='Error: '+esc(e.message);
+ }
+}
+// Auto login if saved
+if(getSavedPhone()){
+ document.getElementById('phone').value=getSavedPhone();
+ fetchOrders(getSavedPhone());
+}
+</script></body></html>
