@@ -1,45 +1,97 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Product - FIXED VARIATIONS + SHIPPING</title>
-<style>body{font-family:Arial;background:#fff;margin:0}header{background:#0a4a7a;padding:12px;color:#fff;display:flex;gap:10px;position:sticky;top:0;z-index:20}.wrap{max-width:1250px;margin:auto;display:grid;grid-template-columns:1fr 420px;gap:10px;padding:10px}.card{border:1px solid #eee;border-radius:10px;padding:12px;background:#fff}.var{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid #eee}.qty{display:flex;gap:6px;margin-left:auto;align-items:center}.qty button{width:32px;height:32px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-weight:900}.ship-opt{border:2px solid #eee;padding:10px;border-radius:10px;margin:6px 0;cursor:pointer;display:flex;justify-content:space-between}.ship-opt.active{border-color:#f68b1e;background:#fffbeb}.origin-opt{border:2px solid #eee;padding:10px;border-radius:10px;margin:6px 0;cursor:pointer}.origin-opt.active{border-color:#0a4a7a;background:#f0f9ff}.totalBox{background:#f8fafc;padding:12px;border-radius:10px;border:2px solid #0a4a7a;margin-top:10px}.btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:8px}.btn-cart{background:#fff;border:2px solid #0a4a7a;color:#0a4a7a}.btn-order{background:#f68b1e;color:#fff}@media(max-width:900px){.wrap{grid-template-columns:1fr}}</style></head><body>
-<header><a href="index.html" style="color:#fff;text-decoration:none;font-weight:900">← Back</a><div style="flex:1"></div><a href="cart.html" style="background:#fff;color:#0a4a7a;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:900">🛒 <span id="cc">0</span> Cart</a></header>
-<div class="wrap"><div id="left"></div><div id="right"></div></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product - E-MARTCOM</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial;background:#eef6fb;color:#0f172a}
+header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+header a{color:#fff;text-decoration:none;font-weight:900}
+.wrap{max-width:1100px;margin:14px auto;padding:0 12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 4px 12px rgba(10,74,122,.08);border:1px solid #e0f2fe}
+.imgMain{width:100%;height:380px;object-fit:contain;background:#f8fafc;border-radius:12px}
+.price{font-size:22px;font-weight:900;color:#0a4a7a;margin:8px 0}
+.small{font-size:11px;color:#64748b}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-weight:900;cursor:pointer;margin-top:8px;font-size:14px}
+.btn-ocean{background:#0a4a7a;color:#fff}.btn-orange{background:#f68b1e;color:#fff}
+.select{width:100%;padding:10px;border:2px solid #e0f2fe;border-radius:10px;margin:6px 0}
+.method{border:2px solid #e0f2fe;padding:10px;border-radius:12px;margin:6px 0;cursor:pointer;display:flex;justify-content:space-between;font-size:12px}
+.method.active{border-color:#f68b1e;background:#fffbeb}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800;background:#e0f2fe;color:#0a4a7a;margin:2px}
+@media(max-width:800px){.wrap{grid-template-columns:1fr}.imgMain{height:280px}}
+</style></head><body>
+<header><a href="index.html">← Back</a><div style="font-weight:900;margin-left:10px">E-MARTCOM</div><div style="flex:1"></div><a href="cart.html" id="cartBtn" style="background:#fff;color:#0a4a7a;padding:8px 14px;border-radius:20px;font-size:12px">🛒 0</a></header>
+<div class="wrap">
+<div class="card"><img id="pImg" class="imgMain" src=""><div style="display:flex;gap:8px;margin-top:10px" id="thumbs"></div></div>
+<div class="card">
+<div id="pCat" class="badge">Category</div>
+<h2 id="pName" style="margin:8px 0;font-size:18px">Loading...</h2>
+<div class="price" id="pPrice">$0.00</div>
+<div class="small" id="pShip">Shipping calculated at cart</div>
+
+<div style="margin:12px 0;padding:10px;background:#fffbeb;border:1px solid #fef3c7;border-radius:10px;font-size:11px">
+<b>🌍 Direct Dropship:</b> Ships from <span id="pSource">CHINA</span> → Kenya DIRECT to your address. No middleman!
+</div>
+
+<label class="small" style="font-weight:800">SHIP METHOD</label>
+<div id="methods"></div>
+
+<label class="small" style="font-weight:800;margin-top:10px;display:block">QTY</label>
+<select id="qty" class="select"><option value="1">1 pc</option><option value="2">2 pcs</option><option value="5">5 pcs</option><option value="10">10 pcs</option><option value="20">20 pcs</option></select>
+
+<button class="btn btn-orange" onclick="addToCart()">Add to Cart 🛒</button>
+<button class="btn btn-ocean" onclick="buyNow()">Buy Now → Cart</button>
+
+<div style="margin-top:14px;font-size:12px;line-height:1.6">
+<b>📦 Details</b><br>
+<span id="pDesc" class="small">Premium quality product sourced globally. Supplier ships DIRECT to your full address you enter in cart.</span>
+<br><br>
+<b>🔒 Secure:</b> Price recalculated on server - fraud proof.
+</div>
+</div>
+</div>
+
 <script>
-const BASE={china:{ke:12,ug:15,ng:18,us:20,ae:16,gb:20,de:20},kenya:{ke:1.5,ug:8,ng:15,us:18,ae:15,gb:18},usa:{ke:20,ug:22,ng:24,us:2,ae:16,gb:14},japan:{ke:26,ug:28,ng:30,us:22,ae:18,gb:16},uk:{ke:18,ug:20,ng:22,us:14,ae:12,gb:2}};
-const MM={air:{m:1,t:"✈️ Air 3-7d",d:"Fast"},sea:{m:0.35,t:"🚢 Sea 20-45d -65% CHEAP",d:"Cheapest"},eparcel:{m:0.65,t:"📦 E-parcel 10-20d",d:"Balanced"},rail:{m:0.55,t:"🚆 Rail 15-25d",d:"Rail"}};
-let all=[
-{id:1,n:"Clover Bracelet 18K Gold 6 Variations",p:1.87,w:0.05,o:["china","kenya"],img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",vars:["Gold-purple_LZ0692","Gold-red-LZ0692","Gold-pink-LZ0692","Gold-blue-LZ0692","Gold-orange-LZ0692","Gold-green-LZ0692"]},
-{id:2,n:"Samsung A71 Phone Case",p:2.5,w:0.1,o:["china","kenya"],img:"https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400",vars:["Black","Blue","Red","Clear"]},
-{id:3,n:"Nike T-Shirt Sports Shorts",p:5.2,w:0.2,o:["china","usa"],img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",vars:["White-M","White-L","White-XL","Black-M","Black-L","Black-XL"]}
+const PRODUCTS=[
+{id:1,name:"Clover Bracelet 18K Gold Plated - Lucky Clover Design Waterproof",price:1.87,weight:0.05,source:"china",cat:"jewelry",img:"https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600",desc:"18K gold plated lucky clover bracelet, waterproof, tarnish free. Direct from Yiwu factory."},
+{id:2,name:"Samsung A71 Phone Case Protective Shockproof",price:2.5,weight:0.1,source:"china",cat:"electronics",img:"https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600",desc:"Premium TPU phone case for Samsung A71, shockproof."},
+{id:3,name:"Nike T-Shirt Sports Shorts Set Men Summer",price:5.2,weight:0.2,source:"china",cat:"apparel",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600",desc:"Sports set men breathable quick dry."},
+{id:4,name:"Oceanic Watch Luxury Steel Quartz",price:2.2,weight:0.2,source:"china",cat:"jewelry",img:"https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600",desc:"Luxury steel watch waterproof."},
+{id:5,name:"iPhone 14 Pro Case Clear MagSafe",price:2.0,weight:0.15,source:"china",cat:"electronics",img:"https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=600",desc:"Clear case with MagSafe."},
 ];
-let pid=parseInt(new URLSearchParams(location.search).get('id')||1);
-let pr=all.find(x=>x.id==pid)||all[0];
-let dest=localStorage.getItem('shipDest')||'ke';let method=localStorage.getItem('shipMethod')||'air';let origin=pr.o[0];
-let qtys={};pr.vars.forEach(v=>qtys[v]=0);
-function baseCost(o,d,weight,methodKey){let b=BASE[o]?.[d]||20;let wm=weight<=0.5?1:weight<=1?1.5:2.2;let m=MM[methodKey].m;return b*wm*m;}
-function toNum(v){let n=parseFloat(v);return isNaN(n)?0:n;}
-function updateCartCount(){let c=JSON.parse(localStorage.getItem('cart')||'[]');document.getElementById('cc').innerText=c.reduce((s,i)=>s+toNum(i.qty),0);}
-function setOrigin(o){origin=o;render();}
-function setMethod(m){method=m;localStorage.setItem('shipMethod',m);render();}
-function render(){
-let subQty=Object.values(qtys).reduce((s,q)=>s+toNum(q),0);
-let subProd=subQty*pr.p;
-let shipOne=baseCost(origin,dest,pr.w,method);
-let shipTotal=shipOne*subQty;
-let fee=subProd*0.03;
-let grand=subProd+shipTotal+fee;
-document.getElementById('left').innerHTML=`<div class="card"><img src="${pr.img}" style="width:100%;height:300px;object-fit:contain;background:#f8fafc;border-radius:10px"><h3 style="margin-top:10px">${pr.n}</h3><p style="font-size:12px;color:#64748b">Weight ${pr.w}kg per piece • Origins: ${pr.o.join(', ')} • ID:${pr.id}</p>
-<div style="margin-top:12px"><label style="font-size:12px;font-weight:900">SHIP TO:</label><select onchange="dest=this.value;localStorage.setItem('shipDest',dest);render()" style="padding:10px;width:100%;border-radius:8px"><option value="ke" ${dest=='ke'?'selected':''}>Kenya</option><option value="ug" ${dest=='ug'?'selected':''}>Uganda</option><option value="ng" ${dest=='ng'?'selected':''}>Nigeria</option><option value="us" ${dest=='us'?'selected':''}>USA</option><option value="ae" ${dest=='ae'?'selected':''}>UAE</option><option value="gb" ${dest=='gb'?'selected':''}>UK</option></select></div>
-<div style="margin-top:12px"><b style="font-size:12px">ORIGIN (where product comes from):</b>${pr.o.map(o=>{let c=baseCost(o,dest,pr.w,method);return `<div class="origin-opt ${o==origin?'active':''}" onclick="setOrigin('${o}')"><b>${o.toUpperCase()}</b> - $${c.toFixed(2)}/pc shipping + $${pr.p.toFixed(2)} prod = <b>$${(c+pr.p).toFixed(2)} INCL</b> ${o==origin?'✅':''}</div>`}).join('')}</div>
-<div style="margin-top:12px"><b style="font-size:12px">SHIPPING MODE - CLICK TO SELECT:</b>${Object.keys(MM).map(m=>{let c=baseCost(origin,dest,pr.w,m);return `<div class="ship-opt ${m==method?'active':''}" onclick="setMethod('${m}')"><div><b>${MM[m].t}</b><br><small>${MM[m].d}</small></div><div style="text-align:right"><b>$${c.toFixed(2)}/pc</b><br><small>$${(c+pr.p).toFixed(2)} INCL</small><br>${m==method?'✅':''}</div></div>`}).join('')}</div></div>`;
-let varsHtml=`<div class="card"><h3>Select variations and quantity</h3><p style="font-size:11px;color:#64748b">${pr.n} - ${pr.vars.length} variations</p>${pr.vars.map(v=>`<div class="var"><img src="${pr.img}" style="width:40px;height:40px;object-fit:cover;border-radius:6px"><div><b style="font-size:11px">${v}</b><br><small>$${pr.p}</small></div><div class="qty"><button onclick="qtys['${v}']=Math.max(0,toNum(qtys['${v}'])-1);render()">-</button><span style="min-width:20px;text-align:center;font-weight:800">${toNum(qtys[v])}</span><button onclick="qtys['${v}']=toNum(qtys['${v}'])+1;render()">+</button></div></div>`).join('')}
-<div class="totalBox"><div style="display:flex;justify-content:space-between"><span>Subtotal (${subQty} pcs)</span><span>$${subProd.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between"><span>Shipping ${origin.toUpperCase()}→${dest.toUpperCase()} ${method.toUpperCase()}</span><span>$${shipTotal.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between"><span>Fee 3%</span><span>$${fee.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;font-weight:900;font-size:18px;border-top:2px solid #0a4a7a;margin-top:8px;padding-top:8px"><span>Pay in USD</span><span>$${grand.toFixed(2)} INCL</span></div></div>
-<button class="btn btn-cart" onclick="addToCart(false)">Add to cart - $${grand.toFixed(2)} INCL (${subQty} pcs)</button><button class="btn btn-order" onclick="addToCart(true)">Start order → $${grand.toFixed(2)}</button></div>`;
-document.getElementById('right').innerHTML=varsHtml;updateCartCount();
+const MM={air:{m:1,t:"✈️ Air 3-7d"},sea:{m:0.35,t:"🚢 Sea 20-45d -65%"},eparcel:{m:0.65,t:"📦 E-parcel 10-20d"},rail:{m:0.55,t:"🚆 Rail 15-25d"}};
+const BASE={china:{ke:12,ug:15,ng:18,us:20},kenya:{ke:1.5,ug:8,ng:15,us:18},usa:{ke:20,ug:22,ng:24,us:2}};
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function getCart(){return JSON.parse(localStorage.getItem('cart')||'[]');}
+function saveCart(c){localStorage.setItem('cart',JSON.stringify(c));updateCartBtn();}
+function updateCartBtn(){let c=getCart(); document.getElementById('cartBtn').innerText='🛒 '+c.reduce((s,i)=>s+(parseInt(i.qty)||0),0);}
+let current=null; let shipMethod=localStorage.getItem('shipMethod')||'eparcel';
+function load(){
+ let id=new URLSearchParams(location.search).get('id') || new URLSearchParams(location.search).get('idx'); // support both fixed
+ id=parseInt(id)||1;
+ current=PRODUCTS.find(p=>p.id===id) || PRODUCTS[0];
+ if(!current){document.getElementById('pName').innerText='Product not found'; return;}
+ document.getElementById('pImg').src=current.img;
+ document.getElementById('pName').innerText=current.name;
+ document.getElementById('pPrice').innerText='$'+current.price.toFixed(2)+' + shipping';
+ document.getElementById('pCat').innerText=esc(current.cat.toUpperCase());
+ document.getElementById('pSource').innerText=esc(current.source.toUpperCase());
+ document.getElementById('pDesc').innerText=current.desc;
+ document.getElementById('pShip').innerText=`Weight ${current.weight}kg • From ${esc(current.source.toUpperCase())}`;
+ document.getElementById('methods').innerHTML=Object.keys(MM).map(m=>`<div class="method ${m===shipMethod?'active':''}" onclick="setMethod('${m}')"><div><b>${MM[m].t}</b></div><div>${m===shipMethod?'✅':''}</div></div>`).join('');
+ // Log view for sourcing dashboard - secure (no price leak to public)
+ try{
+  fetch('/api/product-view',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId:current.id,productName:current.name,source:current.source})}).catch(()=>{});
+ }catch(e){}
 }
-function addToCart(go){
-let totalQty=Object.values(qtys).reduce((s,q)=>s+toNum(q),0);if(totalQty==0){alert('Click + to add quantity');return;}
-let cart=JSON.parse(localStorage.getItem('cart')||'[]');
-Object.keys(qtys).forEach(v=>{if(toNum(qtys[v])>0){let ship=baseCost(origin,dest,pr.w,method);cart.push({id:pr.id+'_'+v,name:pr.n+' '+v,price:pr.p,priceUSD:pr.p,p:pr.p,qty:toNum(qtys[v]),weight:pr.w,w:pr.w,source:origin,o:origin,shipMethod:method,dest:dest,shipCost:ship,variation:v,image:pr.img,img:pr.img});}});
-localStorage.setItem('cart',JSON.stringify(cart));localStorage.setItem('shipDest',dest);localStorage.setItem('shipMethod',method);updateCartCount();alert('✅ Added '+totalQty+' pcs - Cart now '+cart.reduce((s,i)=>s+toNum(i.qty),0)+' items');if(go){location.href='cart.html?t='+Date.now();}}
-render();
+function setMethod(m){shipMethod=m; localStorage.setItem('shipMethod',m); load();}
+function addToCart(){
+ if(!current) return;
+ let cart=getCart();
+ let qty=parseInt(document.getElementById('qty').value)||1;
+ let found=cart.find(i=>parseInt(i.id)===current.id && i.shipMethod===shipMethod);
+ if(found) found.qty=parseInt(found.qty)+qty;
+ else cart.push({id:current.id, qty:qty, source:current.source, shipMethod:shipMethod, name:current.name, image:current.img, price:current.price, weight:current.weight});
+ saveCart(cart);
+ alert(`✅ Added ${qty}x ${current.name} to cart\nMethod: ${MM[shipMethod].t}`);
+}
+function buyNow(){ addToCart(); location.href='cart.html'; }
+load(); updateCartBtn();
 </script></body></html>
