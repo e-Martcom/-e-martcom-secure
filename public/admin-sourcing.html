@@ -1,65 +1,90 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ADMIN - Sourcing - E-MARTCOM</title>
-<style>
-*{box-sizing:border-box;font-family:Arial}body{background:#0a1929;color:#fff;padding:12px;margin:0}
-.top{background:linear-gradient(90deg,#023e8a,#0096c7);padding:16px;border-radius:12px;display:flex;justify-content:space-between;align-items:center}
-.card{background:#fff;color:#023e8a;border-radius:12px;padding:16px;margin:12px 0}
-.btn{padding:8px 14px;border-radius:20px;border:none;font-weight:800;cursor:pointer;margin:2px}
-.btn-blue{background:#023e8a;color:#fff}.btn-ocean{background:#0096c7;color:#fff}.btn-green{background:#00b4d8;color:#fff}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:10px;border-bottom:1px solid #caf0f8;text-align:left}th{background:#f0f8ff;color:#023e8a}
-.profit{color:#00b4d8;font-weight:900}.badge{padding:4px 8px;border-radius:12px;font-size:10px;font-weight:800;background:#caf0f8;color:#0077b6}
-input{padding:10px;border-radius:8px;border:1px solid #90e0ef;width:200px}
+<title>Sourcing Admin SECURE - E-MARTCOM</title>
+<style>*{box-sizing:border-box;font-family:Arial}body{background:#0a1929;color:#fff;padding:12px;margin:0}
+.top{background:linear-gradient(90deg,#082f4a,#0a4a7a);padding:16px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.card{background:#fff;color:#0a4a7a;border-radius:12px;padding:16px;margin:12px 0}
+.btn{padding:8px 14px;border-radius:20px;border:none;font-weight:800;cursor:pointer;margin:2px;font-size:12px}
+.btn-blue{background:#0a4a7a;color:#fff}.btn-red{background:#ef4444;color:#fff}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:10px;border-bottom:1px solid #e0f2fe;text-align:left}th{background:#f0f9ff}
+.profit{color:#00a651;font-weight:900}.badge{padding:4px 8px;border-radius:12px;font-size:10px;background:#e0f2fe}
+.loginWrap{position:fixed;inset:0;background:#0a1929;z-index:999;display:flex;align-items:center;justify-content:center}
+.loginBox{background:#fff;color:#0a4a7a;padding:28px;border-radius:16px;width:90%;max-width:360px;text-align:center}
+input{padding:10px;border-radius:8px;border:2px solid #e0f2fe;width:100%;outline:none}input:focus{border-color:#0a4a7a}
 </style></head><body>
-<div class="top"><div><b style="font-size:18px">🌊 E-MARTCOM SECRET ADMIN</b><div style="font-size:11px;opacity:.8">Global Sourcing • Profit Dashboard</div></div>
-<div><input id="pwd" type="password" placeholder="Admin password"><button class="btn btn-blue" onclick="login()">Login</button></div></div>
 
-<div id="loginMsg" style="text-align:center;padding:20px;color:#90e0ef">Enter password: emart2024</div>
+<div id="loginScreen" class="loginWrap">
+<div class="loginBox">
+<h2>🔒 Sourcing Admin</h2><p style="font-size:11px;color:#64748b">Uses main ADMIN_PASSWORD from Render - no hardcoded password</p>
+<input id="pwd" type="password" placeholder="ADMIN_PASSWORD" style="margin:12px 0">
+<button class="btn btn-blue" onclick="login()" style="width:100%;padding:12px">Unlock</button>
+<p id="err" style="color:#ef4444;font-size:11px;display:none;background:#fee2e2;padding:8px;border-radius:8px;margin-top:8px"></p>
+</div>
+</div>
+
+<div class="top"><div><b>🌊 E-MARTCOM SOURCING SECURE</b><br><small style="opacity:.7">Profit Dashboard - Hidden from customers</small></div>
+<div><button class="btn btn-red" onclick="logout()">Logout</button><a href="admin.html" class="btn btn-blue" style="text-decoration:none">Main Admin</a></div></div>
 
 <div id="dash" style="display:none">
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-<div class="card"><div style="font-size:11px">Total Views Logged</div><div style="font-size:24px;font-weight:900" id="totalViews">0</div></div>
-<div class="card"><div style="font-size:11px">Est. Profit (35%)</div><div style="font-size:24px;font-weight:900;color:#00b4d8" id="totalProfit">KSh 0</div></div>
-<div class="card"><div style="font-size:11px">To Order Today</div><div style="font-size:24px;font-weight:900" id="toOrder">0</div></div>
+<div class="card"><div style="font-size:11px">Total Views</div><b id="totalViews" style="font-size:24px">0</b></div>
+<div class="card"><div style="font-size:11px">Est Profit 45% (HIDDEN)</div><b id="totalProfit" style="font-size:24px;color:#00a651">KSh 0</b></div>
+<div class="card"><div style="font-size:11px">To Order</div><b id="toOrder" style="font-size:24px">0</b></div>
 </div>
 
-<div class="card"><h3 style="margin:0 0 10px;color:#023e8a">📦 Customer Product Views - Auto Sourced</h3>
-<div style="font-size:11px;color:#555;margin-bottom:10px">Every time customer views product.html, it auto-logs here. You order cheap from Alibaba/1688, sell at your price. Customer never knows!</div>
-<table><thead><tr><th>Time</th><th>Product</th><th>Customer Pays</th><th>You Pay (1688)</th><th>Your Profit</th><th>Source</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table>
+<div class="card"><h3>📦 Product Views - Auto Sourced</h3>
+<table><thead><tr><th>Time</th><th>Product</th><th>Customer Pays</th><th>You Pay 55%</th><th>Profit 45%</th><th>Action</th></tr></thead><tbody id="tbody"><tr><td colspan=6>Loading...</td></tr></tbody></table>
 </div>
 
-<div class="card"><h3>🔗 Quick Source Links Generator</h3><input id="pName" placeholder="Product name e.g Samsung A15" style="width:300px"><button class="btn btn-ocean" onclick="genLinks()">Generate Links</button><div id="genLinks" style="margin-top:12px;display:grid;gap:8px"></div></div>
+<div class="card"><h3>🔗 Quick Source</h3><input id="pName" placeholder="Product name"><button class="btn btn-blue" onclick="genLinks()">Generate Alibaba/1688 Links</button><div id="genLinks" style="margin-top:10px;display:grid;gap:8px"></div></div>
 </div>
 
 <script>
-let orders=[];
-function login(){
-  if(document.getElementById('pwd').value==='emart2024' || window.location.search.includes('admin=emart2024')){
-    document.getElementById('dash').style.display='block';document.getElementById('loginMsg').style.display='none';localStorage.setItem('isAdmin','true');loadOrders();
-  } else { alert('Wrong password! Use emart2024'); }
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function getKey(){return localStorage.getItem('adminKey')||'';}
+function logout(){localStorage.removeItem('adminKey');location.reload();}
+async function login(){
+ let p=document.getElementById('pwd').value.trim();
+ if(!p){document.getElementById('err').style.display='block';document.getElementById('err').innerText='Enter password';return;}
+ try{
+  let r=await fetch('/api/orders?adminKey='+encodeURIComponent(p));
+  if(!r.ok) throw new Error('Wrong');
+  localStorage.setItem('adminKey',p);
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('dash').style.display='block';
+  load();
+ }catch(e){
+  document.getElementById('err').style.display='block';document.getElementById('err').innerText='❌ Wrong! Check Render ENV ADMIN_PASSWORD';
+ }
 }
-if(window.location.search.includes('admin=emart2024')||localStorage.getItem('isAdmin')==='true'){document.getElementById('dash').style.display='block';document.getElementById('loginMsg').style.display='none';loadOrders();}
-
-async function loadOrders(){
-  try{
-    let res=await fetch('/api/external-orders');orders=await res.json();
-    if(!Array.isArray(orders)) orders=[];
-    document.getElementById('totalViews').innerText=orders.length;
-    let profit=orders.reduce((s,o)=>s+(o.customerPrice?o.customerPrice*0.35:0),0);
-    document.getElementById('totalProfit').innerText='KSh '+Math.floor(profit).toLocaleString();
-    document.getElementById('toOrder').innerText=orders.length;
-    let tbody=document.getElementById('tbody');tbody.innerHTML='';
-    orders.slice().reverse().forEach((o,i)=>{
-      let cp=o.customerPrice||2000;let cheap=Math.floor(cp*0.55);let prof=Math.floor(cp*0.45);
-      let time=o.time?new Date(o.time).toLocaleString():'now';
-      tbody.innerHTML+=`<tr><td>${time}</td><td><b>${o.productName||'Product '+o.productId}</b></td><td>KSh ${cp}</td><td>KSh ${cheap}</td><td class="profit">KSh ${prof}</td><td><span class="badge">${o.source||'alibaba'}</span></td><td><a href="${o.sourceUrl||'https://www.alibaba.com/trade/search?searchText='+encodeURIComponent(o.productName||'')}" target="_blank" class="btn btn-blue" style="text-decoration:none;font-size:10px">CHECK</a><button class="btn btn-green" onclick="markOrdered(${i})">Ordered</button></td></tr>`;
-    });
-  }catch(e){document.getElementById('tbody').innerHTML='<tr><td colspan=7>No orders yet - customers need to view products. Test: open product.html?id=8</td></tr>'}
+if(getKey()){
+ fetch('/api/orders?adminKey='+encodeURIComponent(getKey())).then(r=>{if(r.ok){document.getElementById('loginScreen').style.display='none';document.getElementById('dash').style.display='block';load();}else logout();});
 }
-function markOrdered(i){orders.splice(orders.length-1-i,1);alert('Marked as ordered! Remember to order on Alibaba/1688 now.');loadOrders();}
+async function load(){
+ try{
+  let r=await fetch('/api/external-orders?adminKey='+encodeURIComponent(getKey()));
+  if(r.status==401){logout();return;}
+  let orders=await r.json(); if(!Array.isArray(orders)) orders=[];
+  document.getElementById('totalViews').innerText=orders.length;
+  let profit=orders.reduce((s,o)=>s+((o.amount||o.customerPrice||0)*0.45),0);
+  document.getElementById('totalProfit').innerText='KSh '+Math.floor(profit).toLocaleString();
+  document.getElementById('toOrder').innerText=orders.length;
+  let tb=document.getElementById('tbody');
+  if(orders.length==0){tb.innerHTML='<tr><td colspan=6 style="text-align:center;color:#94a3b8">No views yet - open product.html?id=1 to test</td></tr>';return;}
+  tb.innerHTML=orders.slice().reverse().map(o=>{
+   let cp=o.amount||o.customerPrice||2000;
+   let cheap=Math.floor(cp*0.55); let pr=Math.floor(cp*0.45);
+   let time=o.date?new Date(o.date).toLocaleString():'now';
+   let name=esc(o.productName||o.itemsText||'Product');
+   let url='https://www.alibaba.com/trade/search?searchText='+encodeURIComponent(o.productName||'');
+   return `<tr><td><small>${esc(time)}</small></td><td><b>${name}</b></td><td>KSh ${cp}</td><td>KSh ${cheap}</td><td class="profit">KSh ${pr}</td><td><a href="${esc(url)}" target="_blank" class="btn btn-blue" style="font-size:10px;text-decoration:none">ALIBABA</a></td></tr>`;
+  }).join('');
+ }catch(e){document.getElementById('tbody').innerHTML='<tr><td colspan=6>Error: '+esc(e.message)+'</td></tr>';}
+}
 function genLinks(){
-  let q=encodeURIComponent(document.getElementById('pName').value);if(!q)return;
-  let links=[{n:'Alibaba',u:`https://www.alibaba.com/trade/search?searchText=${q}`},{n:'1688 Wholesale',u:`https://s.1688.com/selloffer/offer_search.htm?keywords=${q}`},{n:'Made-in-China',u:`https://www.made-in-china.com/productdirectory?word=${q}`},{n:'eBay',u:`https://www.ebay.com/sch/i.html?_nkw=${q}`},{n:'Jumia',u:`https://www.jumia.co.ke/catalog/?q=${q}`}];
-  document.getElementById('genLinks').innerHTML=links.map(l=>`<div style="display:flex;justify-content:space-between;padding:8px;border:1px solid #caf0f8;border-radius:8px"><b>${l.n}</b><div><a href="${l.u}" target="_blank" style="color:#023e8a;font-weight:800">Open →</a></div></div>`).join('');
+ let q=document.getElementById('pName').value.trim(); if(!q) return;
+ let enc=encodeURIComponent(q);
+ let links=[{n:'Alibaba',u:`https://www.alibaba.com/trade/search?searchText=${enc}`},{n:'1688',u:`https://s.1688.com/selloffer/offer_search.htm?keywords=${enc}`}];
+ document.getElementById('genLinks').innerHTML=links.map(l=>`<div style="display:flex;justify-content:space-between;padding:8px;border:1px solid #e0f2fe;border-radius:8px"><b>${esc(l.n)}</b><a href="${l.u}" target="_blank">Open →</a></div>`).join('');
 }
-setInterval(loadOrders,5000);
+setInterval(()=>{if(getKey()) load();},8000);
 </script></body></html>
