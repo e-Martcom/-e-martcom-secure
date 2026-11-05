@@ -20,7 +20,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f0f9ff;p
 <div class="card" id="loginCard">
 <h3 style="color:#0a4a7a">🔒 Track My Orders</h3>
 <p class="small" style="margin:6px 0">Enter phone number you used to pay. Only YOUR orders will show - secure.</p>
-<input id="phone" type="tel" placeholder="e.g. 0713367205 or 254713367205">
+<input id="phone" type="tel" placeholder="e.g. 0712345678 or 254712345678" inputmode="numeric" autocomplete="tel">
 <button class="btn btn-blue" onclick="loadMyOrders()">View My Orders 🔍</button>
 <p id="err" style="color:#ef4444;font-size:11px;display:none;background:#fee2e2;padding:8px;border-radius:8px;margin-top:8px"></p>
 <p class="small" style="margin-top:8px">🔐 Secure - we hide profit, only you see your orders via phone match.</p>
@@ -28,65 +28,79 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{background:#f0f9ff;p
 
 <div class="card" id="ordersCard" style="display:none">
 <h3>My Orders - <span id="phoneShow"></span></h3>
+<p id="pendingNote" style="display:none;background:#fef3c7;padding:8px;border-radius:8px;font-size:11px;margin-top:8px">⏳ Payment pending... Enter your M-Pesa PIN on your phone. This page auto-refreshes every 5s.</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">
 <div style="background:#f0f9ff;padding:10px;border-radius:10px;text-align:center"><b id="totalOrders">0</b><br><small>Total Orders</small></div>
 <div style="background:#ecfeff;padding:10px;border-radius:10px;text-align:center"><b id="totalPaid">KSh 0</b><br><small>Total Paid</small></div>
 </div>
 <table><thead><tr><th>Date</th><th>Items</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead><tbody id="tbody"></tbody></table>
-<button class="btn" style="background:#fff;border:2px solid #e0f2fe;margin-top:12px" onclick="logout()">Logout / Change Phone</button>
+<button class="btn btn-blue" onclick="refreshOrders()">🔄 Refresh Status</button>
+<button class="btn" style="background:#fff;border:2px solid #e0f2fe;margin-top:8px" onclick="logout()">Logout / Change Phone</button>
 </div>
 </div>
 
 <script>
+let refreshTimer=null;
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function normalizePhone(p){
- let c=p.replace(/\D/g,'');
+ let c=String(p||'').replace(/\D/g,'');
  if(c.startsWith('0')) c='254'+c.slice(1);
  if(c.startsWith('7')) c='254'+c;
- if(c.length===9) c='254'+c;
  return c;
 }
 function getSavedPhone(){return localStorage.getItem('myPhone')||'';}
-function logout(){localStorage.removeItem('myPhone');location.reload();}
+function getUrlPhone(){try{let q=new URLSearchParams(location.search).get('phone');return q?normalizePhone(q):'';}catch{return '';}}
+function logout(){localStorage.removeItem('myPhone');if(refreshTimer)clearInterval(refreshTimer);location.href='account.html';}
 function loadMyOrders(){
- let raw=document.getElementById('phone').value.trim()||getSavedPhone();
+ let raw=document.getElementById('phone').value.trim()||getSavedPhone()||getUrlPhone();
  let phone=normalizePhone(raw);
  let err=document.getElementById('err');
- if(phone.length<12){err.style.display='block';err.innerText='❌ Enter valid phone e.g. 0713367205';return;}
+ if(!/^2547\d{8}$/.test(phone)){err.style.display='block';err.innerText='❌ Enter valid Safaricom number e.g. 0712345678';return;}
  err.style.display='none';
  localStorage.setItem('myPhone',phone);
  fetchOrders(phone);
 }
+function refreshOrders(){let p=getSavedPhone();if(p)fetchOrders(p);}
 async function fetchOrders(phone){
  try{
-  // Secure: server filters by phone, never sends all orders
   let r=await fetch('/api/my-orders?phone='+encodeURIComponent(phone));
-  if(!r.ok) throw new Error('Server error');
+  if(!r.ok) throw new Error('Server error - try again');
   let j=await r.json();
   let orders=j.orders||[];
   document.getElementById('loginCard').style.display='none';
   document.getElementById('ordersCard').style.display='block';
   document.getElementById('phoneShow').innerText=phone;
   document.getElementById('totalOrders').innerText=orders.length;
-  let total=orders.reduce((s,o)=>s+parseInt(o.amount||0),0);
+  // FIX: Only sum PAID orders, not pending/failed
+  let total=orders.filter(o=>String(o.status||'').includes('PAID')).reduce((s,o)=>s+parseInt(o.amount||0),0);
   document.getElementById('totalPaid').innerText='KSh '+total.toLocaleString();
+  let hasPending=orders.some(o=>String(o.status||'').includes('STK')||String(o.status||'').includes('PENDING'));
+  document.getElementById('pendingNote').style.display=hasPending?'block':'none';
   let tb=document.getElementById('tbody');
-  if(orders.length==0){tb.innerHTML='<tr><td colspan=5 style="text-align:center;padding:20px;color:#94a3b8">No orders found for this phone. Pay first with M-Pesa, then check here.</td></tr>';return;}
-  tb.innerHTML=orders.slice().reverse().map(o=>{
-   let st=esc(o.status||'');
-   let cls=st.includes('PAID')?'paid':st.includes('STK')?'stk':'fail';
-   let time=new Date(o.date).toLocaleString();
-   // NEVER show profit to customer - secure!
-   return `<tr><td><small>${esc(time)}</small></td><td style="max-width:180px"><small>${esc((o.itemsText||'').slice(0,120))}</small><br><small class="small">${esc(o.address||'').slice(0,80)}</small></td><td><b>KSh ${parseInt(o.amount||0).toLocaleString()}</b></td><td><span class="badge ${cls}">${st}</span></td><td><small>${esc(o.receipt||o.CheckoutRequestID||'-').slice(0,12)}</small></td></tr>`;
-  }).join('');
+  if(orders.length==0){tb.innerHTML='<tr><td colspan=5 style="text-align:center;padding:20px;color:#94a3b8">No orders found for this phone. Pay first with M-Pesa, then check here.</td></tr>';}
+  else{
+   tb.innerHTML=orders.slice().reverse().map(o=>{
+    let st=esc(o.status||'');
+    let cls=st.includes('PAID')?'paid':st.includes('STK')||st.includes('PENDING')?'stk':'fail';
+    let label=st.includes('PAID')?'✅ PAID':st.includes('STK')?'⏳ WAITING FOR PIN':st;
+    let time='-';try{let d=new Date(o.date);if(!isNaN(d))time=d.toLocaleString();}catch{}
+    return `<tr><td><small>${esc(time)}</small></td><td style="max-width:180px"><small>${esc((o.itemsText||'').slice(0,120))}</small><br><small class="small">${esc(o.address||'').slice(0,80)}</small></td><td><b>KSh ${parseInt(o.amount||0).toLocaleString()}</b></td><td><span class="badge ${cls}">${label}</span></td><td><small>${esc(o.receipt||o.CheckoutRequestID||'-').slice(0,20)}</small></td></tr>`;
+   }).join('');
+  }
+  // FIX: Auto-refresh while pending, stop when all settled
+  if(refreshTimer)clearInterval(refreshTimer);
+  if(hasPending){refreshTimer=setInterval(()=>fetchOrders(phone),5000);}
  }catch(e){
   document.getElementById('err').style.display='block';
   document.getElementById('err').innerText='Error: '+esc(e.message);
+  document.getElementById('loginCard').style.display='block';
  }
 }
-// Auto login if saved
-if(getSavedPhone()){
- document.getElementById('phone').value=getSavedPhone();
- fetchOrders(getSavedPhone());
+// FIX: Priority - URL ?phone= from cart.html > saved phone > input
+let startPhone=getUrlPhone()||getSavedPhone();
+if(startPhone){
+ document.getElementById('phone').value=startPhone;
+ localStorage.setItem('myPhone',normalizePhone(startPhone));
+ fetchOrders(normalizePhone(startPhone));
 }
 </script></body></html>
