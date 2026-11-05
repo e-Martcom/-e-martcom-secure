@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cart - E-MARTCOM</title>
 <style>*{box-sizing:border-box}body{font-family:Arial;background:#eef6fb;margin:0;color:#0f172a}header{background:linear-gradient(90deg,#082f4a,#0a4a7a);color:#fff;padding:12px;display:flex;gap:10px;position:sticky;top:0;z-index:10}header a{color:#fff;text-decoration:none;font-weight:900}.wrap{max-width:900px;margin:12px auto;padding:0 12px;display:grid;grid-template-columns:1fr 320px;gap:12px}.card{background:#fff;border-radius:12px;padding:14px;border:1px solid #e0f2fe;box-shadow:0 4px 12px rgba(0,0,0,.05)}input,select,textarea{width:100%;padding:10px;border:2px solid #e0f2fe;border-radius:10px;margin:6px 0;outline:none}input:focus{border-color:#0a4a7a}.btn{width:100%;padding:14px;border:none;border-radius:12px;font-weight:900;cursor:pointer;margin-top:8px;font-size:14px}.btn-green{background:#00a651;color:#fff}.btn-blue{background:#0a4a7a;color:#fff}.btn:disabled{opacity:.5}.small{font-size:11px;color:#64748b}@media(max-width:800px){.wrap{grid-template-columns:1fr}}</style></head><body>
-<header><a href="index.html">← Store</a><b style="margin-left:10px">E-MARTCOM Cart</b><div style="flex:1"></div><a href="my-account.html" style="background:#fff;color:#0a4a7a;padding:8px 12px;border-radius:20px;font-size:11px;text-decoration:none">👤 My Orders</a></header>
+<header><a href="index.html">← Store</a><b style="margin-left:10px">E-MARTCOM Cart</b><div style="flex:1"></div><a href="account.html" style="background:#fff;color:#0a4a7a;padding:8px 12px;border-radius:20px;font-size:11px;text-decoration:none">👤 My Orders</a></header>
 <div class="wrap">
 <div class="card"><h3>🛒 Your Cart (<span id="count">0</span>)</h3><div id="cartItems" style="margin-top:10px"></div></div>
 <div>
 <div class="card"><h4>📍 Delivery Address *</h4>
-<input id="cName" placeholder="Full Name * e.g. TONY KIMANI">
-<input id="cPhone" placeholder="M-Pesa Phone * 0713367205" value="0713367205">
+<input id="cName" placeholder="Full Name * e.g. TONY KIMANI" autocomplete="name">
+<input id="cPhone" placeholder="M-Pesa Phone * 0712345678" inputmode="numeric" autocomplete="tel">
 <label class="small">COUNTY / REGION *</label><select id="county"><option>Nakuru</option><option>Nairobi</option><option>Mombasa</option><option>Kisumu</option><option>Kiambu</option><option>Other</option></select>
 <input id="town" placeholder="TOWN / CITY * e.g. NAKURU TOWN">
 <input id="estate" placeholder="ESTATE / STREET / AREA * e.g. MILIMANI ESTATE">
@@ -21,11 +21,11 @@
 </div></div></div>
 <script>
 const PRODUCT_DB={1:{priceUSD:1.87,weight:0.05,name:"Clover Bracelet"},2:{priceUSD:2.5,weight:0.1,name:"Samsung A71 Case"},3:{priceUSD:5.2,weight:0.2,name:"Nike Set"},4:{priceUSD:2.2,weight:0.2,name:"Oceanic Watch"},5:{priceUSD:2.0,weight:0.15,name:"iPhone Case"}};
-const BASE={china:{ke:12}};const MM={air:1,sea:0.35,eparcel:0.65,rail:0.55};
+const MM={air:1,sea:0.35,eparcel:0.65,rail:0.55};
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function getCart(){return JSON.parse(localStorage.getItem('cart')||'[]');}
+function getCart(){try{return JSON.parse(localStorage.getItem('cart')||'[]');}catch{return[];}}
 function saveCart(c){localStorage.setItem('cart',JSON.stringify(c));render();}
-function calc(items,method){let m=method||localStorage.getItem('shipMethod')||'eparcel';let subProd=0,subShip=0;for(let it of items){let db=PRODUCT_DB[parseInt(it.id)]||{priceUSD:1.87,weight:0.2};let qty=parseInt(it.qty)||1;let wm=db.weight<=0.5?1:db.weight<=1?1.5:2.2;let b=12;let ship=b*wm*(MM[m]||0.65);subProd+=db.priceUSD*qty;subShip+=ship*qty;}let fee=subProd*0.03;let totalUSD=subProd+subShip+fee;return{totalKSh:Math.floor(totalUSD*130),subProd,subShip,method:m};}
+function calc(items,method){let m=method||localStorage.getItem('shipMethod')||'eparcel';let subProd=0,subShip=0;for(let it of items){let db=PRODUCT_DB[parseInt(it.id)]||{priceUSD:1.87,weight:0.2};let qty=Math.max(1,parseInt(it.qty)||1);let wm=db.weight<=0.5?1:db.weight<=1?1.5:2.2;let ship=12*wm*(MM[m]||0.65);subProd+=db.priceUSD*qty;subShip+=ship*qty;}let fee=subProd*0.03;let totalUSD=subProd+subShip+fee;return{totalKSh:Math.floor(totalUSD*130),subProd,subShip,method:m};}
 function render(){
  let cart=getCart();document.getElementById('count').innerText=cart.length;
  if(!cart.length){document.getElementById('cartItems').innerHTML='<p style="text-align:center;color:#94a3b8">Cart empty - go add products</p>';document.getElementById('totalBox').innerHTML='';return;}
@@ -38,22 +38,26 @@ function removeItem(i){let cart=getCart();cart.splice(i,1);saveCart(cart);}funct
 function updatePreview(){let n=document.getElementById('cName').value;let p=document.getElementById('cPhone').value;let h=document.getElementById('house').value;let e=document.getElementById('estate').value;let t=document.getElementById('town').value;let co=document.getElementById('county').value;let lm=document.getElementById('landmark').value;let nt=document.getElementById('notes').value;let txt=`${esc(n)}, ${esc(p)}, ${esc(h)}, ${esc(e)}, ${esc(t)}, ${esc(co)}, Near ${esc(lm)} - ${esc(nt)}`;document.getElementById('preview').innerHTML=`🔍 PREVIEW FOR SUPPLIER:<br><b>${txt.toUpperCase()}</b>`;}
 ['cName','cPhone','town','estate','house','landmark','notes','county'].forEach(id=>{let el=document.getElementById(id);if(el)el.addEventListener('input',updatePreview);});
 document.getElementById('method').addEventListener('change',render);
+function normalizePhone(p){let c=String(p||'').replace(/\D/g,'');if(c.startsWith('0'))c='254'+c.slice(1);if(c.startsWith('7'))c='254'+c;return c;}
 async function payMpesa(){
  let cart=getCart();if(!cart.length)return alert('Cart empty');
- let cName=document.getElementById('cName').value.trim();let cPhone=document.getElementById('cPhone').value.trim();let town=document.getElementById('town').value.trim();let estate=document.getElementById('estate').value.trim();let house=document.getElementById('house').value.trim();let county=document.getElementById('county').value;
- if(!cName||!cPhone||!town||!estate||!house)return alert('Fill ALL * fields - House, Estate, Town required - this goes DIRECT to supplier');
+ let cName=document.getElementById('cName').value.trim();let cPhoneRaw=document.getElementById('cPhone').value.trim();let town=document.getElementById('town').value.trim();let estate=document.getElementById('estate').value.trim();let house=document.getElementById('house').value.trim();let county=document.getElementById('county').value;
+ if(!cName||!cPhoneRaw||!town||!estate||!house)return alert('Fill ALL * fields - House, Estate, Town required - this goes DIRECT to supplier');
+ let cPhone=normalizePhone(cPhoneRaw);
+ if(!/^2547\d{8}$/.test(cPhone))return alert('Enter valid Safaricom number e.g. 0712345678');
  let fullAddress=`${house}, ${estate}, ${town}, ${county}, Near ${document.getElementById('landmark').value} - ${document.getElementById('notes').value}`;
  let btn=document.getElementById('mpesaBtn');btn.disabled=true;btn.innerText='⏳ Sending STK... check phone';
  document.getElementById('status').innerText='Sending STK to '+cPhone+'...';
  try{
-  let r=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:cPhone,items:cart.map(it=>({id:it.id,qty:it.qty,source:it.source})),customerName:cName,address:fullAddress,origin:'china',dest:'ke',method:document.getElementById('method').value})});
+  let r=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:cPhone,items:cart.map(it=>({id:parseInt(it.id)||1,qty:Math.max(1,parseInt(it.qty)||1),source:String(it.source||'china')})),customerName:cName,address:fullAddress,origin:'china',dest:'ke',method:document.getElementById('method').value})});
   let j=await r.json();
-  if(!r.ok) throw new Error(j.error+' '+JSON.stringify(j.details||''));
-  document.getElementById('status').innerHTML=`✅ STK sent! Check <b>${esc(cPhone)}</b> for M-Pesa prompt.<br>Checkout: ${esc(j.CheckoutRequestID)}<br><small>Charged KSh ${j.charged} (sandbox test 1) - real total KSh ${j.amount} saved in order. Enter PIN to pay.</small>`;
+  if(!r.ok) throw new Error((j.error||'STK failed')+' '+(j.details?JSON.stringify(j.details):''));
+  document.getElementById('status').innerHTML=`✅ STK sent! Check <b>${esc(cPhone)}</b> for M-Pesa prompt.<br>Checkout: ${esc(j.CheckoutRequestID)}<br><small>Charged KSh ${j.charged} (sandbox test 1) - real total KSh ${j.amount} saved in order. Enter PIN to pay.<br>Do NOT close - redirecting to My Orders to confirm...</small>`;
   btn.innerText='✅ STK Sent - Check Phone';
-  setTimeout(()=>{localStorage.removeItem('cart');location.href='my-account.html';},3000);
+  // FIX: Do NOT clear cart until payment confirmed - keep it, just go to account page
+  setTimeout(()=>{location.href='account.html?phone='+encodeURIComponent(cPhone);},4000);
  }catch(e){document.getElementById('status').innerHTML='❌ STK FAILED: '+esc(e.message)+'<br><small>Check Render ENV: MPESA_CONSUMER_KEY, SECRET, PASSKEY, SHORTCODE, BASE_URL must be set. See /api/health</small>';btn.disabled=false;btn.innerText='📱 Pay M-Pesa - Retry';}
 }
-async function payCard(){let cart=getCart();if(!cart.length)return;let key=prompt('Enter ADMIN_PASSWORD for card test:');if(!key)return;try{let r=await fetch('/api/card-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminKey:key,items:cart.map(it=>({id:it.id,qty:it.qty})),customerName:document.getElementById('cName').value,phone:document.getElementById('cPhone').value,address:document.getElementById('estate').value,origin:'china',dest:'ke',method:document.getElementById('method').value})});let j=await r.json();if(!r.ok)throw new Error(j.error);alert('✅ Card paid test OK - check admin');localStorage.removeItem('cart');location.href='my-account.html';}catch(e){alert('Card failed '+e.message);}}
+async function payCard(){let cart=getCart();if(!cart.length)return;let key=prompt('Enter ADMIN_PASSWORD for card test:');if(!key)return;try{let r=await fetch('/api/card-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminKey:key,items:cart.map(it=>({id:parseInt(it.id)||1,qty:Math.max(1,parseInt(it.qty)||1)})),customerName:document.getElementById('cName').value,phone:normalizePhone(document.getElementById('cPhone').value),address:document.getElementById('estate').value,origin:'china',dest:'ke',method:document.getElementById('method').value})});let j=await r.json();if(!r.ok)throw new Error(j.error);alert('✅ Card paid test OK - check admin');localStorage.removeItem('cart');location.href='account.html';}catch(e){alert('Card failed '+e.message);}}
 render();updatePreview();
 </script></body></html>
