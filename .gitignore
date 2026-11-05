@@ -1,0 +1,28 @@
+# ===== E-MARTCOM - NEVER PUSH THESE TO GITHUB =====
+
+# Secrets / Env
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Render / Local data - orders contain customer phones
+data/
+orders.json
+*.log
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Render build cache
+.render/
